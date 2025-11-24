@@ -39,7 +39,7 @@ services:
     networks:
       - rosti-net
     restart: unless-stopped
-    cpuset: "20-39,60-79"
+    # cpuset: "20-39,60-79"
     # deploy:
     #   resources:
     #     reservations:
@@ -73,7 +73,7 @@ services:
     networks:
       - rosti-net
     restart: unless-stopped
-    cpuset: "0-19,40-59"
+    # cpuset: "0-19,40-59"
     volumes:
       - ollama_data:/root/.ollama
       - /home/cjb/.ollama:/root/.ollama # Mount local models
