@@ -93,7 +93,7 @@ services:
     # env_file:
     #   - .env
     volumes:
-      - ./logs/backend:/app/logs
+      - backend_logs:/app/logs      
       # --- Alembic Volume Mount ---
       # This volume mount is crucial for development. It maps the local alembic
       # directory to the one inside the container. This ensures that when you run
@@ -228,3 +228,5 @@ volumes:
   redis_data:
   mongodb_data:
   ollama_data:
+  backend_logs:
+
