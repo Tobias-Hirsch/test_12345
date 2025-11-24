@@ -95,7 +95,7 @@ services:
     #           capabilities: [gpu]
 
   latexocr:
-    image: jlh1024/latexocr-amd64-gpu:latest
+    image: jlh1024/latexocr-amd64-cpu:latest
     restart: unless-stopped
     environment:
       - DEVICE=cuda
