@@ -90,8 +90,8 @@ services:
           memory: 8G
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     volumes:
       - ./logs/backend:/app/logs
       # --- Alembic Volume Mount ---
