@@ -21,7 +21,7 @@ services:
           memory: 8G
   mineru-sglang-server:
     image: mineru-sglang:latest
-    profiles: ["sglang"]
+    # profiles: ["sglang"]
     ports:
       - "30001:30000"
     environment:
@@ -40,13 +40,13 @@ services:
       - rosti-net
     restart: unless-stopped
     cpuset: "20-39,60-79"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ['1'] # Assigned to GPU 1
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           device_ids: ['1'] # Assigned to GPU 1
+    #           capabilities: [gpu]
 
   ollama-embedding:
     image: ollama/ollama:latest
@@ -58,13 +58,13 @@ services:
     networks:
       - rosti-net
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ['1'] # Assigned to GPU 1
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           device_ids: ['1'] # Assigned to GPU 1
+    #           capabilities: [gpu]
 
   ollama-serving:
     image: ollama/ollama:latest
@@ -77,34 +77,34 @@ services:
     volumes:
       - ollama_data:/root/.ollama
       - /home/cjb/.ollama:/root/.ollama # Mount local models
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ['0'] # Assigned to GPU 0
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           device_ids: ['0'] # Assigned to GPU 0
+    #           capabilities: [gpu]
 
   paddleocr:
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ['1'] # Assigned to GPU 1
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           device_ids: ['1'] # Assigned to GPU 1
+    #           capabilities: [gpu]
 
   latexocr:
     image: jlh1024/latexocr-amd64-gpu:latest
     restart: unless-stopped
     environment:
       - DEVICE=cuda
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ['1'] # Assigned to GPU 0
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           device_ids: ['1'] # Assigned to GPU 0
+    #           capabilities: [gpu]
 
 
