@@ -146,9 +146,9 @@ services:
   gateway: # Renamed from 'nginx' for clarity
     image: nginx:stable-alpine
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
-      - ./Docker/nginx:/etc/nginx/conf.d:ro
+      - ./Docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - rosti-net
     depends_on:
