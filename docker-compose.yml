@@ -143,18 +143,19 @@ services:
       - rosti-net
     # No ports are exposed to the host, as the gateway handles traffic.
 
-  gateway: # Renamed from 'nginx' for clarity
+  gateway:
     image: nginx:stable-alpine
     ports:
-      - "8080:80"
+      - "8080:80"   # weiter 8080 extern
     volumes:
-      - ./Docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./Docker/nginx:/etc/nginx/conf.d:ro
     networks:
       - rosti-net
     depends_on:
       - backend
       - frontend
       - docs
+
 
   paddleocr:
     # --- ARCHITECTURAL NOTE (2025-07-20) ---
