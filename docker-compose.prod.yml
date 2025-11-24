@@ -20,7 +20,7 @@ services:
         reservations:
           memory: 8G
   mineru-sglang-server:
-    image: mineru-sglang:latest
+    image: alexsuntop/mineru-sglang:latest
     # profiles: ["sglang"]
     ports:
       - "30001:30000"
