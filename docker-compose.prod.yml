@@ -95,7 +95,8 @@ services:
     #           capabilities: [gpu]
 
   latexocr:
-    image: jlh1024/latexocr-amd64-cpu:latest
+    image: lukasblecher/pix2tex:api
+    container_name: latexocr
     restart: unless-stopped
     environment:
       - DEVICE=cuda
