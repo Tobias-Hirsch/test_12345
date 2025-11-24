@@ -53,6 +53,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: rag_db
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app_password123
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -92,6 +94,21 @@ services:
       - "8001:8000"
     # env_file:
     #   - .env
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB: rag_db
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app_password123
+  
+      # (optional, falls du gleich alles sauber haben willst:)
+      MILVUS_HOST: milvus
+      MILVUS_PORT: 19530
+      MONGO_URI: mongodb://root:password@mongodb:27017
+      MONGO_DB_NAME: rag_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      FRONTEND_BASE_URL: http://141.3.142.150:8080
     volumes:
       - backend_logs:/app/logs      
       # --- Alembic Volume Mount ---
