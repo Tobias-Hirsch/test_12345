@@ -102,7 +102,7 @@ services:
       # project's version control. Without this, migration scripts would only
       # exist inside the temporary container and be lost when it stops.
       - ./backend/alembic:/app/alembic
-      - ./backend/alembic.ini:/app/alembic.ini
+      # - ./backend/alembic.ini:/app/alembic.ini
       # Model volumes are removed as backend no longer performs local inference.
       - ./verify_milvus.py:/app/verify_milvus.py:ro
       - ./cleanup_milvus.py:/app/cleanup_milvus.py:ro
