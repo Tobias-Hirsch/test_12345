@@ -131,3 +131,11 @@ def get_db():
     finally:
         db.close()
 
+def create_database_tables():
+    """
+    Create all database tables defined by SQLAlchemy models if they do not exist.
+    Safe to call multiple times; it will only create missing tables.
+    """
+    logger.info("Creating database tables if they do not exist...")
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database table creation complete.")
