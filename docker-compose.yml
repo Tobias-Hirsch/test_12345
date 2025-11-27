@@ -16,7 +16,7 @@ services:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
     networks:
-      - rosti-net
+      - rosti-net2
     depends_on:
       - etcd
       - minio
@@ -30,7 +30,7 @@ services:
       ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
       ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
     networks:
-      - rosti-net
+      - rosti-net2
 
   minio:
     image: minio/minio:RELEASE.2025-04-08T15-41-24Z
@@ -44,7 +44,7 @@ services:
       MINIO_ROOT_PASSWORD: "minioadmin"
     command: ["server", "/data", "--console-address", ":9001"]
     networks:
-      - rosti-net
+      - rosti-net2
 
   mysql:
     image: mysql:8.0
@@ -58,7 +58,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - rosti-net
+      - rosti-net2
 
   redis:
     image: redis:7.0
@@ -67,7 +67,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - rosti-net
+      - rosti-net2
 
   mongodb:
     image: mongo:latest
@@ -79,7 +79,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
     networks:
-      - rosti-net
+      - rosti-net2
 
   # --- Application Services ---
   backend:
@@ -132,7 +132,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
-      - rosti-net
+      - rosti-net2
     depends_on:
       - milvus
       - mysql
@@ -148,7 +148,7 @@ services:
     # ports:
     #   - "8080:80" 
     networks:
-      - rosti-net
+      - rosti-net2
     # No ports are exposed to the host, as the gateway handles traffic.
     # The service is accessible on port 80 within the Docker network.
 
@@ -159,7 +159,7 @@ services:
     container_name: rosti_docs
     restart: unless-stopped
     networks:
-      - rosti-net
+      - rosti-net2
     # No ports are exposed to the host, as the gateway handles traffic.
 
   gateway:
@@ -169,7 +169,7 @@ services:
     volumes:
       - ./Docker/nginx:/etc/nginx/conf.d:ro 
     networks:
-      - rosti-net
+      - rosti-net2
     depends_on:
       - backend
       - frontend
@@ -205,7 +205,7 @@ services:
       # This prevents re-downloading the large models every time the container starts.
       - ./models/paddlex-models:/root/.paddlex
     networks:
-      - rosti-net
+      - rosti-net2
  
   latexocr:
     # --- Base configuration for the LatexOCR service ---
@@ -220,7 +220,7 @@ services:
       # looks for the weight file, derived from the container's startup logs.
       - ./models/latexocr-model/weights.pth:/opt/conda/lib/python3.10/site-packages/pix2tex/model/checkpoints/weights.pth:ro
     networks:
-      - rosti-net
+      - rosti-net2
  
   ollama-serving:
     image: ollama/ollama:latest
@@ -236,12 +236,12 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     networks:
-      - rosti-net
+      - rosti-net2
     restart: unless-stopped
 
 # --- Network Definition ---
 networks:
-  rosti-net:
+  rosti-net2:
     driver: bridge
     external: false
 
