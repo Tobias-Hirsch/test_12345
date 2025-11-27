@@ -37,7 +37,7 @@ services:
       memlock: -1
       stack: 67108864
     networks:
-      - rost-net2
+      - rosti-net2
     restart: unless-stopped
     # cpuset: "20-39,60-79"
     deploy:
@@ -56,7 +56,7 @@ services:
       - ollama_data:/root/.ollama
       - /home/cjb/.ollama:/root/.ollama # Mount local models
     networks:
-      - rost-net2
+      - rosti-net2
     restart: unless-stopped
     deploy:
       resources:
@@ -71,7 +71,7 @@ services:
     ports:
       - "11434:11434"
     networks:
-      - rost-net2
+      - rosti-net2
     restart: unless-stopped
     # cpuset: "0-19,40-59"
     volumes:
