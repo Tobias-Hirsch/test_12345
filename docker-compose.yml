@@ -1,3 +1,4 @@
+version: "3.9"
 
 services:
   # --- Database & Infrastructure Services ---
@@ -86,22 +87,22 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    env_file:
+      - .env.prod
     deploy:
       resources:
         limits:
+          memory: 16G
+        reservations:
           memory: 8G
     ports:
       - "8001:8000"
-    # env_file:
-    #   - .env
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_DB: rag_db
       MYSQL_USER: app
       MYSQL_PASSWORD: app_password123
-  
-      # (optional, falls du gleich alles sauber haben willst:)
       MILVUS_HOST: milvus
       MILVUS_PORT: 19530
       MONGO_URI: mongodb://root:password@mongodb:27017
@@ -109,26 +110,21 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       FRONTEND_BASE_URL: http://141.3.142.150:8080
+      MODELSCOPE_CACHE: /modelscope_cache
+      HUGGINGFACE_HUB_CACHE: /huggingface_cache
+      HF_HUB_OFFLINE: "1"
     volumes:
       - backend_logs:/app/logs      
-      # --- Alembic Volume Mount ---
-      # This volume mount is crucial for development. It maps the local alembic
-      # directory to the one inside the container. This ensures that when you run
-      # `alembic revision --autogenerate`, the newly created migration script
-      # is saved directly to your local filesystem, making it part of your
-      # project's version control. Without this, migration scripts would only
-      # exist inside the temporary container and be lost when it stops.
       - ./backend/alembic:/app/alembic
-      # - ./backend/alembic.ini:/app/alembic.ini
-      # Model volumes are removed as backend no longer performs local inference.
       - ./verify_milvus.py:/app/verify_milvus.py:ro
       - ./cleanup_milvus.py:/app/cleanup_milvus.py:ro
       - ./cleanup_mongodb.py:/app/cleanup_mongodb.py:ro
       - ./diagnose_rag.py:/app/diagnose_rag.py:ro
       - ./backend/migrate_policies.py:/app/migrate_policies.py:ro
       - ./diagnose_data_inconsistency.py:/app/diagnose_data_inconsistency.py:ro
-      # Mount the local models directory for YOLO, etc.
       - ./models:/app/models
+      - /home/cjb/.cache/modelscope/hub:/modelscope_cache
+      - /home/cjb/.cache/huggingface/hub:/huggingface_cache
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -145,12 +141,9 @@ services:
       dockerfile: Dockerfile
     env_file:
       - frontend/.env
-    # ports:
-    #   - "8080:80" 
     networks:
       - rosti-net2
-    # No ports are exposed to the host, as the gateway handles traffic.
-    # The service is accessible on port 80 within the Docker network.
+    # Gateway routet auf frontend:80 innerhalb des Netzes.
 
   docs:
     build:
@@ -160,12 +153,11 @@ services:
     restart: unless-stopped
     networks:
       - rosti-net2
-    # No ports are exposed to the host, as the gateway handles traffic.
 
   gateway:
     image: nginx:stable-alpine
     ports:
-      - "8080:80"   # weiter 8080 extern
+      - "8080:80"
     volumes:
       - ./Docker/nginx:/etc/nginx/conf.d:ro 
     networks:
@@ -175,15 +167,8 @@ services:
       - frontend
       - docs
 
-
   paddleocr:
-    # --- ARCHITECTURAL NOTE (2025-07-20) ---
-    # The paddleocr service is now based on a pre-built image to improve deployment speed
-    # and consistency. The original `build` configuration is commented out below for reference.
-    # To build and push the image, you would typically use a command like:
-    # docker build -t your-registry/paddleocr-service:latest -f ./Docker/paddleocr/Dockerfile ./Docker/paddleocr
-    # docker push your-registry/paddleocr-service:latest
-    # image: your-registry/paddleocr-service:latest # <-- IMPORTANT: Replace with your actual image name
+    # Optional: eigenes Image statt Build, aktuell Build:
     build:
       context: ./Docker/paddleocr
       dockerfile: Dockerfile
@@ -191,53 +176,107 @@ services:
     ports:
       - "8081:8080"
     environment:
-      # --- Image Preprocessing Settings ---
-      # Set to "false" to disable all preprocessing. Defaults to "true".
       - ENABLE_PREPROCESSING=true
-      # Gaussian blur kernel size. Must be an odd number. Defaults to 5.
       - PREPROCESS_BLUR_KERNEL=5
-      # Adaptive thresholding block size. Must be an odd number > 1. Defaults to 11.
       - PREPROCESS_ADAPTIVE_BLOCK=11
-      # Constant subtracted from the mean or weighted mean. Defaults to 2.
       - PREPROCESS_ADAPTIVE_C=2
     volumes:
-      # Mount a host directory to the container's model cache directory.
-      # This prevents re-downloading the large models every time the container starts.
       - ./models/paddlex-models:/root/.paddlex
     networks:
       - rosti-net2
- 
-  latexocr:
-    # --- Base configuration for the LatexOCR service ---
-    # Environment-specific details (build, device, restart policy) are in override/prod files.
-    ports:
-      - "8002:8002"
-    volumes:
-      # Mount the pre-downloaded model weights to prevent re-downloading on startup.
-      # The target path is where the pix2tex library expects to find the weights.
-      # The source path points to the actual weight file.
-      # The target path is the exact location inside the container where the pix2tex library
-      # looks for the weight file, derived from the container's startup logs.
-      - ./models/latexocr-model/weights.pth:/opt/conda/lib/python3.10/site-packages/pix2tex/model/checkpoints/weights.pth:ro
-    networks:
-      - rosti-net2
- 
-  ollama-serving:
-    image: ollama/ollama:latest
-    ports:
-      - "11434:11434"
     deploy:
       resources:
         reservations:
           devices:
             - driver: nvidia
-              count: 1      # oder "all"
-              capabilities: ["gpu", "utility", "compute"]
+              device_ids: ['1']   # GPU 1
+              capabilities: ["gpu"]
+
+  latexocr:
+    image: lukasblecher/pix2tex:api
+    container_name: latexocr
+    restart: unless-stopped
+    environment:
+      DEVICE: cuda
+    ports:
+      - "8002:8002"
     volumes:
-      - ollama_data:/root/.ollama
+      - ./models/latexocr-model/weights.pth:/opt/conda/lib/python3.10/site-packages/pix2tex/model/checkpoints/weights.pth:ro
+    networks:
+      - rosti-net2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['1']   # GPU 1
+              capabilities: ["gpu"]
+
+  ollama-serving:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
     networks:
       - rosti-net2
     restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+      - /home/cjb/.ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']   # GPU 0
+              capabilities: ["gpu"]
+
+  ollama-embedding:
+    image: ollama/ollama:latest
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - /home/cjb/.ollama:/root/.ollama
+    networks:
+      - rosti-net2
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['1']   # GPU 1
+              capabilities: ["gpu"]
+
+  mineru-sglang-server:
+    image: alexsuntop/mineru-sglang:latest
+    ports:
+      - "30001:30000"
+    environment:
+      MINERU_MODEL_SOURCE: local
+    entrypoint: mineru-sglang-server
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - "30000"
+      - --mem-fraction-static
+      - "0.5"
+    shm_size: "32g"
+    ipc: host
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    networks:
+      - rosti-net2
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['1']   # GPU 1
+              capabilities: ["gpu"]
 
 # --- Network Definition ---
 networks:
@@ -256,4 +295,3 @@ volumes:
   mongodb_data:
   ollama_data:
   backend_logs:
-
