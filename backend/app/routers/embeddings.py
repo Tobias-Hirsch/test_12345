@@ -509,7 +509,7 @@ async def resync_single_file(
         raise HTTPException(status_code=404, detail="Associated RAG item not found for this file.")
 
     # Use a comprehensive permission like "manage" for a re-embedding action
-    check_permission(db, current_user, "manage", resource_type="rag_data", resource_id=db_file.rag.id)
+    check_permission(db, current_user, "manage", resource_type="rag_data", resource_id=db_file.rag_data.id)
 
     # --- 2. Update status to 'pending' to signal processing ---
     db_file.processing_status = "pending"
