@@ -117,6 +117,10 @@ services:
       MODELSCOPE_CACHE: /modelscope_cache
       HUGGINGFACE_HUB_CACHE: /huggingface_cache
       HF_HUB_OFFLINE: "1"
+      MINIO_ENDPOINT: minio:9000
+      MINIO_BUCKET_NAME: mm-rag-bucket
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
     volumes:
       - backend_logs:/app/logs      
       - ./backend/alembic:/app/alembic
