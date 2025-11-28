@@ -267,11 +267,11 @@ async def delete_rag_file(
     (MinIO, Milvus, MongoDB, and the database record), based on ABAC policies.
     """
     # First, retrieve the file to get its associated RAG ID for the permission check.
-    db_file = db.query(database.FileGist).options(joinedload(database.FileGist.rag)).filter(database.FileGist.id == file_id).first()
+    db_file = (db.query(database.FileGist).options(joinedload(database.FileGist.rag_data)).filter(database.FileGist.id == file_id).first())    
     if db_file is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
 
-    if not db_file.rag:
+    if not db_file.rag_data:
         # This case is unlikely if foreign keys are set up, but it's a good safeguard.
         # We'll attempt to delete the orphaned FileGist record and return.
         db.delete(db_file)
@@ -279,7 +279,7 @@ async def delete_rag_file(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Associated RAG item not found. Orphaned file record was cleaned up.")
 
     # Perform the permission check before proceeding with the deletion.
-    check_permission(db, current_user, "delete_file", resource_type="rag_data", resource_id=db_file.rag.id)
+    check_permission(db, current_user, "delete_file", resource_type="rag_data", resource_id=db_file.rag_data.id)
 
     # Call the centralized purge service
     success = await purge_file_and_all_related_data(db, file_id)
