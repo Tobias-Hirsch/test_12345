@@ -48,7 +48,7 @@ async def lifespan(app: FastAPI):
     logging.basicConfig(level=logging.DEBUG) # Configure logging here
     logger.info("Application startup: Creating database tables and connecting to Milvus.")
     # The following line is removed as database creation and migration are now handled by Alembic.
-    create_database_tables()
+    # create_database_tables()
     
     # Initialize roles, policies, and admin user
     with next(get_db()) as db:
