@@ -27,7 +27,7 @@ async def purge_file_and_all_related_data(db: Session, file_id: int) -> bool:
         logger.warning(f"Purge operation failed: FileGist with ID {file_id} not found.")
         return False
 
-    rag_entry = db_file.rag
+    rag_entry = db_file.rag_data
     if not rag_entry:
         logger.error(f"Critical error: FileGist {file_id} has no associated RAG entry.")
         # Even without RAG info, we should attempt to clean up what we can.
