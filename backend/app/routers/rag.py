@@ -305,7 +305,7 @@ async def preview_rag_file(
     if not rag:
         raise HTTPException(status_code=404, detail="Associated RAG item not found")
 
-    check_permission(db, current_user, "preview_file", resource_type="rag_data", resource_id=rag.id)
+    check_permission(db, current_user, "preview_file", resource_type="rag_data", resource_id=rag_data.id)
     logger.info(f"--- ROO DEBUG: Checking file preview for file_id: {file_id}, is_third_party: {file_gist.is_third_party} ---")
  
      # ... (rest of the preview logic remains the same)
