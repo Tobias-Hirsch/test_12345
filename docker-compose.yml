@@ -262,12 +262,16 @@ services:
       - "30001:30000"
     environment:
       MINERU_MODEL_SOURCE: local
+      # optional zur Sicherheit:
+      CUDA_VISIBLE_DEVICES: ""   # verhindert versehentlichen GPU-Zugriff
     entrypoint: mineru-sglang-server
     command:
       - --host
       - 0.0.0.0
       - --port
       - "30000"
+      - --device
+      - cpu
       - --mem-fraction-static
       - "0.5"
     shm_size: "32g"
@@ -278,13 +282,7 @@ services:
     networks:
       - rosti-net2
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ['1']   # GPU 1
-              capabilities: ["gpu"]
+
 
 # --- Network Definition ---
 networks:
