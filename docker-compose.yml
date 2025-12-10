@@ -1,4 +1,4 @@
-version: "3.9"
+ersion: "3.9"
 
 services:
   # --- Database & Infrastructure Services ---
@@ -47,7 +47,7 @@ services:
     environment:
       MINIO_ROOT_USER: "minioadmin"
       MINIO_ROOT_PASSWORD: "minioadmin"
-    command: ["server", "/data", "--console-address", ":9001"]
+      command: ["server", "/data", "--console-address", ":9001"]
     networks:
       - rosti-net2
 
@@ -122,7 +122,7 @@ services:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
     volumes:
-      - backend_logs:/app/logs      
+      - backend_logs:/app/logs
       - ./backend/alembic:/app/alembic
       - ./verify_milvus.py:/app/verify_milvus.py:ro
       - ./cleanup_milvus.py:/app/cleanup_milvus.py:ro
@@ -142,7 +142,6 @@ services:
       - mysql
       - redis
       - mongodb
-
   frontend:
     build:
       context: ./frontend
@@ -167,7 +166,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./Docker/nginx:/etc/nginx/conf.d:ro 
+      - ./Docker/nginx:/etc/nginx/conf.d:ro
     networks:
       - rosti-net2
     depends_on:
@@ -235,9 +234,8 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              device_ids: ['0']   # GPU 0
+              device_ids: ['0', '1', '2', '3']   # GPU 0
               capabilities: ["gpu"]
-
   ollama-embedding:
     image: ollama/ollama:latest
     ports:
@@ -257,24 +255,21 @@ services:
               capabilities: ["gpu"]
 
   mineru-sglang-server:
-    image: alexsuntop/mineru-sglang:latest
+    image: mineru-vllm:sm70
+    # container_name: mineru-sglang-server
     ports:
       - "30001:30000"
     environment:
       MINERU_MODEL_SOURCE: local
-      # optional zur Sicherheit:
-      CUDA_VISIBLE_DEVICES: ""   # verhindert versehentlichen GPU-Zugriff
-    entrypoint: mineru-sglang-server
+      VLLM_DISABLE_FLASHINFER: "1"
+      VLLM_ATTENTION_BACKEND: "XFORMERS"
+      VLLM_USE_FLASHINFER_SAMPLER: "0"
+    shm_size: "32g"
     command:
       - --host
       - 0.0.0.0
       - --port
       - "30000"
-      - --device
-      - cpu
-      - --mem-fraction-static
-      - "0.5"
-    shm_size: "32g"
     ipc: host
     ulimits:
       memlock: -1
@@ -282,7 +277,13 @@ services:
     networks:
       - rosti-net2
     restart: unless-stopped
-
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["3"]   # ggf. anpassen: ["1"], ["0","1"], ...
+              capabilities: ["gpu"]
 
 # --- Network Definition ---
 networks:
@@ -301,3 +302,8 @@ volumes:
   mongodb_data:
   ollama_data:
   backend_logs:
+              
+              
+      
+      
+      
