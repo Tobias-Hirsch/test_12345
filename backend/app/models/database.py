@@ -76,10 +76,25 @@ class RagData(Base):
     description = Column(Text, nullable=True)
     is_active = Column(Integer, default=1)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),   # <<< WICHTIG
+        onupdate=func.now(),         # SQLAlchemy setzt bei UPDATE die Zeit
+        nullable=False,              # passt zu MySQL NOT NULL
+    )
+
     owner = relationship("User")
-    files = relationship("FileGist", back_populates="rag_data", cascade="all, delete-orphan")
+    files = relationship(
+        "FileGist",
+        back_populates="rag_data",
+        cascade="all, delete-orphan"
+    )
 
 class FileGist(Base):
     __tablename__ = "file_gists"
