@@ -1,30 +1,30 @@
-# 数据处理
+# Kommentar
 
-本节描述 Rosti 后端的数据处理流程，包括 RAG (Retrieval-Augmented Generation) 流程、附件处理和数据存储。
+Hinweis
 
-## 1. RAG 数据处理流程
+## 1. RAG Kommentar
 
-*   **文档上传与解析**: 用户上传文档后，后端会解析文档内容（PDF, Word, Excel 等）。
-*   **文本分块与嵌入**: 解析后的文本会被分割成小块 (chunks)，并使用嵌入模型生成向量嵌入 (embeddings)。
-*   **向量存储**: 向量嵌入存储在 Milvus 向量数据库中，用于高效的相似性搜索。
-*   **摘要生成与存储**: 文档块的摘要信息存储在 MongoDB 中，用于 RAG 响应的快速概览。
-*   **权限管理**: RAG 数据的访问权限与用户角色关联，确保数据安全。
+*   **DokumenteHochladenKommentar**: BenutzerDokumente hochladenKommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: DokumenteKommentar
+*   **Rechteverwaltung**: RAG Kommentar
 
-## 2. 聊天附件处理
+## 2. Kommentar
 
-*   **上传与存储**: 用户上传的聊天附件直接存储在 MinIO 对象存储中。
-*   **内容提取**: 对于支持的附件类型（如 PDF, Word, Excel），后端会尝试提取其文本内容，并将其作为上下文传递给 LLM。
-*   **下载与管理**: 提供附件的下载接口和删除功能。
+*   **HochladenKommentar**: BenutzerHochladenKommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: KommentaröschenKommentar
 
-## 3. 数据存储
+## 3. Kommentar
 
-*   **关系型数据库 (PostgreSQL/MySQL)**: 存储用户、会话、RAG 条目等结构化元数据。
-*   **MongoDB**: 存储聊天消息、附件元数据和 RAG 文档的摘要信息。
-*   **MinIO**: 对象存储，用于存储原始文档文件和聊天附件。
-*   **Milvus**: 向量数据库，用于存储文档块的向量嵌入。
+*   **Kommentar**: Kommentar
+*   **MongoDB**: Kommentar
+*   **MinIO**: Kommentar
+*   **Milvus**: Kommentar
 
-## 4. LLM 交互
+## 4. LLM Kommentar
 
-*   **上下文构建**: 后端根据用户查询、聊天历史、RAG 搜索结果和附件内容构建 LLM 的输入上下文。
-*   **流式响应**: LLM 的响应以流式方式返回给前端，提供更好的用户体验。
-*   **提示工程**: 使用精心设计的提示 (prompts) 来指导 LLM 生成高质量、包含引用的回答。
+*   **Kommentar**: Kommentar
+*   **Kommentar**: LLM Kommentar
+*   **Anweisung**: Anweisung

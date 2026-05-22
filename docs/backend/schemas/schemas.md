@@ -1,29 +1,29 @@
-# `schemas/schemas.py` - 通用数据模式
+# `schemas/schemas.py` - Kommentar
 
-本文档描述了 `backend/app/schemas/schemas.py` 文件，该文件定义了应用程序中使用的各种 Pydantic 数据模式（Schema），用于请求体验证、响应序列化和数据模型定义。
+Hinweis`backend/app/schemas/schemas.py` Hinweis
 
-## 功能描述
-*   **请求体验证**: 定义 API 接口接收的输入数据的结构和类型。
-*   **响应序列化**: 定义 API 接口返回的输出数据的结构和类型。
-*   **数据模型**: 作为数据库模型（SQLAlchemy ORM 模型）和 API 之间的数据转换层。
-*   **数据验证**: 利用 Pydantic 的强大功能进行数据类型检查和验证。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-该文件通常包含继承自 `pydantic.BaseModel` 的类，每个类定义一个特定的数据结构。
+## Kommentar
+Hinweis`pydantic.BaseModel` Hinweis
 
-例如，可能包含以下模式：
-*   **`UserBase`**: 用户基本信息（如 `username`, `email`）。
-*   **`UserCreate`**: 用户创建时的请求体，可能包含密码。
-*   **`UserUpdate`**: 用户更新时的请求体。
-*   **`UserInDB`**: 数据库中用户的完整信息，可能包含哈希密码。
-*   **`Token`**: JWT 令牌的响应模式（`access_token`, `token_type`）。
-*   **`TokenData`**: JWT 令牌中包含的数据模式（`username`）。
-*   **`Message`**: 通用消息响应模式（`message`）。
-*   **`FileGistBase`**: 文件基本信息。
-*   **`FileGistCreate`**: 文件创建时的请求体。
-*   **`FileGistResponse`**: 文件列表响应模式，可能包含 `download_url`。
-*   **`AgentChatRequest`**: 代理聊天请求模式，包含用户消息和会话 ID。
-*   **`AgentChatResponse`**: 代理聊天响应模式，包含代理回复。
+Hinweis
+*   **`UserBase`**: BenutzerKommentar`username`, `email`). 
+*   **`UserCreate`**: BenutzerKommentar
+*   **`UserUpdate`**: BenutzerKommentar
+*   **`UserInDB`**: Kommentar
+*   **`Token`**: JWT Kommentar`access_token`, `token_type`). 
+*   **`TokenData`**: JWT Kommentar`username`). 
+*   **`Message`**: Kommentar`message`). 
+*   **`FileGistBase`**: Kommentar
+*   **`FileGistCreate`**: Kommentar
+*   **`FileGistResponse`**: Kommentar`download_url`. 
+*   **`AgentChatRequest`**: Kommentar
+*   **`AgentChatResponse`**: Kommentar
 
 ```python
 from typing import Optional, List
@@ -99,5 +99,5 @@ class AgentChatResponse(BaseModel):
     source_documents: Optional[List[dict]] = None # For RAG sources
 ```
 
-## 路径
+## Kommentar
 `/backend/app/schemas/schemas.py`

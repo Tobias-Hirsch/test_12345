@@ -18,27 +18,27 @@ class UserBase(BaseModel):
     username: str
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
-    department: Optional[str] = None # 允许为空
-    security_level: Optional[int] = None # 新增
+    department: Optional[str] = None # ErlaubenHinweis
+    security_level: Optional[int] = None # Hinweis
     first_name: Optional[str] = None # Optional
     surname: Optional[str] = None # Optional
 
 class UserCreate(UserBase):
-    password: Optional[str] = None # 允许为空，因为SSO用户可能没有本地密码
-    is_active: Optional[bool] = True # 新增，默认活跃
+    password: Optional[str] = None # ErlaubenHinweis
+    is_active: Optional[bool] = True # Hinweis
 
 class User(UserBase):
     id: int
-    is_active: bool # 更改为bool类型
-    # department: str # 已在UserBase中定义，无需重复
-    # first_name: Optional[str] = None # 已在UserBase中定义，无需重复
-    # surname: Optional[str] = None # 已在UserBase中定义，无需重复
+    is_active: bool # Hinweis
+    # department: str # Kommentar
+    # first_name: Optional[str] = None # Kommentar
+    # surname: Optional[str] = None # Kommentar
     avatar: Optional[str] = None # Add avatar field
     activation_token: Optional[str] = None # Add activation_token
     activation_expires_at: Optional[datetime] = None # Add activation_expires_at
     roles: list['Role'] = [] # Add roles
-    provider: Optional[str] = None # 新增：认证提供者
-    provider_id: Optional[str] = None # 新增：提供者ID
+    provider: Optional[str] = None # Hinweis
+    provider_id: Optional[str] = None # Hinweis
 
     class Config:
         from_attributes = True # Enable ORM mode (Pydantic V2)
@@ -50,10 +50,10 @@ class UserUpdate(BaseModel): # Inherit from BaseModel, not UserBase, for optiona
     department: Optional[str] = None # Allow updating department
     first_name: Optional[str] = None # Allow updating first_name
     surname: Optional[str] = None # Allow updating surname
-    is_active: Optional[bool] = None # 更改为bool类型
+    is_active: Optional[bool] = None # Hinweis
     avatar: Optional[str] = None # Allow updating avatar
-    security_level: Optional[int] = None # 新增
-    password: Optional[str] = None # 允许更新密码，但需要后端逻辑处理哈希
+    security_level: Optional[int] = None # Hinweis
+    password: Optional[str] = None # ErlaubenHinweis
 
 class Token(BaseModel):
     access_token: str

@@ -6,7 +6,7 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item command="en">English</el-dropdown-item>
-          <el-dropdown-item command="zh">中文</el-dropdown-item>
+          <el-dropdown-item command="de">Deutsch</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -81,7 +81,7 @@ export default defineComponent({
     const handleLocaleChange = (newLocale: string) => {
       locale.value = newLocale; // Update the locale
       // Optionally save the locale preference, e.g., in localStorage
-      localStorage.setItem('user-locale', newLocale);
+      localStorage.setItem('language', newLocale);
     };
 
     const loginFormRef = ref<FormInstance>();
@@ -143,7 +143,7 @@ export default defineComponent({
             // console.error('Login failed:', error);
             // Check for specific inactive user error detail
             if (error.message && error.message.includes('inactive_user')) {
-              ElMessage.error('当前用户不存在或者未激活'); // Specific message for inactive users
+              ElMessage.error('Der aktuelle Benutzer existiert nicht oder ist nicht aktiviert'); // Specific message for inactive users
             } else {
               ElMessage.error(error.message || t('login.loginFailed')); // Generic login failed message
             }

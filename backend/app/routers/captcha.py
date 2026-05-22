@@ -39,7 +39,7 @@ def generate_captcha():
         except IOError:
             font = ImageFont.load_default()
 
-    # 预设一组高对比度颜色
+    # Kommentar
     color_palette = [
         (220, 20, 60),   # Crimson
         (0, 102, 204),   # Blue

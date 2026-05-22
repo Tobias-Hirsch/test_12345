@@ -1,15 +1,15 @@
-# `services/ollama_deepseek.py` - Ollama DeepSeek 集成服务
+# `services/ollama_deepseek.py` - Ollama DeepSeek Kommentar
 
-本文档描述了 `backend/app/services/ollama_deepseek.py` 文件，该文件可能专门用于与本地 Ollama 服务上部署的 DeepSeek 模型进行交互。
+Hinweis`backend/app/services/ollama_deepseek.py` Hinweis
 
-## 功能描述
-*   **DeepSeek 模型调用**: 封装了调用 Ollama 上 DeepSeek 模型进行文本生成或聊天补全的功能。
-*   **特定模型配置**: 可能包含针对 DeepSeek 模型优化的参数设置。
+## Kommentar
+*   **DeepSeek Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-该模块会利用 `ollama_module.py` 中定义的通用 Ollama 交互函数，并可能添加 DeepSeek 模型特有的处理逻辑或参数。
+## Kommentar
+Hinweis`ollama_module.py` MittelHinweis
 
-例如，一个使用 DeepSeek 模型进行聊天的示例：
+Hinweis
 ```python
 import httpx
 from backend.app.core.config import settings
@@ -48,5 +48,5 @@ async def chat_with_ollama_deepseek(messages: list[dict], model_name: str = "dee
         raise
 ```
 
-## 路径
+## Kommentar
 `/backend/app/services/ollama_deepseek.py`

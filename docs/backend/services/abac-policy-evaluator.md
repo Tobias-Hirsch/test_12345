@@ -1,25 +1,25 @@
-# `services/abac_policy_evaluator.py` - ABAC 策略评估器
+# `services/abac_policy_evaluator.py` - ABAC Kommentar
 
-本文档描述了 `backend/app/services/abac_policy_evaluator.py` 文件，该文件是 ABAC（Attribute-Based Access Control）系统的核心组件，负责根据定义的策略规则评估访问请求。
+Hinweis`backend/app/services/abac_policy_evaluator.py` Hinweis
 
-## 功能描述
-*   **策略加载**: 从数据库或配置文件中加载 ABAC 策略。
-*   **属性匹配**: 将请求中的属性与策略规则中定义的属性进行匹配。
-*   **规则评估**: 根据匹配结果和策略的组合逻辑（如“允许优先”或“拒绝优先”）评估访问请求。
-*   **决策输出**: 返回访问决策（允许或拒绝）以及可能的原因。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar"ErlaubenKommentar"Oder"AblehnenKommentar")Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-该模块会定义一个或多个函数来执行策略评估。策略通常以 JSON 或其他结构化格式定义，包含规则、条件和效果（允许/拒绝）。
+## Kommentar
+Hinweisührt ausHinweis
 
-例如：
+Hinweis
 ```python
 from typing import Dict, Any
-from backend.app.services.abac_functions import equals, greater_than, contains # 导入辅助函数
+from backend.app.services.abac_functions import equals, greater_than, contains # Hinweis
 import logging
 
 logger = logging.getLogger(__name__)
 
-# 示例策略结构
+# Kommentar
 # policies = {
 #     "document_access_policy": {
 #         "rules": [
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 #                 ]
 #             }
 #         ],
-#         "combiner": "PermitOverrides" # 允许优先
+#         "combiner": "PermitOverrides" # ErlaubenKommentar
 #     }
 # }
 
@@ -51,13 +51,13 @@ def evaluate_policy(policy_name: str, attributes: Dict[str, Any]) -> bool:
     """
     Evaluates an ABAC policy based on the given attributes.
     """
-    # 实际应用中，策略会从数据库加载
+    # Kommentar
     # policy = get_policy_from_db(policy_name)
     # if not policy:
     #     logger.warning(f"Policy '{policy_name}' not found.")
-    #     return False # 默认拒绝
+    #     return False # Kommentar
 
-    # 简化示例：假设策略已硬编码或通过某种方式获取
+    # Kommentar
     policies = {
         "rag_document_access_policy": {
             "rules": [
@@ -84,7 +84,7 @@ def evaluate_policy(policy_name: str, attributes: Dict[str, Any]) -> bool:
         return False
 
     rules = policy.get("rules", [])
-    combiner = policy.get("combiner", "DenyOverrides") # 默认拒绝优先
+    combiner = policy.get("combiner", "DenyOverrides") # Hinweis
 
     permit_found = False
     deny_found = False
@@ -119,9 +119,9 @@ def evaluate_policy(policy_name: str, attributes: Dict[str, Any]) -> bool:
                         break
                 if not all_conditions_met:
                     break
-                value = resource_attr_value # 使用资源中的属性值进行比较
+                value = resource_attr_value # Hinweis
 
-            # 执行条件判断
+            # führt ausBedingungKommentar
             if operator == "equals":
                 if not equals(current_attr_value, value):
                     all_conditions_met = False
@@ -131,7 +131,7 @@ def evaluate_policy(policy_name: str, attributes: Dict[str, Any]) -> bool:
             elif operator == "contains":
                 if not contains(current_attr_value, value):
                     all_conditions_met = False
-            # ... 其他操作符
+            # ... Kommentar
 
             if not all_conditions_met:
                 break
@@ -147,9 +147,9 @@ def evaluate_policy(policy_name: str, attributes: Dict[str, Any]) -> bool:
     elif combiner == "DenyOverrides":
         return not deny_found
     
-    return False # 默认拒绝
+    return False # Hinweis
 
 ```
 
-## 路径
+## Kommentar
 `/backend/app/services/abac_policy_evaluator.py`

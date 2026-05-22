@@ -20,14 +20,14 @@ BING_SEARCH_ENDPOINT = settings.BING_SEARCH_ENDPOINT
 
 async def bingsearch(queries: List[str], max_results: int = 10) -> Dict[str, List[Any]]:
     """
-    异步处理多个Bing搜索查询
+    Hinweis
 
     Args:
-        queries: 包含多个搜索问题的数组
-        max_results: 每个查询的最大结果数量
+        queries: Hinweis
+        max_results: Hinweis
 
     Returns:
-        字典，键为查询字符串，值为对应的搜索结果列表
+        Hinweis
     """
     results = {}
 
@@ -74,16 +74,16 @@ async def bingsearch(queries: List[str], max_results: int = 10) -> Dict[str, Lis
 async def duckduckgosearch(queries: List[str], max_results: int = 10, max_retries: int = 3, retry_delay: float = 2.0) -> \
 Dict[str, List[Any]]:
     """
-    异步处理多个DuckDuckGo搜索查询
+    Hinweis
 
     Args:
-        queries: 包含多个搜索问题的数组
-        max_results: 每个查询的最大结果数量
-        max_retries: 遇到限流时的最大重试次数
-        retry_delay: 重试之间的基础延迟时间(秒)
+        queries: Hinweis
+        max_results: Hinweis
+        max_retries: Hinweis
+        retry_delay: Hinweis
 
     Returns:
-        字典，键为查询字符串，值为对应的搜索结果列表
+        Hinweis
     """
     results = {}
 
@@ -99,36 +99,36 @@ Dict[str, List[Any]]:
                     )
             except DuckDuckGoSearchException as e:
                 if "Ratelimit" in str(e) and attempt < max_retries - 1:
-                    # 添加随机抖动以避免所有请求同时重试
+                    # Kommentar
                     jitter = random.uniform(0.3, 0.5)
                     wait_time = retry_delay * (2 ** attempt) * jitter
-                    print(f"查询 '{query}' 遇到限流，等待 {wait_time:.2f} 秒后重试 ({attempt + 1}/{max_retries})")
+                    print(f"Abfragen '{query}' Hinweis{wait_time:.2f} Hinweis{attempt + 1}/{max_retries})")
                     await asyncio.sleep(wait_time)
                 else:
-                    print(f"查询 '{query}' 失败: {e}")
-                    return []  # 返回空列表表示查询失败
+                    print(f"Abfragen '{query}' Hinweis{e}")
+                    return []  # Hinweis
 
-        return []  # 所有重试都失败
+        return []  # Hinweis
 
-    # 为了避免同时发送太多请求，分批处理查询
-    batch_size = 2  # 每批处理的查询数量
+    # Kommentar
+    batch_size = 2  # Hinweis
     all_results = []
 
     for i in range(0, len(queries), batch_size):
         batch_queries = queries[i:i + batch_size]
 
-        # 创建当前批次的查询任务
+        # Kommentar
         tasks = [search_single_query(query) for query in batch_queries]
 
-        # 等待当前批次完成
+        # Kommentar
         batch_results = await asyncio.gather(*tasks)
         all_results.extend(batch_results)
 
-        # 批次之间添加延迟
+        # Kommentar
         if i + batch_size < len(queries):
-            await asyncio.sleep(1.0)  # 批次之间等待1秒
+            await asyncio.sleep(1.0)  # Hinweis
 
-    # 将结果与查询关联
+    # Kommentar
     for query, result in zip(queries, all_results):
         results[query] = result
 

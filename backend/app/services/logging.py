@@ -2,7 +2,7 @@ import os
 import sys
 import logging
 from datetime import datetime
-# 配置日志
+# Kommentar
 from app.core.config import settings # Import settings
 
 # Define a fixed log directory inside the container
@@ -11,7 +11,7 @@ log_dir = "/app/logs/api_log"
 os.makedirs(log_dir, exist_ok=True)
 log_file = os.path.join(log_dir, f"ai_log_{datetime.now().strftime('%Y%m%d')}.log")
 
-# 重置基本配置，避免与其他模块的日志配置冲突
+# Kommentar
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 

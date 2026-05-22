@@ -9,7 +9,7 @@ from typing import Optional
 from datetime import timedelta
 from ..core.config import settings # Global import
 
-# 配置日志
+# Kommentar
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()

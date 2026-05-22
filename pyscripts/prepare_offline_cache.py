@@ -4,14 +4,14 @@ from pathlib import Path
 import shutil
 
 # --- Configuration ---
-# 使用 HuggingFace 的国内镜像
+# Kommentar
 os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
-# 强制使用 huggingface hub 作为唯一的缓存位置
+# Kommentar
 CACHE_DIR = Path("/home/cjb/.cache/huggingface/hub")
 os.environ['HUGGINGFACE_HUB_CACHE'] = str(CACHE_DIR)
 os.environ['MODELSCOPE_CACHE'] = str(CACHE_DIR)
 
-# 检查 mineru 是否安装
+# Kommentar
 try:
     from mineru.utils.models_download_utils import auto_download_and_get_model_root_path
     from huggingface_hub import snapshot_download
@@ -38,10 +38,10 @@ def download_model(model_repo_id: str):
     """A helper function to download a single model and provide feedback."""
     try:
         print(f"--- Downloading model: {model_repo_id} ---")
-        # 使用 huggingface_hub 的 snapshot_download，因为它更底层、更可靠
+        # Kommentar
         snapshot_download(repo_id=model_repo_id,
                           cache_dir=CACHE_DIR,
-                          # local_files_only=False 确保它会去下载
+                          # local_files_only=False Kommentar
                           )
         
         if verify_snapshot(model_repo_id):
@@ -72,7 +72,7 @@ def main():
         "opendatalab/yolo_v8_mfd",
     ]
     
-    # 建议：在重新运行前，先删除不完整的缓存
+    # KommentaröschenKommentar
     print("Recommendation: Before running, you may want to delete incomplete cache directories.")
     for repo_id in models_to_download:
         model_path = CACHE_DIR / f"models--{repo_id.replace('/', '--')}"

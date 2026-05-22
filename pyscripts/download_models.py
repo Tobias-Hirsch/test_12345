@@ -7,9 +7,9 @@ from modelscope import snapshot_download
 
 
 def download_json(url):
-    # 下载JSON文件
+    # Kommentar
     response = requests.get(url)
-    response.raise_for_status()  # 检查请求是否成功
+    response.raise_for_status()  # Hinweis
     return response.json()
 
 
@@ -22,11 +22,11 @@ def download_and_modify_json(url, local_filename, modifications):
     else:
         data = download_json(url)
 
-    # 修改内容
+    # Kommentar
     for key, value in modifications.items():
         data[key] = value
 
-    # 保存修改后的内容
+    # SpeichernKommentar
     with open(local_filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 

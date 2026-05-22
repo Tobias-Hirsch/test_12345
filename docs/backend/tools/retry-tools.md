@@ -1,16 +1,16 @@
-# `tools/retry_tools.py` - 重试工具
+# `tools/retry_tools.py` - Kommentar
 
-本文档描述了 `backend/app/tools/retry_tools.py` 文件，该文件包含了用于实现函数重试逻辑的工具函数，以提高系统在面对暂时性错误时的健壮性。
+Hinweis`backend/app/tools/retry_tools.py` Hinweis
 
-## 功能描述
-*   **函数重试**: 提供一个装饰器或函数，用于在被装饰的函数执行失败时自动重试。
-*   **可配置策略**: 支持配置重试次数、重试间隔、指数退避等策略。
-*   **错误捕获**: 捕获特定类型的异常并触发重试。
+## Kommentar
+*   **Kommentar**: Kommentarührt ausKommentar
+*   **Kommentar**: Kommentar
+*   **FehlerKommentar**: Kommentar
 
-## 逻辑实现
-该模块通常会使用自定义装饰器或 `tenacity` 等库来实现重试逻辑。
+## Kommentar
+Hinweis`tenacity` Hinweis
 
-例如，一个简单的重试装饰器：
+Hinweis
 ```python
 import time
 import logging
@@ -47,12 +47,12 @@ def retry(max_attempts: int = 3, delay_seconds: int = 1, backoff_factor: int = 2
         return wrapper
     return decorator
 
-# 示例用法：
+# Kommentar
 # @retry(max_attempts=5, delay_seconds=2, exceptions=(SomeAPIError, AnotherError))
 # async def call_external_api():
-#     # ... API 调用逻辑
+#     # ... API Kommentar
 #     pass
 ```
 
-## 路径
+## Kommentar
 `/backend/app/tools/retry_tools.py`

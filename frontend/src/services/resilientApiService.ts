@@ -1,4 +1,4 @@
-// 简化的弹性API服务 - 修复TypeScript编译错误
+// Kommentar
 export class ResilientStreamingApi {
   private baseUrl: string
   private defaultHeaders: HeadersInit
@@ -30,7 +30,7 @@ export class ResilientStreamingApi {
     return response
   }
 
-  // 简化的文件上传重试机制
+  // Kommentar
   async uploadWithRetry(
     url: string,
     formData: FormData,
@@ -45,7 +45,7 @@ export class ResilientStreamingApi {
           method: 'POST',
           body: formData,
           headers: {
-            // 移除Content-Type让浏览器自动设置boundary
+            // Kommentar
             ...Object.fromEntries(
               Object.entries(this.defaultHeaders).filter(([key]) => 
                 key.toLowerCase() !== 'content-type'
@@ -65,13 +65,13 @@ export class ResilientStreamingApi {
           throw error
         }
         
-        // 等待后重试
+        // Kommentar
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
       }
     }
   }
 
-  // 简化的请求重试机制
+  // Kommentar
   async requestWithRetry<T>(
     url: string,
     options: RequestInit = {},
@@ -89,7 +89,7 @@ export class ResilientStreamingApi {
           throw error
         }
         
-        // 等待后重试
+        // Kommentar
         await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
       }
     }

@@ -114,8 +114,8 @@ async def _recursive_summarize(summaries: List[str], llm_instance, lang: str, ma
 
     prompt_template = {
         "en": "Please summarize the following collection of summaries concisely in English:\n\n{text}",
-        "zh-cn": "请用中文对以下摘要集合进行简洁的总结:\n\n{text}",
-    }.get(lang, "Please summarize the following collection of summaries concisely:\n\n{text}")
+        "de": "Bitte fasse die folgende Sammlung von Zusammenfassungen prägnant auf Deutsch zusammen:\n\n{text}",
+    }.get("de" if lang.startswith("de") else lang, "Please summarize the following collection of summaries concisely:\n\n{text}")
 
     summary1_task = llm_instance.ainvoke(prompt_template.format(text="\n\n".join(batch_1)))
     summary2_task = llm_instance.ainvoke(prompt_template.format(text="\n\n".join(batch_2)))
@@ -129,7 +129,7 @@ async def _recursive_summarize(summaries: List[str], llm_instance, lang: str, ma
 def _is_structured_data(text: str) -> bool:
     """Detect if text is structured data (like Excel/CSV content)."""
     # Look for table indicators
-    table_indicators = ['工作表:', 'Unnamed:', '|', '\t', '---']
+    table_indicators = ['Arbeitsblatt:', 'Unnamed:', '|', '\t', '---']
     nan_count = text.count('NaN')
     total_lines = len(text.split('\n'))
     
@@ -146,13 +146,13 @@ def _extract_table_summary(text: str) -> str:
     # Extract worksheet names
     worksheet_names = []
     for line in lines:
-        if '工作表:' in line or 'Sheet:' in line:
+        if 'Arbeitsblatt:' in line or 'Sheet:' in line:
             worksheet_names.append(line.strip())
     
     # Count data rows (excluding headers and separators)
     data_rows = 0
     for line in lines:
-        if line.strip() and not any(x in line for x in ['工作表:', '---', 'Unnamed:', 'Sheet:']):
+        if line.strip() and not any(x in line for x in ['Arbeitsblatt:', '---', 'Unnamed:', 'Sheet:']):
             # Count lines that look like data (have numbers or meaningful content)
             if any(c.isdigit() or c in '.,+-' for c in line) and 'NaN' not in line:
                 data_rows += 1
@@ -173,22 +173,22 @@ def _extract_table_summary(text: str) -> str:
         summary_lines.extend(worksheet_names)
     
     if data_rows > 0:
-        summary_lines.append(f"数据行数: {data_rows}")
+        summary_lines.append(f"Datenzeilen: {data_rows}")
     
     if headers:
-        summary_lines.append(f"主要列: {', '.join(headers[:5])}")  # First 5 columns
+        summary_lines.append(f"Wichtige Spalten: {', '.join(headers[:5])}")  # First 5 columns
     
     # Add a sample of actual data
     sample_data = []
     for line in lines[:20]:  # First 20 lines
-        if line.strip() and not any(x in line for x in ['工作表:', '---', 'Unnamed:']):
+        if line.strip() and not any(x in line for x in ['Arbeitsblatt:', '---', 'Unnamed:']):
             if len(line.strip()) > 10 and 'NaN' not in line[:50]:  # Non-empty meaningful lines
                 sample_data.append(line.strip()[:100])  # First 100 chars
                 if len(sample_data) >= 3:
                     break
     
     if sample_data:
-        summary_lines.append("样本数据:")
+        summary_lines.append("Beispieldaten:")
         summary_lines.extend(sample_data)
     
     return '\n'.join(summary_lines) if summary_lines else text[:500]
@@ -220,8 +220,8 @@ async def summarize_long_text(text: str, show_think_process: bool = False) -> As
         
         format_prompt = {
             "en": f"Please format and summarize the following table information clearly in English:\n\n{table_summary}",
-            "zh-cn": f"请用中文清晰地格式化和总结以下表格信息:\n\n{table_summary}"
-        }.get(lang, f"Please format and summarize the following table information clearly:\n\n{table_summary}")
+            "de": f"Bitte formatiere und fasse die folgenden Tabelleninformationen klar auf Deutsch zusammen:\n\n{table_summary}"
+        }.get("de" if lang.startswith("de") else lang, f"Please format and summarize the following table information clearly:\n\n{table_summary}")
         
         yield "Formatting summary...\n\n"
         final_summary = ""
@@ -245,12 +245,12 @@ async def summarize_long_text(text: str, show_think_process: bool = False) -> As
             "chunk_summary": "Please summarize the following content concisely in English:\n\n{chunk}",
             "final_report": "Synthesize the following English summaries into a single, coherent final report in English. Structure it using Markdown.\n\n--- Collection of Summaries ---\n{final_context}"
         },
-        "zh-cn": {
-            "chunk_summary": "请用中文对以下内容进行简洁的总结:\n\n{chunk}",
-            "final_report": "请将以下摘要整合成一份连贯、结构清晰的中文最终报告。请使用 Markdown 进行格式化。\n\n--- 摘要集合 ---\n{final_context}"
+        "de": {
+            "chunk_summary": "Bitte fasse den folgenden Inhalt prägnant auf Deutsch zusammen:\n\n{chunk}",
+            "final_report": "Führe die folgenden deutschen Zusammenfassungen zu einem kohärenten Abschlussbericht auf Deutsch zusammen. Strukturiere die Antwort mit Markdown.\n\n--- Sammlung der Zusammenfassungen ---\n{final_context}"
         }
     }
-    lang_prompts = prompts.get(lang, prompts["en"])
+    lang_prompts = prompts.get("de" if lang.startswith("de") else lang, prompts["en"])
 
     splitter = get_text_splitter()
     chunks = splitter(text, settings.TEXT_CHUNK_SIZE, settings.TEXT_CHUNK_OVERLAP)

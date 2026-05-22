@@ -21,9 +21,12 @@ app = FastAPI(
 # --- Model Loading ---
 try:
     logger.info("Initializing PaddleOCR...")
-    # Initialize the lightweight OCR model for Chinese and English.
-    # use_angle_cls=True helps in correcting the text orientation.
-    ocr_model = PaddleOCR(use_angle_cls=True, lang='ch')
+    # Initialisiert das OCR-Modell für deutsche bzw. lateinische Texte.
+    # Die Sprache kann über PADDLEOCR_LANG überschrieben werden, Standard ist Deutsch.
+    # use_angle_cls=True hilft bei der Korrektur der Textausrichtung.
+    paddleocr_lang = os.getenv('PADDLEOCR_LANG', 'german')
+    logger.info(f"Using PaddleOCR language: {paddleocr_lang}")
+    ocr_model = PaddleOCR(use_angle_cls=True, lang=paddleocr_lang)
     logger.info("PaddleOCR model initialized successfully.")
 except Exception as e:
     logger.error("!!! CRITICAL: An exception occurred during PaddleOCR initialization !!!")

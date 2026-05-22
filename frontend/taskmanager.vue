@@ -11,15 +11,15 @@
           >
             <el-menu-item index="1">
               <el-icon><icon-menu /></el-icon>
-              <span>任务管理</span>
+              <span>Aufgabenverwaltung</span>
             </el-menu-item>
             <!-- Add more menu items as needed -->
           </el-menu>
         </el-aside>
         <el-container>
           <el-header>
-            <h2>任务管理</h2>
-            <el-button type="primary" @click="openAddTaskDialog">新建任务</el-button>
+            <h2>Aufgabenverwaltung</h2>
+            <el-button type="primary" @click="openAddTaskDialog">Neue Aufgabe</el-button>
           </el-header>
           <el-main>
             <el-row :gutter="20">
@@ -27,7 +27,7 @@
                 <el-card class="task-column">
                   <template #header>
                     <div class="card-header">
-                      <span>待处理</span>
+                      <span>Offen</span>
                       <el-tag type="info" size="small">{{ todoTasks.length }}</el-tag>
                     </div>
                   </template>
@@ -49,7 +49,7 @@
                 <el-card class="task-column">
                   <template #header>
                     <div class="card-header">
-                      <span>进行中</span>
+                      <span>In Bearbeitung</span>
                       <el-tag type="warning" size="small">{{ inProgressTasks.length }}</el-tag>
                     </div>
                   </template>
@@ -71,7 +71,7 @@
                 <el-card class="task-column">
                   <template #header>
                     <div class="card-header">
-                      <span>已完成</span>
+                      <span>Abgeschlossen</span>
                       <el-tag type="success" size="small">{{ completedTasks.length }}</el-tag>
                     </div>
                   </template>
@@ -94,29 +94,29 @@
         </el-container>
       </el-container>
   
-      <el-dialog v-model="addTaskDialogVisible" title="新建任务" width="30%">
+      <el-dialog v-model="addTaskDialogVisible" title="Neue Aufgabe" width="30%">
         <el-form :model="newTask" label-width="100px">
-          <el-form-item label="任务标题">
+          <el-form-item label="Aufgabentitel">
             <el-input v-model="newTask.title"></el-input>
           </el-form-item>
-          <el-form-item label="任务描述">
+          <el-form-item label="Aufgabenbeschreibung">
             <el-input v-model="newTask.description" type="textarea"></el-input>
           </el-form-item>
-          <el-form-item label="优先级">
+          <el-form-item label="Priorität">
             <el-select v-model="newTask.priority">
-              <el-option label="低" value="低"></el-option>
-              <el-option label="中" value="中"></el-option>
-              <el-option label="高" value="高"></el-option>
+              <el-option label="Niedrig" value="Niedrig"></el-option>
+              <el-option label="Mittel" value="Mittel"></el-option>
+              <el-option label="Hoch" value="Hoch"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="截止日期">
-            <el-date-picker v-model="newTask.dueDate" type="date" placeholder="选择日期"></el-date-picker>
+          <el-form-item label="Fälligkeitsdatum">
+            <el-date-picker v-model="newTask.dueDate" type="date" placeholder="Datum auswählen"></el-date-picker>
           </el-form-item>
         </el-form>
         <template #footer>
           <span class="dialog-footer">
-            <el-button @click="addTaskDialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="addTask">确定</el-button>
+            <el-button @click="addTaskDialogVisible = false">Abbrechen</el-button>
+            <el-button type="primary" @click="addTask">OK</el-button>
           </span>
         </template>
       </el-dialog>
@@ -129,16 +129,16 @@
   import draggable from 'vuedraggable'
   
   const todoTasks = ref([
-    { id: 1, title: '设计新功能', description: '为应用程序设计新的用户界面', priority: '高', dueDate: '2023-06-15' },
-    { id: 2, title: '修复bug', description: '解决用户报告的登录问题', priority: '中', dueDate: '2023-06-10' },
+    { id: 1, title: 'Neue Funktion entwerfen', description: 'Neue Benutzeroberfläche für die Anwendung entwerfen', priority: 'Hoch', dueDate: '2023-06-15' },
+    { id: 2, title: 'Bug beheben', description: 'Von Benutzern gemeldetes Anmeldeproblem lösen', priority: 'Mittel', dueDate: '2023-06-10' },
   ])
   
   const inProgressTasks = ref([
-    { id: 3, title: '实现新API', description: '开发和测试新的后端API', priority: '高', dueDate: '2023-06-20' },
+    { id: 3, title: 'Neue API implementieren', description: 'Neue Backend-API entwickeln und testen', priority: 'Hoch', dueDate: '2023-06-20' },
   ])
   
   const completedTasks = ref([
-    { id: 4, title: '更新文档', description: '更新用户手册和API文档', priority: '低', dueDate: '2023-06-05' },
+    { id: 4, title: 'Titel', description: 'Titel', priority: 'Niedrig', dueDate: '2023-06-05' },
   ])
   
   const addTaskDialogVisible = ref(false)

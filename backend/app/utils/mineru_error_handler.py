@@ -1,15 +1,15 @@
 """
-MinerU统一错误处理模块
-提供标准化的错误处理、重试机制和性能监控
+MinerUHinweis
+Hinweis
 
-主要功能：
-1. 统一错误处理和分类
-2. 智能重试机制
-3. 性能指标收集
-4. 错误统计和分析
+Hinweis
+1. Hinweis
+2. Hinweis
+3. Hinweis
+4. Fehlerhinweis
 
-作者: Assistant
-日期: 2025-01-26
+Hinweis
+Hinweis
 """
 
 import asyncio
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 class ErrorCategory(Enum):
-    """错误分类"""
+    """Fehlerhinweis"""
     NETWORK_ERROR = "network"
     TIMEOUT_ERROR = "timeout"
     AUTHENTICATION_ERROR = "auth"
@@ -40,7 +40,7 @@ class ErrorCategory(Enum):
 
 @dataclass
 class ErrorMetrics:
-    """错误指标"""
+    """Fehlerhinweis"""
     category: ErrorCategory
     count: int = 0
     first_occurrence: Optional[datetime] = None
@@ -49,7 +49,7 @@ class ErrorMetrics:
     successful_retries: int = 0
     
     def record_error(self, retry_attempt: int = 0, retry_success: bool = False):
-        """记录错误"""
+        """Hinweis"""
         self.count += 1
         now = datetime.now()
         
@@ -65,7 +65,7 @@ class ErrorMetrics:
 
 @dataclass
 class ProcessingMetrics:
-    """处理指标"""
+    """Hinweis"""
     strategy: str
     filename: str
     start_time: datetime
@@ -78,7 +78,7 @@ class ProcessingMetrics:
     file_size_mb: float = 0.0
     
     def mark_completed(self, success: bool, error_category: Optional[ErrorCategory] = None, error_message: Optional[str] = None):
-        """标记处理完成"""
+        """Hinweis"""
         self.end_time = datetime.now()
         self.duration = (self.end_time - self.start_time).total_seconds()
         self.success = success
@@ -87,7 +87,7 @@ class ProcessingMetrics:
 
 
 class RetryStrategy:
-    """重试策略"""
+    """Hinweis"""
     
     def __init__(self, max_retries: int = 3, base_delay: float = 1.0, max_delay: float = 60.0, exponential_base: float = 2.0):
         self.max_retries = max_retries
@@ -96,7 +96,7 @@ class RetryStrategy:
         self.exponential_base = exponential_base
     
     def get_delay(self, attempt: int) -> float:
-        """计算重试延迟"""
+        """Hinweis"""
         if attempt <= 0:
             return 0.0
         
@@ -104,48 +104,48 @@ class RetryStrategy:
         return min(delay, self.max_delay)
     
     def should_retry(self, attempt: int, error_category: ErrorCategory) -> bool:
-        """判断是否应该重试"""
+        """Hinweis"""
         if attempt >= self.max_retries:
             return False
         
-        # 根据错误类型决定是否重试
+        # Kommentar
         non_retryable_errors = {
             ErrorCategory.AUTHENTICATION_ERROR,
             ErrorCategory.CONFIGURATION_ERROR,
-            ErrorCategory.CLIENT_ERROR  # 4xx错误通常不应该重试
+            ErrorCategory.CLIENT_ERROR  # 4xxFehlerFehler bei der Verarbeitung
         }
         
         return error_category not in non_retryable_errors
 
 
 class MinerUErrorHandler:
-    """MinerU错误处理器"""
+    """MinerUFehlerhinweis"""
     
     def __init__(self):
         self.error_metrics: Dict[ErrorCategory, ErrorMetrics] = {}
         self.processing_history: List[ProcessingMetrics] = []
         self.retry_strategy = RetryStrategy()
         
-        # 初始化错误指标
+        # Kommentar
         for category in ErrorCategory:
             self.error_metrics[category] = ErrorMetrics(category)
         
-        logger.info("MinerU错误处理器初始化完成")
+        logger.info("MinerUFehlerhinweis")
     
     def classify_error(self, error: Exception) -> ErrorCategory:
-        """错误分类"""
+        """Fehlerhinweis"""
         error_type = type(error).__name__
         error_message = str(error).lower()
         
-        # 网络相关错误
+        # Kommentar
         if any(keyword in error_type.lower() for keyword in ['connection', 'network', 'dns', 'socket']):
             return ErrorCategory.NETWORK_ERROR
         
-        # 超时错误
+        # Kommentar
         if 'timeout' in error_type.lower() or 'timeout' in error_message:
             return ErrorCategory.TIMEOUT_ERROR
         
-        # HTTP状态码相关
+        # HTTPStatusKommentar
         if hasattr(error, 'status') or hasattr(error, 'status_code'):
             status = getattr(error, 'status', None) or getattr(error, 'status_code', None)
             if status:
@@ -158,15 +158,15 @@ class MinerUErrorHandler:
                 elif 400 <= status < 500:
                     return ErrorCategory.CLIENT_ERROR
         
-        # 认证相关
+        # Kommentar
         if any(keyword in error_message for keyword in ['auth', 'unauthorized', 'forbidden', 'token']):
             return ErrorCategory.AUTHENTICATION_ERROR
         
-        # 配置相关
+        # Kommentar
         if any(keyword in error_message for keyword in ['config', 'setting', 'environment', 'variable']):
             return ErrorCategory.CONFIGURATION_ERROR
         
-        # 处理相关
+        # Kommentar
         if any(keyword in error_message for keyword in ['parse', 'process', 'convert', 'extract']):
             return ErrorCategory.PROCESSING_ERROR
         
@@ -182,17 +182,17 @@ class MinerUErrorHandler:
         **kwargs
     ) -> Tuple[Any, ProcessingMetrics]:
         """
-        使用重试机制执行函数
+        Hinweisührt ausHinweis
         
         Args:
-            func: 要执行的异步函数
-            filename: 文件名
-            strategy: 处理策略
-            file_size_mb: 文件大小(MB)
-            *args, **kwargs: 传递给函数的参数
+            func: Hinweisührt ausHinweis
+            filename: Dateiname
+            strategy: Hinweis
+            file_size_mb: Dateigröße(MB)
+            *args, **kwargs: Kommentar
             
         Returns:
-            (结果, 处理指标)
+            (Ergebnisse, Hinweis
         """
         metrics = ProcessingMetrics(
             strategy=strategy,
@@ -206,44 +206,44 @@ class MinerUErrorHandler:
         
         for attempt in range(self.retry_strategy.max_retries + 1):
             try:
-                # 记录重试次数
+                # Kommentar
                 metrics.retry_count = attempt
                 
-                # 执行函数
+                # führt ausKommentar
                 result = await func(*args, **kwargs)
                 
                 if result:
-                    # 成功
+                    # Kommentar
                     metrics.mark_completed(True)
                     self.processing_history.append(metrics)
                     
-                    # 如果之前有重试，记录成功的重试
+                    # Kommentar
                     if attempt > 0 and last_error_category:
                         self.error_metrics[last_error_category].record_error(attempt, True)
                     
-                    logger.info(f"处理成功: {filename} (尝试: {attempt + 1}, 耗时: {metrics.duration:.2f}s)")
+                    logger.info(f"Verarbeitung erfolgreich: {filename} (Hinweis{attempt + 1}, Dauer: {metrics.duration:.2f}s)")
                     return result, metrics
                 else:
-                    # 结果为空，视为失败
+                    # ErgebnisseKommentar
                     error_category = ErrorCategory.PROCESSING_ERROR
-                    error_message = "处理结果为空"
+                    error_message = "Fehler bei der Verarbeitung"
                     
                     if attempt < self.retry_strategy.max_retries:
-                        logger.warning(f"处理结果为空，准备重试: {filename} (尝试: {attempt + 1})")
+                        logger.warning(f"Warnhinweis{filename} (Warnhinweis{attempt + 1})")
                         last_error_category = error_category
                         
-                        # 等待重试
+                        # Kommentar
                         delay = self.retry_strategy.get_delay(attempt + 1)
                         if delay > 0:
                             await asyncio.sleep(delay)
                         continue
                     else:
-                        # 最后一次尝试仍然失败
+                        # Kommentar
                         metrics.mark_completed(False, error_category, error_message)
                         self.error_metrics[error_category].record_error(attempt)
                         self.processing_history.append(metrics)
                         
-                        logger.error(f"所有重试都失败: {filename} (最终错误: {error_message})")
+                        logger.error(f"Fehler bei der Verarbeitung{filename} (Fehler bei der Verarbeitung{error_message})")
                         return None, metrics
             
             except Exception as e:
@@ -251,32 +251,32 @@ class MinerUErrorHandler:
                 error_category = self.classify_error(e)
                 last_error_category = error_category
                 
-                # 检查是否应该重试
+                # Kommentar
                 if attempt < self.retry_strategy.max_retries and self.retry_strategy.should_retry(attempt, error_category):
-                    logger.warning(f"处理失败，准备重试: {filename} (尝试: {attempt + 1}, 错误: {error_category.value}) - {e}")
+                    logger.warning(f"Fehler bei der Verarbeitung{filename} (Fehler bei der Verarbeitung{attempt + 1}, Fehler: {error_category.value}) - {e}")
                     
-                    # 记录重试错误
+                    # Kommentar
                     self.error_metrics[error_category].record_error(attempt, False)
                     
-                    # 等待重试
+                    # Kommentar
                     delay = self.retry_strategy.get_delay(attempt + 1)
                     if delay > 0:
                         await asyncio.sleep(delay)
                     continue
                 else:
-                    # 不重试或达到最大重试次数
+                    # Kommentar
                     metrics.mark_completed(False, error_category, str(e))
                     self.error_metrics[error_category].record_error(attempt)
                     self.processing_history.append(metrics)
                     
-                    logger.error(f"处理最终失败: {filename} (错误: {error_category.value}) - {e}")
+                    logger.error(f"Fehler bei der Verarbeitung{filename} (Fehler: {error_category.value}) - {e}")
                     return None, metrics
         
-        # 这行不应该被执行到
+        # Kommentarührt ausKommentar
         return None, metrics
     
     def get_error_statistics(self) -> Dict[str, Any]:
-        """获取错误统计"""
+        """Hinweis"""
         stats = {}
         
         for category, metrics in self.error_metrics.items():
@@ -298,14 +298,14 @@ class MinerUErrorHandler:
         return stats
     
     def get_processing_statistics(self, hours: int = 24) -> Dict[str, Any]:
-        """获取处理统计（最近N小时）"""
+        """Hinweis"""
         cutoff_time = datetime.now() - timedelta(hours=hours)
         recent_metrics = [m for m in self.processing_history if m.start_time >= cutoff_time]
         
         if not recent_metrics:
-            return {"message": f"最近{hours}小时内无处理记录"}
+            return {"message": f"Hinweis{hours}Hinweis"}
         
-        # 按策略分组统计
+        # Kommentar
         strategy_stats = {}
         for metrics in recent_metrics:
             strategy = metrics.strategy
@@ -330,7 +330,7 @@ class MinerUErrorHandler:
             else:
                 stats["failure_count"] += 1
         
-        # 计算汇总指标
+        # Kommentar
         for strategy, stats in strategy_stats.items():
             total = stats["total_count"]
             stats["success_rate"] = stats["success_count"] / total if total > 0 else 0
@@ -338,7 +338,7 @@ class MinerUErrorHandler:
             stats["average_file_size_mb"] = stats["total_file_size_mb"] / total if total > 0 else 0
             stats["average_retries"] = stats["total_retries"] / total if total > 0 else 0
         
-        # 总体统计
+        # Kommentar
         total_files = len(recent_metrics)
         successful_files = sum(1 for m in recent_metrics if m.success)
         
@@ -352,14 +352,14 @@ class MinerUErrorHandler:
         }
     
     def get_performance_insights(self) -> Dict[str, Any]:
-        """获取性能洞察"""
+        """Hinweis"""
         if not self.processing_history:
-            return {"message": "暂无处理历史数据"}
+            return {"message": "Hinweis"}
         
-        # 最近100个处理记录
+        # Kommentar
         recent_metrics = self.processing_history[-100:]
         
-        # 成功率分析
+        # Kommentar
         successful = [m for m in recent_metrics if m.success]
         failed = [m for m in recent_metrics if not m.success]
         
@@ -380,7 +380,7 @@ class MinerUErrorHandler:
             }
         
         if failed:
-            # 失败原因分析
+            # Kommentar
             failure_categories = {}
             for m in failed:
                 category = m.error_category.value if m.error_category else "unknown"
@@ -391,7 +391,7 @@ class MinerUErrorHandler:
                 "average_retries_before_failure": sum(m.retry_count for m in failed) / len(failed)
             }
         
-        # 策略效果分析
+        # Kommentar
         strategy_performance = {}
         for m in recent_metrics:
             if m.strategy not in strategy_performance:
@@ -409,17 +409,17 @@ class MinerUErrorHandler:
         return insights
     
     def clear_old_history(self, days: int = 7):
-        """清理旧的处理历史"""
+        """Hinweis"""
         cutoff_time = datetime.now() - timedelta(days=days)
         
         old_count = len(self.processing_history)
         self.processing_history = [m for m in self.processing_history if m.start_time >= cutoff_time]
         new_count = len(self.processing_history)
         
-        logger.info(f"清理了 {old_count - new_count} 条超过 {days} 天的处理历史记录")
+        logger.info(f"Hinweis{old_count - new_count} Hinweis{days} Hinweis")
     
     def export_metrics(self) -> Dict[str, Any]:
-        """导出所有指标"""
+        """Hinweis"""
         return {
             "error_statistics": self.get_error_statistics(),
             "processing_statistics": self.get_processing_statistics(),
@@ -428,11 +428,11 @@ class MinerUErrorHandler:
         }
 
 
-# 全局错误处理器实例
+# Kommentar
 _error_handler = None
 
 def get_mineru_error_handler() -> MinerUErrorHandler:
-    """获取MinerU错误处理器实例（单例模式）"""
+    """Hinweis"""
     global _error_handler
     
     if _error_handler is None:
@@ -441,7 +441,7 @@ def get_mineru_error_handler() -> MinerUErrorHandler:
     return _error_handler
 
 
-# 导出接口
+# Kommentar
 __all__ = [
     "MinerUErrorHandler",
     "ErrorCategory",

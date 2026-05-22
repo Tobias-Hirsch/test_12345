@@ -120,8 +120,9 @@ async def initialize_data(db: Session):
     if settings.CREATE_DEFAULT_ADMIN:
         # Use a separate query for the user to ensure the session is fresh after commit
         admin_user = db.query(User).filter(User.username == settings.DEFAULT_ADMIN_USERNAME).first()
+        admin_role = db.query(Role).filter(Role.name == "admin").first()
+
         if not admin_user:
-            admin_role = db.query(Role).filter(Role.name == "admin").first()
             if admin_role:
                 user_in = schemas.UserCreate(
                     username=settings.DEFAULT_ADMIN_USERNAME,
@@ -130,12 +131,26 @@ async def initialize_data(db: Session):
                     department="IT", # Default department
                     phone="0000000000" # Default phone
                 )
-                # Note: auth.create_user handles password hashing
+                # Note: auth.create_user handles password hashing and may already assign
+                # the admin role automatically when this is the first user.
                 new_admin_user = auth.create_user(db, user_create=user_in, is_active=True)
-                new_admin_user.roles.append(admin_role)
-                db.add(new_admin_user) # Add the user to the session before committing
-                db.commit() # Commit the new user
+
+                # Make role assignment idempotent. Without this guard, the app can try to
+                # insert the same (user_id, role_id) pair twice into user_role_association.
+                if not any(role.id == admin_role.id for role in new_admin_user.roles):
+                    new_admin_user.roles.append(admin_role)
+                    db.add(new_admin_user)
+                    db.commit()
+
                 print(f"Created default admin user: {new_admin_user.username}")
+        else:
+            # If the admin user already exists, make sure they have the admin role.
+            # This keeps startup safe after a partially successful previous initialization.
+            if admin_role and not any(role.id == admin_role.id for role in admin_user.roles):
+                admin_user.roles.append(admin_role)
+                db.add(admin_user)
+                db.commit()
+                print(f"Assigned admin role to existing default admin user: {admin_user.username}")
 
 if __name__ == "__main__":
     from app.models.database import get_db, create_database_tables

@@ -7,6 +7,38 @@ OLLAMA_URL = settings.OLLAMA_SERVING_URL # Use the specific serving URL
 OLLAMA_CHAT_MODEL = settings.OLLAMA_CHAT_MODEL # Use the chat model from COT_MODE
 OLLAMA_COT_MODEL = settings.OLLAMA_COT_MODEL
 
+def _sanitize_ollama_options(options: Dict[str, Any] | None) -> Dict[str, Any]:
+    """
+    Ollama does not understand several OpenAI-style option names.
+    Keep only options accepted by Ollama and map max_tokens -> num_predict.
+    """
+    if not options:
+        return {}
+
+    sanitized: Dict[str, Any] = {}
+
+    if "num_predict" in options and options["num_predict"] is not None:
+        sanitized["num_predict"] = options["num_predict"]
+    elif "max_tokens" in options and options["max_tokens"] is not None:
+        sanitized["num_predict"] = options["max_tokens"]
+
+    allowed_keys = {
+        "temperature",
+        "top_p",
+        "top_k",
+        "repeat_penalty",
+        "seed",
+        "stop",
+        "num_ctx",
+        "num_predict",
+    }
+
+    for key, value in options.items():
+        if key in allowed_keys and value is not None:
+            sanitized[key] = value
+
+    return sanitized
+
 async def get_chat_response(messages: List[Dict[str, str]]) -> str:
     """
     Sends a list of messages to the Ollama chat API and returns the bot's response.
@@ -23,15 +55,17 @@ async def get_chat_response(messages: List[Dict[str, str]]) -> str:
         "model": OLLAMA_CHAT_MODEL,
         "messages": messages,
         "stream": False, # We want the full response at once
-        "options": {            
-            "max_tokens": 4096,
-            "temperature": 0.8,
-            "top_p": 0.95,
-            "top_k": 40,
-            "presence_penalty": 0.0,
-            "frequency_penalty": 0.0,
-        }
+        "think": False,
     }
+    sanitized_options = _sanitize_ollama_options({
+        # "num_ctx": 4096,        #TODO Anpassen!!!!
+        "num_predict": settings.OLLAMA_NUM_PREDICT,
+        "temperature": 0.8,
+        "top_p": 0.95,
+        "top_k": 40,
+    })
+    if sanitized_options:
+        payload["options"] = sanitized_options
 
     try:
         async with httpx.AsyncClient() as client:
@@ -77,8 +111,11 @@ async def get_chat_response_stream(messages: List[Dict[str, str]], show_think_pr
         "model": model,
         "messages": messages,
         "stream": True,
-        "options": options
+        "think": False,
     }
+    sanitized_options = _sanitize_ollama_options(options)
+    if sanitized_options:
+        payload["options"] = sanitized_options
 
     try:
         async with httpx.AsyncClient() as client:
@@ -101,7 +138,9 @@ async def get_chat_response_stream(messages: List[Dict[str, str]], show_think_pr
     except httpx.RequestError as e:
         yield f"Error: Could not connect to AI service. Details: {e}"
     except httpx.HTTPStatusError as e:
-        yield f"Error: AI service returned an error. Status: {e.response.status_code}"
+        error_text = e.response.text
+        print(f"HTTP error response from Ollama API: {e.response.status_code} - {error_text}")
+        yield f"Error: AI service returned an error. Status: {e.response.status_code}. Details: {error_text}"
     except Exception as e:
         yield f"Error: An unexpected error occurred with the AI service. Details: {e}"
 

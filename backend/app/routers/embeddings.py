@@ -143,6 +143,9 @@ async def process_files_in_background(rag_id: int, file_ids: list[int], user_id:
                 else:
                     raise ValueError(f"Unsupported file type: {original_file_extension}")
 
+                if count <= 0:
+                    raise ValueError("Document processing produced 0 chunks; no vectors were stored.")
+
                 # If processing was successful
                 file_gist.processing_status = 'success'
                 file_gist.processing_details = f'Successfully processed {count} chunks.'
@@ -357,6 +360,8 @@ async def re_embed_rag_files(rag_id: int, file_embed_request: schemas.FileEmbedR
                     rag_id=rag_id,
                     mongo_collection_name=mongo_collection_name
                 )
+                if count <= 0:
+                    raise ValueError("Document processing produced 0 chunks; no vectors were stored.")
                 processed_count += count
             elif original_file_extension in ['.md', '.txt']:
                 with tempfile.NamedTemporaryFile(delete=False, suffix=original_file_extension) as tmp:
@@ -368,6 +373,8 @@ async def re_embed_rag_files(rag_id: int, file_embed_request: schemas.FileEmbedR
                         tmp_path, image_dir, milvus_collection_name,
                         mongo_db_name, mongo_collection_name
                     )
+                    if count <= 0:
+                        raise ValueError("Document processing produced 0 chunks; no vectors were stored.")
                     processed_count += count
                 finally:
                     os.remove(tmp_path)
@@ -471,6 +478,8 @@ async def retry_embedding_from_minio(
                     mongo_collection_name=mongo_collection_name,
                     minio_object_name=mineru_object_path # Pass the existing path
                 )
+                if count <= 0:
+                    raise ValueError("Embedding retry produced 0 chunks; no vectors were stored.")
                 processed_count += count
                 print(f"--- Successfully retried embedding for: {original_filename} ---")
 

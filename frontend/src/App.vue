@@ -23,7 +23,7 @@ import { ElConfigProvider, ElSwitch, ElButton, ElSelect, ElOption } from 'elemen
 import { Sunny, Moon, Menu } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
 import enLocale from 'element-plus/es/locale/lang/en';
-import zhLocale from 'element-plus/es/locale/lang/zh-cn';
+import deLocale from 'element-plus/es/locale/lang/de';
 import { useAuthStore } from './stores/auth';
 import Sidebar from './components/Sidebar.vue';
 import AppHeader from './components/AppHeader.vue';
@@ -59,7 +59,7 @@ export default defineComponent({
     const isDarkMode = ref(false);
 
     const currentLocale = computed(() => {
-      return locale.value === 'en' ? enLocale : zhLocale;
+      return locale.value === 'en' ? enLocale : deLocale;
     });
 
     const toggleTheme = (value: any) => {
@@ -92,7 +92,7 @@ export default defineComponent({
       router.push('/profile');
     };
 
-    // 菜单收起/展开
+    // Menü ein- und ausklappen
     const isAsideCollapsed = ref(false);
     const toggleAside = () => {
       isAsideCollapsed.value = !isAsideCollapsed.value;

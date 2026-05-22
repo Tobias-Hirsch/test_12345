@@ -1,18 +1,18 @@
 from typing import Dict, Any, Callable, List
 from app.models.database import Policy
-from app.services import abac_functions # 导入自定义函数模块
+from app.services import abac_functions # Hinweis
 
 class ABACPolicyEvaluator:
     def __init__(self):
         self.function_registry: Dict[str, Callable[..., bool]] = {
             "is_resource_owner": abac_functions.is_resource_owner,
             "is_within_working_hours": abac_functions.is_within_working_hours,
-            # 注册更多自定义函数
+            # RegistrierenKommentar
         }
 
     def _evaluate_condition(self, condition: Dict[str, Any], attributes: Dict[str, Any]) -> bool:
         """
-        评估单个条件。
+        Hinweis
         """
         if "function" in condition:
             func_name = condition["function"]
@@ -52,7 +52,7 @@ class ABACPolicyEvaluator:
                 return actual_value <= value
             elif operator == "not_equals":
                 return actual_value != value
-            # 添加更多操作符
+            # Kommentar
             else:
                 raise ValueError(f"Unknown ABAC operator: {operator}")
 
@@ -90,7 +90,7 @@ class ABACPolicyEvaluator:
 
     def _evaluate_rules(self, rules_logic: Dict[str, Any], attributes: Dict[str, Any]) -> bool:
         """
-        递归评估规则集合。
+        Hinweis
         """
         operator = rules_logic.get("operator", "AND")
         rules = rules_logic.get("rules", [])

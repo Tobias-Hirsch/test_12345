@@ -1,7 +1,7 @@
 <template>
   <div class="chat-container">
     <div class="chat-area">
-      <!-- 聊天消息区域 -->
+      <!-- Chat-Nachrichtenbereich -->
       <div class="messages-container" ref="messagesContainerRef">
         <div v-if="messages && !messages.some((message: Message) => message.sender === 'user')" class="welcome-top">
           <div class="welcome-message">Welcome to the Multi-Agent Chat!</div>
@@ -22,12 +22,12 @@
           </div>
         </template>
       </div>
-      <!-- 输入区域 -->
+      <!-- Eingabebereich -->
       <div class="input-area">
         <div class="input-container input-flex">
           <textarea
             v-model="userInput"
-            placeholder="输入消息..."
+            placeholder="Nachricht eingeben ..."
             class="textarea-input"
             rows="1"
             @keyup.enter.prevent="sendMessage"
@@ -66,7 +66,7 @@
               :title="$t('chatPage.attachmentTooltip')"
             >📎</span>
             <input type="file" multiple @change="handleFileChange" ref="fileInputRef" style="display: none;">
-            <button type="button" class="send-btn" @click="sendMessage" :disabled="isLoading || !userInput.trim()">发送</button>
+            <button type="button" class="send-btn" @click="sendMessage" :disabled="isLoading || !userInput.trim()">Senden</button>
           </div>
         </div>
         <!-- Display selected files -->

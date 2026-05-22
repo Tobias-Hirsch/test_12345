@@ -5,8 +5,7 @@ import re
 import json
 import logging
 import logging
-from langchain_core.output_parsers import JsonOutputParser
-from langchain_core.prompts import PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 from fastapi import UploadFile
 from app.llm.llm import get_llm
@@ -27,7 +26,32 @@ logger = logging.getLogger(__name__)
 DOCUMENT_TYPE_QWEN_VL_DEAL_IMAGE = settings.DOCUMENT_TYPE_QWEN_VL_DEAL_IMAGE
 
 class SummarizeQuestionContentType(BaseModel):
-    summarize: str = Field(description="根据问题从文本中提取的内容")
+    summarize: str = Field(description="A concise summary of the provided document text.")
+
+
+SUMMARY_DOCUMENTS_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            """
+You summarize industrial and technical documents for retrieval systems.
+Write a concise, factual summary grounded only in the provided document text.
+Do not mention parser errors, formatting instructions, or implementation details.
+If the document text is noisy or partially extracted, keep only the reliable content.
+""".strip(),
+        ),
+        (
+            "human",
+            """
+Question:
+{question}
+
+Document text:
+{document_text}
+""".strip(),
+        ),
+    ]
+)
 
 async def process_image(doc_info,question):
     url = doc_info['url']
@@ -38,10 +62,10 @@ async def process_image(doc_info,question):
             return content
         return None
     except Exception as e:
-        return f"处理图片时出错: {str(e)}"
+        return f"Fehler bei der Bildverarbeitung: {str(e)}"
 
 async def process_document(doc_info):
-    """处理单个文档并返回其内容"""  
+    """Hinweis"""  
     url = doc_info['url']
     file_extension = os.path.splitext(urlparse(url).path)[-1].lower()
     try:
@@ -72,33 +96,33 @@ async def process_document(doc_info):
 
         return content
     except Exception as e:
-        return f"处理文档时出错: {str(e)}"
+        return f"Hinweis{str(e)}"
 
 
 async def process_images(docu_list, question, max_concurrency=5):
-    """并行处理多个图片并返回分割后的内容列表
+    """Hinweis
 
     Args:
-        docu_list: 文档列表，每个文档包含url等信息
-        question: 用户问题
-        max_concurrency: 最大并发数量
+        docu_list: DokumenteHinweis
+        question: BenutzerHinweis
+        max_concurrency: Hinweis
 
     Returns:
-        图片处理结果列表
+        Hinweis
     """
-    # 创建信号量控制并发
+    # Kommentar
     semaphore = asyncio.Semaphore(max_concurrency)
 
     async def process_image_with_semaphore(doc):
         async with semaphore:
             return await process_image(doc, question)
 
-    # 创建任务列表
+    # Kommentar
     tasks = [process_image_with_semaphore(doc) for doc in docu_list]
 
-    # 并行执行所有任务
+    # Kommentarührt ausKommentar
     results = await asyncio.gather(*tasks)
-    # 合并所有文档内容
+    # Kommentar
     all_contents = []
     for content in results:
         if isinstance(content, str) and content:
@@ -107,14 +131,14 @@ async def process_images(docu_list, question, max_concurrency=5):
     return all_contents
 
 async def process_documents(docu_list):
-    """并行处理多个文档并返回分割后的内容列表"""
-    # 创建任务列表
+    """Hinweis"""
+    # Kommentar
     tasks = [process_document(doc) for doc in docu_list]
 
-    # 并行执行所有任务
+    # Kommentarührt ausKommentar
     results = await asyncio.gather(*tasks)
 
-    # 合并所有文档内容
+    # Kommentar
     all_contents = []
     for content in results:
         if isinstance(content, str) and content:
@@ -129,111 +153,85 @@ async def process_documents(docu_list):
 
 
 async def summary_documents_content(docu_str: str, question: str):
-    parser = JsonOutputParser(pydantic_object=SummarizeQuestionContentType)
-    
-    prompt = PromptTemplate(
-        template="""
-        # 任务说明
-            您是一个专业的文档分析助手。您的任务是分析给定的文本内容，判断其是否与用户提出的问题相关，并提取有用信息。
+    document_text = str(docu_str).strip()
+    if not document_text:
+        return None
 
-        # 输入内容
-            文本内容: {messages}
-            用户问题: {question}
-
-        # 分析要求
-            1. 仔细阅读文本内容和用户问题
-            2. 判断文本内容是否包含与用户问题相关的信息
-            3. 如果文本内容与问题相关，请提取出对回答问题有帮助的关键信息并进行简洁总结
-            4. 如果文本内容与问题无关，请返回空字符串("")
-
-        # 输出格式
-            - 相关时：提供简洁的总结，包含问题相关的关键信息
-            - 不相关时：返回空字符串
-
-        {format_instructions}
-            """,
-        input_variables=["messages", "question"],
-        partial_variables={"format_instructions": parser.get_format_instructions()},
-    )
-    
     llm_instance = get_llm(show_think_process=False)
-    
-    # The chain now returns raw text output from the LLM
-    chain = prompt | llm_instance
-    
-    # Invoke the chain to get the raw output
-    raw_result = await chain.ainvoke(
-        {"messages": ["user", str(docu_str)], "question": str(question)},
-        config={"run_name": f"summarize_question_content_{str(question)}"}
-    )
-    
-    # Manually clean and parse the output
-    raw_text_output = raw_result.content if hasattr(raw_result, 'content') else str(raw_result)
-    
-    # Find the JSON block using regex
-    match = re.search(r'\{.*\}', raw_text_output, re.DOTALL)
-    
-    if match:
-        json_str = match.group(0)
-        try:
-            # Parse the extracted JSON string
-            parsed_json = json.loads(json_str)
-            return parsed_json.get("summarize")
-        except json.JSONDecodeError:
-            # Handle cases where the extracted string is not valid JSON
-            # This is a fallback, but ideally the regex is good enough
-            pass # Or log an error
-    
-    # If regex fails or parsing fails, try parsing the whole output as a last resort
+
     try:
-        return parser.parse(raw_text_output).get("summarize")
-    except Exception:
-        # If everything fails, return None or an empty string
+        chain = SUMMARY_DOCUMENTS_PROMPT | llm_instance.with_structured_output(
+            SummarizeQuestionContentType
+        ).with_retry(stop_after_attempt=3)
+        result = await chain.ainvoke(
+            {"document_text": document_text, "question": str(question)},
+            config={"run_name": f"summarize_question_content_{str(question)}"}
+        )
+        summary = getattr(result, "summarize", None)
+        if isinstance(summary, str) and summary.strip():
+            return summary.strip()
+    except Exception as e:
+        logger.warning(f"Structured document summarization failed: {e}")
+
+    fallback_prompt = (
+        "Summarize the following document text in 2-4 factual sentences. "
+        "Ignore extraction noise and do not mention formatting or parser issues.\n\n"
+        f"Question: {question}\n\n"
+        f"Document text:\n{document_text}"
+    )
+
+    try:
+        fallback_result = await llm_instance.ainvoke(fallback_prompt)
+        fallback_text = fallback_result.content if hasattr(fallback_result, "content") else str(fallback_result)
+        fallback_text = fallback_text.strip()
+        return fallback_text or None
+    except Exception as e:
+        logger.error(f"Fallback document summarization failed: {e}")
         return None
 
 
 async def process_and_summarize_documents(doc_list, question, max_concurrency=5, max_length=2000):
     """
-    处理文档列表并生成总结，控制并发数和总结长度
+    Hinweis
 
     Args:
-        doc_list: 文档列表，每个文档包含url等信息
-        question: 用户问题
-        max_concurrency: 最大并发数量
-        max_length: 最大字符串长度
+        doc_list: DokumenteHinweis
+        question: BenutzerHinweis
+        max_concurrency: Hinweis
+        max_length: Hinweis
 
     Returns:
-        总结列表
+        Hinweis
     """
-    # 处理文档并获取分割后的内容
+    # Kommentar
     chunks = await process_documents(doc_list)
     if not chunks:
         return []
 
-    # 创建信号量控制并发
+    # Kommentar
     semaphore = asyncio.Semaphore(max_concurrency)
 
     async def summarize_with_semaphore(chunk):
         async with semaphore:
             return await summary_documents_content(chunk, question)
 
-    # 并发调用summary_documents_content
+    # Kommentar
     tasks = [summarize_with_semaphore(chunk) for chunk in chunks]
     summaries = await asyncio.gather(*tasks)
 
-    # 过滤掉空的总结
+    # Kommentar
     summaries = [s for s in summaries if s and s.strip()]
 
-    # 如果总结长度超过最大长度，递归总结
+    # Kommentar
     while summaries and sum(len(s) for s in summaries) > max_length:
-        # 将当前总结分成较小的批次
+        # Kommentar
         batch_size = max(1, len(summaries) // 2)
         new_summaries = []
 
         for i in range(0, len(summaries), batch_size):
             batch = summaries[i:i + batch_size]
             combined_text = "\n".join(batch)
-            # 对批次进行再总结
+            # Kommentar
             summary = await summary_documents_content(combined_text, question)
             if summary and summary.strip():
                 new_summaries.append(summary)
@@ -245,25 +243,25 @@ async def process_and_summarize_documents(doc_list, question, max_concurrency=5,
 
 async def process_documents_and_images(doc_list, question, max_concurrency=5, max_length=2000):
     """
-    同时处理文档和图片，并返回合并后的结果
+    Hinweis
 
     Args:
-        doc_list: 文档列表，每个文档包含url等信息
-        question: 用户问题
-        max_concurrency: 最大并发数量
-        max_length: 最大字符串长度
+        doc_list: DokumenteHinweis
+        question: BenutzerHinweis
+        max_concurrency: Hinweis
+        max_length: Hinweis
 
     Returns:
-        合并后的总结列表
+        Hinweis
     """
-    # 并行处理文档和图片
+    # Kommentar
     doc_task = process_and_summarize_documents(doc_list, question, max_concurrency, max_length)
-    image_task = process_images(doc_list, question, max_concurrency)  # 传递max_concurrency参数
+    image_task = process_images(doc_list, question, max_concurrency)  # Hinweis
 
-    # 同时等待两个任务完成
+    # Kommentar
     doc_results, image_results = await asyncio.gather(doc_task, image_task)
 
-    # 合并结果
+    # Kommentar
     combined_results = []
     combined_results.extend(doc_results)
     combined_results.extend(image_results)
@@ -273,8 +271,8 @@ async def process_documents_and_images(doc_list, question, max_concurrency=5, ma
 
 def _extract_text_from_mineru_result(result: dict) -> str:
     """
-    从 MinerU 的结构化输出中提取并拼接所有纯文本内容。
-    假设 result 的结构是 {"result": [{"type": "text", "text": "...", "content": "..."}, ...]}
+    Hinweis
+    Hinweis{"result": [{"type": "text", "text": "...", "content": "..."}, ...]}
     """
     if not result or "result" not in result or not isinstance(result["result"], list):
         return ""
@@ -313,20 +311,20 @@ def _extract_text_with_pymupdf_fallback(file_bytes: bytes) -> str:
 
 async def extract_text_from_file_content(file_content: bytes, filename: str, question: str = None) -> str:
     """
-    从文件内容和文件名中嗅探文件类型，使用相应的解析器提取纯文本。
+    Hinweis
     
     Args:
-        file_content: 文件的字节内容。
-        filename: 文件名。
-        question: 用户的问题，主要用于图片解析。
+        file_content: Hinweis
+        filename: Dateiname. 
+        question: BenutzerHinweis
 
     Returns:
-        提取出的纯文本内容。
+        Hinweis
     """
     file_extension = os.path.splitext(filename)[-1].lower()
 
-    # 检查是否为支持的图片类型
-    # DOCUMENT_TYPE_QWEN_VL_DEAL_IMAGE 是一个从 settings 加载的 JSON 字符串列表
+    # Kommentar
+    # DOCUMENT_TYPE_QWEN_VL_DEAL_IMAGE JaKommentar
     supported_image_types = DOCUMENT_TYPE_QWEN_VL_DEAL_IMAGE
     if file_extension.strip('.') in supported_image_types:
         if not question:
@@ -334,7 +332,7 @@ async def extract_text_from_file_content(file_content: bytes, filename: str, que
         return await llm_ollama_vision_ainvoke(question, file_content)
 
     if file_extension == '.pdf':
-        # 使用 MinerU 处理 PDF
+        # Kommentar
         mineru_result = await process_pdf_with_mineru(file_content, filename)
         
         # --- DEBUG: Log the raw MinerU result to see its structure and type ---
@@ -367,32 +365,32 @@ async def extract_text_from_file_content(file_content: bytes, filename: str, que
             return ""
     
     elif file_extension in ['.doc', '.docx']:
-        # 使用改进的基于字节的解析器，包含详细错误信息
-        logger.info(f"开始处理Word文档: {filename}")
+        # Kommentar
+        logger.info(f"Hinweis{filename}")
         result = await extract_word_content_from_bytes(file_content)
         
-        if result and not result.startswith("错误") and not result.startswith("无法"):
-            logger.info(f"Word文档处理成功: {filename}")
+        if result and not result.startswith("Fehler") and not result.startswith("Hinweis"):
+            logger.info(f"WordDokument erfolgreich verarbeitet: {filename}")
         else:
-            logger.error(f"Word文档处理失败: {filename}, 结果: {result[:100] if result else 'None'}...")
+            logger.error(f"WordDokumenteVerarbeitung fehlgeschlagen: {filename}, Ergebnisse: {result[:100] if result else 'None'}...")
         
         return result
     elif file_extension in ['.xlsx', '.xls']:
-        # 使用改进的基于字节的解析器，传递文件名以确定正确的引擎
+        # Kommentar
         return await extract_excel_content_from_bytes(file_content, filename)
     else:
         return f"Unsupported file type for preview: {file_extension}"
 
 async def get_text_from_uploaded_file(file: UploadFile) -> str:
     """
-    从上传的文件中嗅探文件类型，使用相应的解析器提取纯文本。
-    这是为文件预览设计的核心函数。
+    Hinweis
+    Hinweis
 
     Args:
-        file: FastAPI 的 UploadFile 对象.
+        file: FastAPI Hinweis
 
     Returns:
-        提取出的纯文本内容。
+        Hinweis
     """
     filename = file.filename
     file_content = await file.read()
@@ -411,8 +409,8 @@ async def get_text_from_uploaded_file(file: UploadFile) -> str:
 #             "url": "http://localhost:9001/api/v1/download-shared-object/aHR0cDovLzEyNy4wLjAuMTo5MDAwL21tLXJhZy1idWNrZXQvcm9zdGkvQ09QMDNfRjAxNi0wMF9Nb3VsZGluZyUyMGZpcnN0JTIwb3IlMjBsYXN0JTIwc2FtcGxlJTIwaW5zcGVjdGlvbiUyMHJlY29yZCVFNiVCMyVBOCVFNSVBMSU5MSVFOSVBNiU5NiVFNiU5QyVBQiVFNiVBMCVCNyVFNiVBMyU4MCVFOSVBQSU4QyVFOCVBRSVCMCVFNSVCRCU5NV9BMC54bHM_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1MWlJQWDJVWFY1U1lTUE01QzhFRCUyRjIwMjUwNTI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDUyN1QwODM5MjRaJlgtQW16LUV4cGlyZXM9NDMxOTgmWC1BbXotU2VjdXJpdHktVG9rZW49ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmhZMk5sYzNOTFpYa2lPaUpNV2xKUVdESlZXRlkxVTFsVFVFMDFRemhGUkNJc0ltVjRjQ0k2TVRjME9ETTNPRE0wTkN3aWNHRnlaVzUwSWpvaWJXbHVhVzloWkcxcGJpSjkuR1c5UzItazNqMW1TLVVzVzBpS2tBSTNJUWV2STBRY280VzlzMV9pR3Z5dGUxazdhS2F0TUMyNzhjcVkwT1JBS1Z0OFJSY3pBZ2t4Tk9TWm90aG9NV2cmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnZlcnNpb25JZD1udWxsJlgtQW16LVNpZ25hdHVyZT0wNDFhNzRlMDVlZTAzYjJjNjYxMjBhYWViZmQwNDU0ODBkYzAwYTdjMDBkNzJhZTUyY2Q5MjAwNWU3MGExNzhj"
 #         }
 #     ]
-#     #a = await process_documents_and_images(doc, "经理电话")
-#     a = await process_and_summarize_documents(doc, "经理电话")
+#     #a = await process_documents_and_images(doc, "Kommentar")
+#     a = await process_and_summarize_documents(doc, "Kommentar")
 #     print(a)
 #     print(len(a))
 

@@ -1,4 +1,4 @@
-# 核心稳定依赖 - 很少变化，缓存时间长
+# Kommentar
 fastapi==0.104.1
 uvicorn==0.24.0
 pydantic==2.5.0
@@ -6,27 +6,27 @@ sqlalchemy==2.0.23
 redis==5.0.1
 httpx==0.25.2
 
-# 数据库相关
+# Kommentar
 asyncmy==0.2.10
 pymilvus==2.3.4
 pymongo==4.6.0
 
-# 基础工具库
+# Kommentar
 pandas==2.1.4
 numpy==1.24.3
 python-dotenv==1.0.0
 python-multipart==0.0.6
 
-# 认证和安全
+# Kommentar
 python-jose==3.3.0
 passlib==1.7.4
 bcrypt==4.1.2
 
-# 日志和监控
+# Kommentar
 loguru==0.7.2
 coloredlogs==15.0.1
 
-# 网络和异步
+# Kommentar
 aiohttp==3.9.1
 aiofiles==23.2.1
 asyncio

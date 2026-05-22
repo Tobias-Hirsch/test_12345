@@ -1,23 +1,23 @@
-# 用户界面
+# BenutzerKommentar
 
-本节描述 Rosti 产品的主要用户界面元素和布局。
+Hinweis
 
-## 1. 导航栏
+## 1. Kommentar
 
-*   **顶部导航**: 包含产品名称、主要模块入口（如聊天、知识库、设置）和用户头像/菜单。
-*   **侧边栏导航**: 在特定模块（如知识库）中提供更细粒度的导航，用于切换不同视图或功能。
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 2. 主要内容区域
+## 2. Kommentar
 
-*   **聊天界面**: 聊天消息的显示区域、输入框、附件上传等。
-*   **知识库界面**: 文件列表、搜索框、文件上传/管理功能。
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 3. 交互元素
+## 3. Kommentar
 
-*   **按钮**: 各种操作按钮（如发送、上传、删除、编辑）。
-*   **输入框**: 文本输入、搜索输入。
-*   **下拉菜单**: 用于选择选项或执行特定操作。
+*   **Kommentar**: Kommentaröschen, Bearbeiten). 
+*   **Kommentar**: Kommentar
+*   **Kommentar**: KommentarägeOderführt ausKommentar
 
-## 4. 响应式设计
+## 4. Kommentar
 
-Rosti 产品界面支持在不同设备（桌面、平板、手机）上提供良好的用户体验。
+Rosti Hinweis

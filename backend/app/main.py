@@ -9,7 +9,7 @@ from fastapi import FastAPI
 import os
 from app.core.config import settings # Ensure settings are loaded early
 from app.rag_knowledge.generic_knowledge import connect_to_milvus
-from app.models.database import get_db
+from app.models.database import get_db, create_database_tables
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.services.inactive_user_cleaner import remove_expired_unactivated_users
@@ -48,7 +48,7 @@ async def lifespan(app: FastAPI):
     logging.basicConfig(level=logging.DEBUG) # Configure logging here
     logger.info("Application startup: Creating database tables and connecting to Milvus.")
     # The following line is removed as database creation and migration are now handled by Alembic.
-    # create_database_tables()
+    create_database_tables()
     
     # Initialize roles, policies, and admin user
     with next(get_db()) as db:

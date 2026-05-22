@@ -102,7 +102,7 @@ mailbox: admin@de-manufacturing.cn
         </div>
         <div class="sidebar-bottom-buttons">
           <el-button class="help-btn" @click="showHelp">{{ $t('rostiChat.help') }}</el-button>
-          <el-button class="lang-toggle-btn" @click="toggleLanguage" type="default">中文/En</el-button>
+          <el-button class="lang-toggle-btn" @click="toggleLanguage" type="default">DE/EN</el-button>
         </div>
       </div>
       <div class="resizer" @mousedown="startResize" v-if="!isAsideCollapsed"></div>
@@ -184,7 +184,7 @@ mailbox: admin@de-manufacturing.cn
   }
   
   const toggleLanguage = () => {
-    const newLang = locale.value === 'en' ? 'zh' : 'en';
+    const newLang = locale.value === 'en' ? 'de' : 'en';
     locale.value = newLang;
     localStorage.setItem('language', newLang);
     appStore.setLanguage(newLang);

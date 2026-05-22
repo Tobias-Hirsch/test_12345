@@ -1,4 +1,4 @@
-# 构建优化版docker-compose配置
+# Kommentar
 version: '3.8'
 
 services:
@@ -6,18 +6,18 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.optimized
-      # 启用BuildKit缓存
+      # AktivBuildKitKommentar
       cache_from:
         - registry.your-company.com/rosti-backend:cache-core
         - registry.your-company.com/rosti-backend:cache-extras
         - registry.your-company.com/rosti-backend:latest
-      # 构建参数
+      # Kommentar
       args:
         BUILDKIT_INLINE_CACHE: 1
-    # 生产环境镜像标签策略  
+    # Kommentar
     image: registry.your-company.com/rosti-backend:${VERSION:-latest}
     
-  # 缓存管理服务
+  # Kommentar
   cache-warmer:
     build:
       context: ./backend

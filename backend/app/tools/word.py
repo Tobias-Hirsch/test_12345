@@ -9,99 +9,99 @@ from typing import Optional
 import traceback
 from app.services.logging import word_process_content_logger as logger
 
-# 导入额外的处理库
+# Kommentar
 try:
     import docx2txt
     DOCX2TXT_AVAILABLE = True
 except ImportError:
     DOCX2TXT_AVAILABLE = False
-    logger.warning("docx2txt库未安装，将跳过该处理方法")
+    logger.warning("docx2txtWarnhinweis")
 
 
 async def extract_word_content_from_url(url: str) -> Optional[str]:
     """
-    从指定URL下载Word文档并提取其中的文本内容
+    Hinweis
 
     Args:
-        url: Word文档的下载地址
+        url: WordDokumenteHinweis
 
     Returns:
-        str: 提取的文本内容，如果出错则返回None
+        str: Hinweis
     """
     temp_file_path = None
     try:
-        # 创建异步HTTP会话，添加请求头模拟浏览器
+        # Kommentar
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             'Accept': 'application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, */*',
-            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+            'Accept-Language': 'de-DE,de;q=0.9,en;q=0.8',
         }
 
         async with aiohttp.ClientSession(headers=headers) as session:
-            # 发送GET请求下载文件
-            logger.info(f"正在下载文件: {url}")
+            # SendenGETKommentar
+            logger.info(f"Hinweis{url}")
             async with session.get(url) as response:
                 if response.status != 200:
-                    logger.error(f"下载失败，状态码: {response.status}")
+                    logger.error(f"Fehler bei der Verarbeitung{response.status}")
                     return None
 
-                # 读取响应内容
+                # Kommentar
                 content = await response.read()
                 content_length = len(content)
-                logger.info(f"下载完成，文件大小: {content_length} 字节")
+                logger.info(f"Hinweisöße: {content_length} Hinweis")
 
                 if content_length == 0:
-                    logger.error("下载的文件为空")
+                    logger.error("Fehler bei der Verarbeitung")
                     return None
 
-                # 使用临时文件保存下载的文档
+                # Kommentar
                 with tempfile.NamedTemporaryFile(suffix='.docx', delete=False) as temp_file:
                     temp_file_path = temp_file.name
                     temp_file.write(content)
 
-                logger.info(f"文件已保存到临时位置: {temp_file_path}")
+                logger.info(f"Hinweis{temp_file_path}")
 
                 try:
-                    # 使用python-docx解析文档
-                    logger.info("开始解析文档...")
+                    # Kommentar
+                    logger.info("Hinweis")
                     doc = Document(temp_file_path)
-                    logger.info("文档解析成功")
+                    logger.info("DokumenteHinweis")
 
-                    # 提取所有段落的文本
+                    # Kommentar
                     text_content = []
                     for para in doc.paragraphs:
-                        if para.text.strip():  # 忽略空段落
+                        if para.text.strip():  # Hinweis
                             text_content.append(para.text)
 
-                    # 提取表格中的文本
+                    # Kommentar
                     for table in doc.tables:
                         for row in table.rows:
                             for cell in row.cells:
-                                if cell.text.strip():  # 忽略空单元格
+                                if cell.text.strip():  # Hinweis
                                     text_content.append(cell.text)
 
                     return "\n".join(text_content)
                 except Exception as doc_error:
-                    logger.debug(f"解析文档时出错: {str(doc_error)}")
-                    logger.debug(f"详细错误信息: {traceback.format_exc()}")
+                    logger.debug(f"Fehler bei der Dokumentanalyse: {str(doc_error)}")
+                    logger.debug(f"Detaillierte Fehlerinformationen: {traceback.format_exc()}")
 
-                    # 尝试使用备用方法
+                    # Kommentar
                     try:
-                        logger.info("尝试使用备用方法解析文档...")
-                        # 检查文件是否为有效的ZIP文件（DOCX实际上是ZIP格式）
+                        logger.info("Hinweis")
+                        # Kommentar
                         import zipfile
                         if zipfile.is_zipfile(temp_file_path):
                             with zipfile.ZipFile(temp_file_path) as zip_ref:
-                                # 打印ZIP文件内容列表，帮助调试
-                                logger.info(f"ZIP文件内容: {zip_ref.namelist()}")
+                                # Kommentar
+                                logger.info(f"ZIP-Inhalt: {zip_ref.namelist()}")
 
-                                # 尝试提取document.xml
+                                # Kommentar
                                 if 'word/document.xml' in zip_ref.namelist():
                                     import xml.etree.ElementTree as ET
                                     with zip_ref.open('word/document.xml') as xml_file:
                                         tree = ET.parse(xml_file)
                                         root = tree.getroot()
-                                        # 查找所有文本节点
+                                        # Kommentar
                                         ns = {
                                             'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
                                         }
@@ -111,24 +111,24 @@ async def extract_word_content_from_url(url: str) -> Optional[str]:
                                                 text_parts.append(t.text)
                                         return "\n".join(text_parts)
                         else:
-                            logger.debug("文件不是有效的ZIP/DOCX格式")
+                            logger.debug("Hinweis")
                             return None
                     except Exception as backup_error:
-                        logger.error(f"备用解析方法失败: {str(backup_error)}")
+                        logger.error(f"Fehler bei der Verarbeitung{str(backup_error)}")
                         return None
                 finally:
-                    # 清理临时文件
+                    # Kommentar
                     if temp_file_path and os.path.exists(temp_file_path):
                         os.remove(temp_file_path)
-                        logger.info(f"临时文件已删除: {temp_file_path}")
+                        logger.info(f"Hinweisöschen: {temp_file_path}")
 
     except Exception as e:
-        logger.error(f"处理Word文档时出错: {str(e)}")
-        logger.error(f"详细错误信息: {traceback.format_exc()}")
-        # 确保临时文件被删除
+        logger.error(f"Fehler bei der Word-Verarbeitung: {str(e)}")
+        logger.error(f"Detaillierte Fehlerinformationen: {traceback.format_exc()}")
+        # Kommentaröschen
         if temp_file_path and os.path.exists(temp_file_path):
             os.remove(temp_file_path)
-            logger.info(f"临时文件已删除: {temp_file_path}")
+            logger.info(f"Hinweisöschen: {temp_file_path}")
         return None
 
 
@@ -136,55 +136,55 @@ async def extract_word_content_from_url(url: str) -> Optional[str]:
 
 async def extract_word_content_from_file(file_path: str) -> Optional[str]:
     """
-    从本地Word文档文件提取文本内容
+    Hinweis
 
     Args:
-        file_path: 本地Word文档文件的路径
+        file_path: Hinweis
 
     Returns:
-        str: 提取的文本内容，如果出错则返回None
+        str: Hinweis
     """
     try:
-        logger.info(f"开始解析本地文档: {file_path}")
-        # 使用python-docx解析文档
+        logger.info(f"Hinweis{file_path}")
+        # Kommentar
         doc = Document(file_path)
-        logger.info("文档解析成功")
+        logger.info("DokumenteHinweis")
 
-        # 提取所有段落的文本
+        # Kommentar
         text_content = []
         for para in doc.paragraphs:
-            if para.text.strip():  # 忽略空段落
+            if para.text.strip():  # Hinweis
                 text_content.append(para.text)
 
-        # 提取表格中的文本
+        # Kommentar
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
-                    if cell.text.strip():  # 忽略空单元格
+                    if cell.text.strip():  # Hinweis
                         text_content.append(cell.text)
 
         return "\n".join(text_content)
     except Exception as doc_error:
-        logger.debug(f"解析文档时出错: {str(doc_error)}")
-        logger.debug(f"详细错误信息: {traceback.format_exc()}")
+        logger.debug(f"Fehler bei der Dokumentanalyse: {str(doc_error)}")
+        logger.debug(f"Detaillierte Fehlerinformationen: {traceback.format_exc()}")
 
-        # 尝试使用备用方法
+        # Kommentar
         try:
-            logger.info("尝试使用备用方法解析文档...")
-            # 检查文件是否为有效的ZIP文件（DOCX实际上是ZIP格式）
+            logger.info("Hinweis")
+            # Kommentar
             import zipfile
             if zipfile.is_zipfile(file_path):
                 with zipfile.ZipFile(file_path) as zip_ref:
-                    # 打印ZIP文件内容列表，帮助调试
-                    logger.info(f"ZIP文件内容: {zip_ref.namelist()}")
+                    # Kommentar
+                    logger.info(f"ZIP-Inhalt: {zip_ref.namelist()}")
 
-                    # 尝试提取document.xml
+                    # Kommentar
                     if 'word/document.xml' in zip_ref.namelist():
                         import xml.etree.ElementTree as ET
                         with zip_ref.open('word/document.xml') as xml_file:
                             tree = ET.parse(xml_file)
                             root = tree.getroot()
-                            # 查找所有文本节点
+                            # Kommentar
                             ns = {
                                 'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
                             }
@@ -194,107 +194,107 @@ async def extract_word_content_from_file(file_path: str) -> Optional[str]:
                                     text_parts.append(t.text)
                             return "\n".join(text_parts)
             else:
-                logger.debug("文件不是有效的ZIP/DOCX格式")
+                logger.debug("Hinweis")
                 return None
         except Exception as backup_error:
-            logger.error(f"备用解析方法失败: {str(backup_error)}")
+            logger.error(f"Fehler bei der Verarbeitung{str(backup_error)}")
             return None
 
     except Exception as e:
-        logger.error(f"处理Word文档时出错: {str(e)}")
-        logger.error(f"详细错误信息: {traceback.format_exc()}")
+        logger.error(f"Fehler bei der Word-Verarbeitung: {str(e)}")
+        logger.error(f"Detaillierte Fehlerinformationen: {traceback.format_exc()}")
         return None
 
 
 async def extract_word_content_from_bytes(file_content: bytes) -> Optional[str]:
     """
-    从Word文档的字节流中提取文本内容，采用多重后备策略确保最大兼容性
+    Hinweis
 
     Args:
-        file_content: Word文档的字节内容
+        file_content: WordDokumenteHinweis
 
     Returns:
-        str: 提取的文本内容，如果所有方法都失败则返回错误信息
+        str: Hinweis
     """
     
-    # 验证文件内容
+    # Kommentar
     if not file_content or len(file_content) == 0:
-        logger.error("文件内容为空或无效")
-        return "错误：文件内容为空或无效"
+        logger.error("Fehler bei der Verarbeitung")
+        return "Fehler: Hinweis"
     
-    logger.info(f"开始处理Word文档，文件大小: {len(file_content)} 字节")
+    logger.info(f"Hinweisöße: {len(file_content)} Hinweis")
     
-    # 策略1: 使用python-docx库
+    # Kommentar
     try:
-        logger.info("策略1: 使用python-docx解析...")
+        logger.info("Hinweis")
         file_like_object = io.BytesIO(file_content)
         
         doc = Document(file_like_object)
-        logger.info("python-docx解析成功")
+        logger.info("python-docxHinweis")
 
-        # 提取所有段落的文本
+        # Kommentar
         text_content = []
         
-        # 提取段落文本
+        # Kommentar
         for para in doc.paragraphs:
             if para.text and para.text.strip():
                 text_content.append(para.text.strip())
 
-        # 提取表格中的文本
+        # Kommentar
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
                     if cell.text and cell.text.strip():
                         text_content.append(cell.text.strip())
         
-        # 提取页眉页脚文本
+        # Kommentar
         for section in doc.sections:
             if section.header:
                 for para in section.header.paragraphs:
                     if para.text and para.text.strip():
-                        text_content.append(f"[页眉] {para.text.strip()}")
+                        text_content.append(f"[Hinweis{para.text.strip()}")
             if section.footer:
                 for para in section.footer.paragraphs:
                     if para.text and para.text.strip():
-                        text_content.append(f"[页脚] {para.text.strip()}")
+                        text_content.append(f"[Hinweis{para.text.strip()}")
 
         if text_content:
             result = "\n".join(text_content)
-            logger.info(f"python-docx成功提取文本，长度: {len(result)} 字符")
+            logger.info(f"python-docxHinweis{len(result)} Hinweis")
             return result
         else:
-            logger.warning("python-docx解析成功但未提取到任何文本内容")
+            logger.warning("python-docxWarnhinweis")
     
     except Exception as e:
-        logger.warning(f"python-docx解析失败: {str(e)}")
+        logger.warning(f"python-docxWarnhinweis{str(e)}")
     
-    # 策略2: 使用改进的XML解析方法
+    # Kommentar
     try:
-        logger.info("策略2: 使用改进的XML解析方法...")
+        logger.info("Hinweis")
         import zipfile
         import xml.etree.ElementTree as ET
         
         file_like_object = io.BytesIO(file_content)
         
         if not zipfile.is_zipfile(file_like_object):
-            logger.error("文件不是有效的ZIP格式（.docx应该是ZIP格式）")
-            return "错误：文件格式无效，.docx文件应该是ZIP格式"
+            logger.error("Fehler bei der Verarbeitung")
+            return "Fehler: Hinweis"
         
         with zipfile.ZipFile(file_like_object) as zf:
             xml_parts = []
             
-            # 首先尝试主要的文档内容
+            # Kommentar
             if 'word/document.xml' in zf.namelist():
                 try:
                     with zf.open('word/document.xml') as xml_file:
                         content = xml_file.read()
-                        # 处理可能的编码问题
+                        # Kommentar
                         if content.startswith(b'\xef\xbb\xbf'):  # BOM
                             content = content[3:]
                         
                         tree = ET.fromstring(content)
                         
-                        # 使用多个命名空间尝试
+                        # Kommentar
                         namespaces = [
                             {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'},
                             {'w': 'http://schemas.microsoft.com/office/word/2003/wordml'}
@@ -302,12 +302,12 @@ async def extract_word_content_from_bytes(file_content: bytes) -> Optional[str]:
                         
                         for ns in namespaces:
                             try:
-                                # 提取文本节点
+                                # Kommentar
                                 for t in tree.iterfind('.//w:t', ns):
                                     if t.text and t.text.strip():
                                         xml_parts.append(t.text.strip())
                                         
-                                # 提取表格文本
+                                # Kommentar
                                 for cell in tree.iterfind('.//w:tc', ns):
                                     cell_texts = []
                                     for t in cell.iterfind('.//w:t', ns):
@@ -317,16 +317,16 @@ async def extract_word_content_from_bytes(file_content: bytes) -> Optional[str]:
                                         xml_parts.append(' '.join(cell_texts))
                                         
                                 if xml_parts:
-                                    break  # 如果找到了文本，就不尝试其他命名空间
+                                    break  # Hinweis
                             except Exception:
                                 continue
                                 
                 except ET.ParseError as pe:
-                    logger.warning(f"XML解析错误: {pe}")
+                    logger.warning(f"XMLWarnhinweis{pe}")
                 except Exception as ee:
-                    logger.warning(f"处理document.xml时出错: {ee}")
+                    logger.warning(f"Warnhinweis{ee}")
             
-            # 如果主文档没有内容，尝试其他XML文件
+            # Kommentar
             if not xml_parts:
                 for filename in zf.namelist():
                     if filename.startswith('word/') and filename.endswith('.xml') and filename != 'word/document.xml':
@@ -334,7 +334,7 @@ async def extract_word_content_from_bytes(file_content: bytes) -> Optional[str]:
                             with zf.open(filename) as xml_file:
                                 tree = ET.parse(xml_file)
                                 root = tree.getroot()
-                                # 提取任何包含文本的节点
+                                # Kommentar
                                 for elem in root.iter():
                                     if elem.text and elem.text.strip() and len(elem.text.strip()) > 1:
                                         xml_parts.append(elem.text.strip())
@@ -342,30 +342,30 @@ async def extract_word_content_from_bytes(file_content: bytes) -> Optional[str]:
                             continue
             
             if xml_parts:
-                # 去重并过滤
-                unique_parts = list(dict.fromkeys(xml_parts))  # 保持顺序的去重
-                filtered_parts = [part for part in unique_parts if len(part) > 1]  # 过滤单字符
+                # Kommentar
+                unique_parts = list(dict.fromkeys(xml_parts))  # Hinweis
+                filtered_parts = [part for part in unique_parts if len(part) > 1]  # Hinweis
                 
                 if filtered_parts:
                     result = "\n".join(filtered_parts)
-                    logger.info(f"XML方法成功提取文本，长度: {len(result)} 字符")
+                    logger.info(f"XMLHinweis{len(result)} Hinweis")
                     return result
     
     except Exception as e:
-        logger.error(f"XML解析方法失败: {str(e)}")
-        logger.error(f"详细错误: {traceback.format_exc()}")
+        logger.error(f"XMLFehler bei der Verarbeitung{str(e)}")
+        logger.error(f"Fehler bei der Verarbeitung{traceback.format_exc()}")
     
-    # 策略3: 使用docx2txt库（如果可用）
+    # Kommentar
     if DOCX2TXT_AVAILABLE:
         try:
-            logger.info("策略3: 使用docx2txt库...")
+            logger.info("Hinweis")
             with tempfile.NamedTemporaryFile(suffix='.docx', delete=False) as temp_file:
                 temp_file.write(file_content)
                 temp_file.flush()
                 
                 text_content = docx2txt.process(temp_file.name)
                 
-                # 清理临时文件
+                # Kommentar
                 try:
                     os.unlink(temp_file.name)
                 except:
@@ -373,29 +373,29 @@ async def extract_word_content_from_bytes(file_content: bytes) -> Optional[str]:
                 
                 if text_content and text_content.strip():
                     result = text_content.strip()
-                    logger.info(f"docx2txt成功提取文本，长度: {len(result)} 字符")
+                    logger.info(f"docx2txtHinweis{len(result)} Hinweis")
                     return result
                 else:
-                    logger.warning("docx2txt提取的内容为空")
+                    logger.warning("docx2txtWarnhinweis")
         
         except Exception as e:
-            logger.warning(f"docx2txt处理失败: {str(e)}")
+            logger.warning(f"docx2txtVerarbeitung fehlgeschlagen: {str(e)}")
     
-    # 策略4: 尝试原始ZIP内容提取（最后的尝试）
+    # Kommentar
     try:
-        logger.info("策略4: 尝试原始内容提取...")
+        logger.info("Hinweis")
         file_like_object = io.BytesIO(file_content)
         
         if zipfile.is_zipfile(file_like_object):
             with zipfile.ZipFile(file_like_object) as zf:
-                # 尝试读取所有文本文件
+                # Kommentar
                 text_parts = []
                 for filename in zf.namelist():
                     if any(filename.endswith(ext) for ext in ['.xml', '.rels']):
                         try:
                             with zf.open(filename) as f:
                                 content = f.read()
-                                # 尝试解码为文本
+                                # Kommentar
                                 try:
                                     text_content = content.decode('utf-8')
                                 except UnicodeDecodeError:
@@ -404,9 +404,9 @@ async def extract_word_content_from_bytes(file_content: bytes) -> Optional[str]:
                                     except UnicodeDecodeError:
                                         continue
                                 
-                                # 使用正则表达式提取可能的文本内容
+                                # Kommentar
                                 import re
-                                # 查找XML文本节点内容
+                                # Kommentar
                                 text_matches = re.findall(r'>([^<]{2,})<', text_content)
                                 for match in text_matches:
                                     cleaned = match.strip()
@@ -416,33 +416,33 @@ async def extract_word_content_from_bytes(file_content: bytes) -> Optional[str]:
                             continue
                 
                 if text_parts:
-                    # 去重并排序
+                    # Kommentar
                     unique_parts = list(set(text_parts))
                     result = "\n".join(unique_parts)
-                    logger.info(f"原始内容提取成功，长度: {len(result)} 字符")
+                    logger.info(f"Hinweis{len(result)} Hinweis")
                     return result
     
     except Exception as e:
-        logger.error(f"原始内容提取失败: {str(e)}")
+        logger.error(f"Fehler bei der Verarbeitung{str(e)}")
     
-    # 所有策略都失败了
-    error_msg = "无法从Word文档中提取文本内容。可能的原因：\n1. 文件已损坏\n2. 文件格式不受支持\n3. 文件受密码保护\n4. 文件内容为纯图片\n\n建议：请尝试用Microsoft Word打开并重新保存该文件，或转换为PDF格式后重试。"
-    logger.error("所有文本提取策略均失败")
+    # Kommentar
+    error_msg = "Fehler bei der Verarbeitung\n1. Fehler bei der Verarbeitung\n2. Fehler bei der Verarbeitung\n3. Fehler bei der Verarbeitung\n4. Fehler bei der Verarbeitung\n\nFehler bei der Verarbeitung"
+    logger.error("Fehler bei der Verarbeitung")
     return error_msg
     
-# 使用示例
+# Kommentar
 # async def main():
 #     url = "https://x/img/2025/05/07/14/6e/6e811b83-8f22-43d2-894b-8fc236ff971f.docx"
-#     print(f"开始处理URL: {url}")
+#     print(f"Kommentar{url}")
 #     content = await extract_word_content_from_url(url)
 #     if content:
-#         print("提取的内容:")
+#         print("Kommentar")
 #         print(content)
 #     else:
-#         print("无法提取内容")
+#         print("Kommentar")
 
 
-# # 如果直接运行此文件
+# # Kommentar
 # if __name__ == "__main__":
 #     import asyncio
 

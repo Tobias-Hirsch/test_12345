@@ -1,17 +1,17 @@
-# `services/msad_ldap.py` - MS AD/LDAP 集成服务
+# `services/msad_ldap.py` - MS AD/LDAP Kommentar
 
-本文档描述了 `backend/app/services/msad_ldap.py` 文件，该文件包含了与 Microsoft Active Directory (MS AD) 或通用 LDAP 服务器进行用户认证和信息同步的业务逻辑。
+Hinweis`backend/app/services/msad_ldap.py` Hinweis
 
-## 功能描述
-*   **LDAP 连接**: 建立与 LDAP 服务器的安全连接。
-*   **用户认证**: 通过 LDAP 绑定（bind）操作验证用户凭据。
-*   **用户信息查询**: 从 LDAP 目录中查询用户属性（如邮箱、组信息）。
-*   **用户同步**: 可能包含将 LDAP 用户信息同步到本地数据库的功能。
+## Kommentar
+*   **LDAP Kommentar**: Kommentar
+*   **BenutzerKommentar**: Kommentar
+*   **BenutzerKommentar**: Kommentar
+*   **BenutzerKommentar**: Kommentar
 
-## 逻辑实现
-该模块通常会使用 `ldap3` 库与 LDAP 服务器进行交互。
+## Kommentar
+Hinweis`ldap3` Hinweis
 
-例如，一个基本的 LDAP 认证和用户查询示例：
+Hinweis
 ```python
 from ldap3 import Server, Connection, ALL, SUBTREE
 from backend.app.core.config import settings
@@ -39,7 +39,7 @@ def get_ldap_user_info(username: str) -> Optional[dict]:
             search_base=settings.LDAP_BASE_DN,
             search_filter=f'(uid={username})',
             search_scope=SUBTREE,
-            attributes=['mail', 'cn', 'memberOf'] # 根据需要获取的属性
+            attributes=['mail', 'cn', 'memberOf'] # Hinweis
         )
         if conn.entries:
             user_entry = conn.entries[0]
@@ -54,5 +54,5 @@ def get_ldap_user_info(username: str) -> Optional[dict]:
     return None
 ```
 
-## 路径
+## Kommentar
 `/backend/app/services/msad_ldap.py`

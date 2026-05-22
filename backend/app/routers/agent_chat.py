@@ -22,6 +22,7 @@ from app.models.database import get_db
 from app.schemas import schemas
 from app.services import auth
 from app.services.rag_permission_service import RagPermissionService
+from app.core.redis_client import get_redis_client
 from app.utils.stream_processors import sse_stream_formatter # Import the new formatter
 
 router = APIRouter()
@@ -61,7 +62,8 @@ async def agent_chat_endpoint(
     search_online_active: Optional[str] = Form(None),
     files: Optional[Union[UploadFile, List[UploadFile]]] = File(None),
     current_user: schemas.User = Depends(auth.get_current_active_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    redis_client = Depends(get_redis_client)
 ):
     """
     Endpoint for interacting with the multi-agent system.
@@ -92,7 +94,7 @@ async def agent_chat_endpoint(
     logger.info(f"Passing {len(processed_files_for_agents)} processed files to context.")
 
     # Get retrievable RAG IDs based on user permissions
-    permission_service = RagPermissionService(db)
+    permission_service = RagPermissionService(db, redis_client)
     retrievable_rag_ids = permission_service.get_retrievable_rag_ids(current_user)
     logger.info(f"User '{current_user.username}' has access to RAG IDs: {retrievable_rag_ids}")
 

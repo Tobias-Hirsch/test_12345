@@ -1,7 +1,7 @@
 {
   "name": "rosti-docs",
   "version": "1.0.0",
-  "description": "Rosti 产品文档",
+  "description": "Rosti Hinweis",
   "main": "index.js",
   "type": "module",
   "scripts": {

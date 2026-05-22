@@ -98,13 +98,15 @@ class OrchestratorAgent(BaseAgent):
                 thoughts.append("RAG search active. Delegating to Information Retrieval Agent.")
                 yield clean_chunk({"thoughts": thoughts, "status": "processing"})
                 rag_context = {
-                    "query_text": task, # Use the user's task as the query
+                    "query": task, # Use the user's task as the query
                     "db_session": db_session,
                     "current_user": current_user,
+                    "retrievable_rag_ids": context.get("retrievable_rag_ids", []),
+                    "display_thoughts": context.get("display_thoughts", False),
                 }
                 rag_result = await rag_agent.process("query_rag", rag_context)
                 thoughts.extend(rag_result.get("thoughts", []))
-                reasoning_context["rag_results"] = rag_result.get("output", {}).get("results", [])
+                reasoning_context["rag_results"] = rag_result.get("output", {})
                 yield clean_chunk({"thoughts": thoughts, "status": "processing", "agent_output": rag_result.get("output", {}), "agent_name": "Information Retrieval Agent"})
             else:
                 thoughts.append("RAG Agent not registered, skipping RAG search.")

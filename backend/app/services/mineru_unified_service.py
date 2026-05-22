@@ -1,17 +1,17 @@
 """
-统一MinerU处理器服务
-整合所有MinerU相关处理策略，提供统一接口
+Hinweis
+Hinweis
 
-主要特性：
-1. 智能策略选择（SGLang、VLM、Pipeline、Fallback）
-2. 统一错误处理和重试机制
-3. 性能监控和日志记录
-4. 配置验证和环境适应
-5. 向后兼容现有API
+Hinweis
+1. Hinweis
+2. Hinweis
+3. Hinweis
+4. Hinweis
+5. Hinweis
 
-作者: Assistant
-日期: 2025-01-26
-版本: 1.0
+Hinweis
+Hinweis
+Hinweis
 """
 
 import logging
@@ -28,23 +28,23 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-# 尝试导入MinerU组件
+# Kommentar
 try:
     from mineru.cli.common import convert_pdf_bytes_to_bytes_by_pypdfium2
     PDF_PREPROCESSING_AVAILABLE = True
-    logger.info("PDF预处理功能可用 (PyPDFium2)")
+    logger.info("PDFHinweis")
 except ImportError as e:
-    logger.warning(f"PDF预处理功能不可用: {e}")
+    logger.warning(f"PDFWarnhinweis{e}")
     PDF_PREPROCESSING_AVAILABLE = False
     
     def convert_pdf_bytes_to_bytes_by_pypdfium2(pdf_bytes: bytes) -> bytes:
-        """降级方案：直接返回原始字节"""
-        logger.debug("使用降级PDF预处理方案")
+        """Hinweis"""
+        logger.debug("Hinweis")
         return pdf_bytes
 
 
 class ProcessingStrategy:
-    """处理策略基类"""
+    """Hinweis"""
     
     def __init__(self, name: str):
         self.name = name
@@ -53,30 +53,30 @@ class ProcessingStrategy:
         self.total_processing_time = 0.0
     
     async def process(self, file_bytes: bytes, filename: str) -> Optional[Dict[str, Any]]:
-        """处理文档的抽象方法"""
-        raise NotImplementedError("子类必须实现process方法")
+        """Hinweis"""
+        raise NotImplementedError("Fehler bei der Verarbeitung")
     
     def get_success_rate(self) -> float:
-        """计算成功率"""
+        """Hinweis"""
         total = self.success_count + self.failure_count
         return self.success_count / total if total > 0 else 0.0
     
     def get_average_processing_time(self) -> float:
-        """计算平均处理时间"""
+        """Hinweis"""
         return self.total_processing_time / self.success_count if self.success_count > 0 else 0.0
     
     def record_success(self, processing_time: float):
-        """记录成功处理"""
+        """Hinweis"""
         self.success_count += 1
         self.total_processing_time += processing_time
     
     def record_failure(self):
-        """记录失败处理"""
+        """Hinweis"""
         self.failure_count += 1
 
 
 class SGLangStrategy(ProcessingStrategy):
-    """SGLang远程服务处理策略"""
+    """SGLangHinweis"""
     
     def __init__(self):
         super().__init__("sglang")
@@ -91,21 +91,21 @@ class SGLangStrategy(ProcessingStrategy):
             self.base_url = None
     
     async def process(self, file_bytes: bytes, filename: str) -> Optional[Dict[str, Any]]:
-        """SGLang远程处理"""
+        """SGLangHinweis"""
         if not self.base_url:
-            logger.error("SGLang服务器URL未配置")
+            logger.error("SGLangFehler bei der Verarbeitung")
             return None
         
         start_time = time.time()
         
         try:
-            # 检查服务器健康状态
+            # Kommentar
             if not await self._check_server_health():
-                logger.error("SGLang服务器不可用")
+                logger.error("SGLangFehler bei der Verarbeitung")
                 self.record_failure()
                 return None
             
-            # 准备请求数据
+            # Kommentar
             pdf_b64 = base64.b64encode(file_bytes).decode('utf-8')
             request_data = {
                 "file_data": pdf_b64,
@@ -120,7 +120,7 @@ class SGLangStrategy(ProcessingStrategy):
                 }
             }
             
-            # 执行请求
+            # führt ausKommentar
             async with self._create_session() as session:
                 async with session.post(f"{self.base_url}/api/v1/parse_pdf", json=request_data) as response:
                     if response.status == 200:
@@ -128,21 +128,21 @@ class SGLangStrategy(ProcessingStrategy):
                         processing_time = time.time() - start_time
                         self.record_success(processing_time)
                         
-                        logger.info(f"SGLang处理成功: {filename} (耗时: {processing_time:.2f}s)")
+                        logger.info(f"SGLangVerarbeitung erfolgreich: {filename} (Dauer: {processing_time:.2f}s)")
                         return self._standardize_result(result, filename)
                     else:
                         error_text = await response.text()
-                        logger.error(f"SGLang处理失败 {response.status}: {error_text[:200]}")
+                        logger.error(f"SGLangFehler bei der Verarbeitung{response.status}: {error_text[:200]}")
                         self.record_failure()
                         return None
         
         except Exception as e:
-            logger.error(f"SGLang处理异常: {filename} - {e}")
+            logger.error(f"SGLangAusnahme bei Verarbeitung: {filename} - {e}")
             self.record_failure()
             return None
     
     def _create_session(self) -> aiohttp.ClientSession:
-        """创建HTTP会话"""
+        """Hinweis"""
         timeout = aiohttp.ClientTimeout(total=self.timeout_seconds)
         connector = aiohttp.TCPConnector(
             limit=10,
@@ -164,7 +164,7 @@ class SGLangStrategy(ProcessingStrategy):
         )
     
     async def _check_server_health(self) -> bool:
-        """检查服务器健康状态"""
+        """Hinweis"""
         health_endpoints = ["/health", "/api/health", "/api/v1/health", "/status", "/"]
         
         try:
@@ -173,25 +173,25 @@ class SGLangStrategy(ProcessingStrategy):
                     try:
                         async with session.get(f"{self.base_url}{endpoint}", timeout=aiohttp.ClientTimeout(total=10)) as response:
                             if response.status == 200:
-                                logger.debug(f"SGLang服务器健康检查成功: {endpoint}")
+                                logger.debug(f"SGLangServer-Healthcheck erfolgreich: {endpoint}")
                                 return True
                     except:
                         continue
         except Exception as e:
-            logger.error(f"SGLang服务器健康检查失败: {e}")
+            logger.error(f"SGLangServer-Healthcheck fehlgeschlagen: {e}")
         
         return False
     
     def _standardize_result(self, raw_result: Any, filename: str) -> Dict[str, Any]:
-        """标准化结果格式"""
+        """Hinweis"""
         if not raw_result:
             return {"result": []}
         
-        # 如果已经是标准格式
+        # Kommentar
         if isinstance(raw_result, dict) and "result" in raw_result:
             return raw_result
         
-        # 提取内容列表
+        # Kommentar
         content_list = []
         if isinstance(raw_result, list):
             content_list = raw_result
@@ -206,46 +206,46 @@ class SGLangStrategy(ProcessingStrategy):
 
 
 class VLMStrategy(ProcessingStrategy):
-    """本地VLM处理策略"""
+    """Hinweis"""
     
     def __init__(self):
         super().__init__("vlm")
-        # VLM处理逻辑（如果需要本地VLM支持）
+        # VLMKommentar
     
     async def process(self, file_bytes: bytes, filename: str) -> Optional[Dict[str, Any]]:
-        """本地VLM处理（占位符实现）"""
-        logger.info(f"VLM处理策略尚未完全实现: {filename}")
+        """Hinweis"""
+        logger.info(f"VLMHinweis{filename}")
         self.record_failure()
         return None
 
 
 class PipelineStrategy(ProcessingStrategy):
-    """Pipeline处理策略"""
+    """PipelineHinweis"""
     
     def __init__(self):
         super().__init__("pipeline")
     
     async def process(self, file_bytes: bytes, filename: str) -> Optional[Dict[str, Any]]:
-        """Pipeline处理（占位符实现）"""
-        logger.info(f"Pipeline处理策略尚未完全实现: {filename}")
+        """PipelineHinweis"""
+        logger.info(f"PipelineHinweis{filename}")
         self.record_failure()
         return None
 
 
 class FallbackStrategy(ProcessingStrategy):
-    """降级处理策略 - PyMuPDF"""
+    """Hinweis"""
     
     def __init__(self):
         super().__init__("fallback")
     
     async def process(self, file_bytes: bytes, filename: str) -> Optional[Dict[str, Any]]:
-        """PyMuPDF降级处理"""
+        """PyMuPDFHinweis"""
         try:
             import fitz  # PyMuPDF
             
             start_time = time.time()
             
-            # 使用PyMuPDF提取文本
+            # Kommentar
             doc = fitz.open(stream=file_bytes, filetype="pdf")
             full_text = ""
             
@@ -253,7 +253,7 @@ class FallbackStrategy(ProcessingStrategy):
                 page = doc.load_page(page_num)
                 page_text = page.get_text()
                 if page_text.strip():
-                    full_text += f"\n\n--- 第{page_num + 1}页 ---\n{page_text}"
+                    full_text += f"\n\n--- Hinweis{page_num + 1}Hinweis\n{page_text}"
             
             doc.close()
             
@@ -261,7 +261,7 @@ class FallbackStrategy(ProcessingStrategy):
                 processing_time = time.time() - start_time
                 self.record_success(processing_time)
                 
-                # 构造标准结果格式
+                # Kommentar
                 result = {
                     "result": [
                         {
@@ -272,34 +272,34 @@ class FallbackStrategy(ProcessingStrategy):
                     ]
                 }
                 
-                logger.info(f"Fallback处理成功: {filename} (耗时: {processing_time:.2f}s)")
+                logger.info(f"FallbackVerarbeitung erfolgreich: {filename} (Dauer: {processing_time:.2f}s)")
                 return result
             else:
-                logger.warning(f"Fallback处理未提取到文本: {filename}")
+                logger.warning(f"FallbackWarnhinweis{filename}")
                 self.record_failure()
                 return None
                 
         except Exception as e:
-            logger.error(f"Fallback处理失败: {filename} - {e}")
+            logger.error(f"FallbackVerarbeitung fehlgeschlagen: {filename} - {e}")
             self.record_failure()
             return None
 
 
 class MinerUConfig:
-    """MinerU配置管理类"""
+    """MinerUHinweis"""
     
     @classmethod
     def get_processing_strategy(cls) -> str:
-        """智能选择处理策略"""
-        # 强制模式检查
+        """Hinweis"""
+        # Kommentar
         if settings.MINERU_FORCE_MODE:
             return settings.MINERU_FORCE_MODE
         
-        # 基于环境和时间的智能选择
+        # Kommentar
         environment = settings.ENVIRONMENT.lower()
         current_hour = datetime.now().hour
         
-        # 解析夜间时间范围
+        # Kommentar
         night_hours = settings.MINERU_NIGHTTIME_HOURS.split("-")
         if len(night_hours) == 2:
             night_start = int(night_hours[0])
@@ -311,19 +311,19 @@ class MinerUConfig:
         else:
             is_nighttime = False
         
-        # 策略选择逻辑
+        # Kommentar
         if environment == "production" and is_nighttime:
-            return "sglang"  # 生产环境夜间使用远程SGLang
+            return "sglang"  # Hinweis
         elif environment == "production":
-            return "fallback"  # 生产环境白天使用降级方案
+            return "fallback"  # Hinweis
         elif environment == "development":
             return "sglang" if settings.MINERU_SGLANG_SERVER_URL else "fallback"
         else:
-            return "fallback"  # 默认降级方案
+            return "fallback"  # Hinweis
     
     @classmethod
     def validate_configuration(cls) -> Dict[str, bool]:
-        """验证配置项"""
+        """Hinweisäge"""
         validations = {
             "sglang_server_configured": bool(settings.MINERU_SGLANG_SERVER_URL),
             "environment_set": bool(settings.ENVIRONMENT),
@@ -335,7 +335,7 @@ class MinerUConfig:
     
     @classmethod
     def _validate_nighttime_hours(cls) -> bool:
-        """验证夜间时间配置"""
+        """Hinweis"""
         try:
             hours = settings.MINERU_NIGHTTIME_HOURS.split("-")
             if len(hours) != 2:
@@ -347,14 +347,14 @@ class MinerUConfig:
 
 
 class MinerUErrorHandler:
-    """MinerU错误处理类"""
+    """MinerUFehlerhinweis"""
     
     def __init__(self):
         self.error_counts = {}
         self.performance_metrics = {}
     
     async def with_retry(self, func, filename: str, max_retries: int = 3, *args, **kwargs):
-        """统一重试逻辑"""
+        """Hinweis"""
         last_exception = None
         
         for attempt in range(max_retries):
@@ -363,29 +363,29 @@ class MinerUErrorHandler:
                 if result:
                     return result
                 else:
-                    logger.warning(f"尝试 {attempt + 1}/{max_retries} 失败: {filename} (结果为空)")
+                    logger.warning(f"Warnhinweis{attempt + 1}/{max_retries} Warnhinweis{filename} (ErgebnisseWarnhinweis")
             except Exception as e:
                 last_exception = e
-                logger.warning(f"尝试 {attempt + 1}/{max_retries} 失败: {filename} - {e}")
+                logger.warning(f"Warnhinweis{attempt + 1}/{max_retries} Warnhinweis{filename} - {e}")
                 
                 if attempt < max_retries - 1:
-                    await asyncio.sleep(2 ** attempt)  # 指数退避
+                    await asyncio.sleep(2 ** attempt)  # Hinweis
         
-        # 记录最终失败
-        self._record_error(filename, last_exception or Exception("处理失败"))
+        # Kommentar
+        self._record_error(filename, last_exception or Exception("Fehler bei der Verarbeitung"))
         return None
     
     def _record_error(self, filename: str, error: Exception):
-        """记录错误信息"""
+        """Hinweis"""
         error_type = type(error).__name__
         if error_type not in self.error_counts:
             self.error_counts[error_type] = 0
         self.error_counts[error_type] += 1
         
-        logger.error(f"处理失败记录: {filename} - {error_type}: {error}")
+        logger.error(f"Fehler bei der Verarbeitung{filename} - {error_type}: {error}")
     
     def log_processing_metrics(self, filename: str, strategy: str, duration: float, success: bool):
-        """记录处理指标"""
+        """Hinweis"""
         if strategy not in self.performance_metrics:
             self.performance_metrics[strategy] = {
                 "success_count": 0,
@@ -408,12 +408,12 @@ class MinerUErrorHandler:
             "timestamp": datetime.now().isoformat()
         })
         
-        # 保留最近100个处理记录
+        # Kommentar
         if len(metrics["files_processed"]) > 100:
             metrics["files_processed"] = metrics["files_processed"][-100:]
     
     def get_performance_summary(self) -> Dict[str, Any]:
-        """获取性能摘要"""
+        """Hinweis"""
         summary = {}
         for strategy, metrics in self.performance_metrics.items():
             total = metrics["success_count"] + metrics["failure_count"]
@@ -429,10 +429,10 @@ class MinerUErrorHandler:
 
 
 class UnifiedMinerUProcessor:
-    """统一MinerU处理器"""
+    """Hinweis"""
     
     def __init__(self):
-        """初始化处理器"""
+        """Hinweis"""
         self.strategies = {
             'sglang': SGLangStrategy(),
             'vlm': VLMStrategy(),
@@ -443,99 +443,99 @@ class UnifiedMinerUProcessor:
         self.config = MinerUConfig()
         self.error_handler = MinerUErrorHandler()
         
-        # 验证配置
+        # Kommentar
         config_validation = self.config.validate_configuration()
-        logger.info(f"MinerU配置验证结果: {config_validation}")
+        logger.info(f"MinerUHinweis{config_validation}")
         
-        # 报告配置状态
+        # Kommentar
         self._report_configuration_status()
     
     def _report_configuration_status(self):
-        """报告配置状态"""
+        """Hinweis"""
         strategy = self.config.get_processing_strategy()
-        logger.info(f"UnifiedMinerUProcessor已初始化")
-        logger.info(f"选定处理策略: {strategy}")
-        logger.info(f"环境: {settings.ENVIRONMENT}")
-        logger.info(f"夜间时间: {settings.MINERU_NIGHTTIME_HOURS}")
+        logger.info(f"UnifiedMinerUProcessorHinweis")
+        logger.info(f"Hinweis{strategy}")
+        logger.info(f"Hinweis{settings.ENVIRONMENT}")
+        logger.info(f"Hinweis{settings.MINERU_NIGHTTIME_HOURS}")
         
         if strategy == "sglang" and settings.MINERU_SGLANG_SERVER_URL:
-            logger.info(f"SGLang服务器: {settings.MINERU_SGLANG_SERVER_URL}")
+            logger.info(f"SGLangHinweis{settings.MINERU_SGLANG_SERVER_URL}")
         elif strategy == "sglang":
-            logger.warning("选择了SGLang策略但未配置服务器URL，将自动降级")
+            logger.warning("Warnhinweis")
     
     async def process_document_bytes(self, file_bytes: bytes, filename: str, strategy: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """
-        统一文档处理入口
+        Hinweis
         
         Args:
-            file_bytes: 文件字节数据
-            filename: 文件名
-            strategy: 指定处理策略（可选，默认智能选择）
+            file_bytes: Dateibytes
+            filename: Dateiname
+            strategy: Hinweis
         
         Returns:
-            处理结果或None
+            Hinweis
         """
         if not file_bytes:
-            logger.error(f"文件数据为空: {filename}")
+            logger.error(f"Dateidaten sind leer: {filename}")
             return None
         
-        # 选择处理策略
+        # Kommentar
         selected_strategy = strategy or self.config.get_processing_strategy()
         
-        # PDF预处理
+        # PDFKommentar
         if filename.lower().endswith('.pdf') and PDF_PREPROCESSING_AVAILABLE:
             try:
-                logger.debug(f"应用PDF预处理: {filename}")
+                logger.debug(f"Hinweis{filename}")
                 file_bytes = convert_pdf_bytes_to_bytes_by_pypdfium2(file_bytes)
             except Exception as e:
-                logger.warning(f"PDF预处理失败，使用原始数据: {filename} - {e}")
+                logger.warning(f"PDFWarnhinweis{filename} - {e}")
         
         file_size_mb = len(file_bytes) / 1024 / 1024
-        logger.info(f"开始处理: {filename} ({file_size_mb:.2f} MB) - 策略: {selected_strategy}")
+        logger.info(f"Hinweis{filename} ({file_size_mb:.2f} MB) - Hinweis{selected_strategy}")
         
         start_time = time.time()
         
-        # 尝试主要策略
+        # Kommentar
         result = await self._try_strategy(selected_strategy, file_bytes, filename)
         
-        # 如果主要策略失败，尝试降级策略
+        # Kommentar
         if not result and selected_strategy != "fallback":
-            logger.warning(f"主策略 {selected_strategy} 失败，尝试降级策略")
+            logger.warning(f"Warnhinweis{selected_strategy} Warnhinweis")
             result = await self._try_strategy("fallback", file_bytes, filename)
         
-        # 记录处理指标
+        # Kommentar
         processing_time = time.time() - start_time
         success = result is not None
         self.error_handler.log_processing_metrics(filename, selected_strategy, processing_time, success)
         
         if result:
-            logger.info(f"处理成功: {filename} (耗时: {processing_time:.2f}s)")
+            logger.info(f"Verarbeitung erfolgreich: {filename} (Dauer: {processing_time:.2f}s)")
         else:
-            logger.error(f"所有策略都失败: {filename}")
+            logger.error(f"Fehler bei der Verarbeitung{filename}")
         
         return result
     
     async def _try_strategy(self, strategy_name: str, file_bytes: bytes, filename: str) -> Optional[Dict[str, Any]]:
-        """尝试指定策略"""
+        """Hinweis"""
         if strategy_name not in self.strategies:
-            logger.error(f"未知处理策略: {strategy_name}")
+            logger.error(f"Fehler bei der Verarbeitung{strategy_name}")
             return None
         
         strategy = self.strategies[strategy_name]
         
-        # 使用错误处理器进行重试
+        # Kommentar
         result = await self.error_handler.with_retry(
             strategy.process,
             filename,
-            max_retries=3,
-            file_bytes=file_bytes,
-            filename=filename
+            3,
+            file_bytes,
+            filename
         )
         
         return result
     
     def get_strategy_statistics(self) -> Dict[str, Dict[str, Any]]:
-        """获取策略统计信息"""
+        """Hinweis"""
         stats = {}
         for name, strategy in self.strategies.items():
             stats[name] = {
@@ -548,7 +548,7 @@ class UnifiedMinerUProcessor:
         return stats
     
     def get_performance_summary(self) -> Dict[str, Any]:
-        """获取性能摘要"""
+        """Hinweis"""
         return {
             "strategy_stats": self.get_strategy_statistics(),
             "error_handler_metrics": self.error_handler.get_performance_summary(),
@@ -556,11 +556,11 @@ class UnifiedMinerUProcessor:
         }
 
 
-# 全局处理器实例
+# Kommentar
 _unified_processor = None
 
 def get_unified_mineru_processor() -> UnifiedMinerUProcessor:
-    """获取统一MinerU处理器实例（单例模式）"""
+    """Hinweis"""
     global _unified_processor
     
     if _unified_processor is None:
@@ -569,13 +569,13 @@ def get_unified_mineru_processor() -> UnifiedMinerUProcessor:
     return _unified_processor
 
 
-# 向后兼容的工厂函数
+# Kommentar
 def get_mineru_processor():
-    """向后兼容：返回统一处理器"""
+    """Hinweis"""
     return get_unified_mineru_processor()
 
 
-# 导出接口
+# Kommentar
 __all__ = [
     "UnifiedMinerUProcessor",
     "get_unified_mineru_processor", 

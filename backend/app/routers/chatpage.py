@@ -5,7 +5,7 @@ from ..services.ollama_deepseek import get_deepseek_reply
 
 router = APIRouter()
 
-# 内存存储，生产环境请替换为数据库
+# Kommentar
 user_messages = {}
 
 class Message(BaseModel):
@@ -25,11 +25,11 @@ def get_messages(user_id: str = Path(...)):
 
 @router.post("/api/messages/{user_id}", response_model=MessageResponse)
 def post_message(user_id: str, req: MessageRequest):
-    # 记录用户消息
+    # Kommentar
     msg = Message(id=str(id(req)), text=req.text, sender='user')
     user_msgs = user_messages.setdefault(user_id, [])
     user_msgs.append(msg)
-    # 调用LLM
+    # Kommentar
     try:
         reply = get_deepseek_reply(req.text)
     except Exception as e:

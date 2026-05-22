@@ -100,7 +100,7 @@ export default defineComponent({
 
     const handleSend = () => {
       if (!inputText.value.trim()) return;
-      // 模拟AI回复
+      // Kommentar
       const answer = 'This is a mock answer.';
       history.value.push({
         id: nextId++,

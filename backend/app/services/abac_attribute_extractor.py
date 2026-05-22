@@ -52,7 +52,7 @@ class ABACAttributeExtractor:
 
     def get_action_attributes(self, action_type: str) -> Dict[str, Any]:
         """
-        从操作类型中提取操作属性。
+        Hinweis
         """
         return {"type": action_type}
 

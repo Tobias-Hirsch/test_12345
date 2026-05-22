@@ -1,17 +1,17 @@
-# `tools/inpymupdf.py` - PyMuPDF（Fitz）集成工具
+# `tools/inpymupdf.py` - PyMuPDF(Fitz)Kommentar
 
-本文档描述了 `backend/app/tools/inpymupdf.py` 文件，该文件可能包含了使用 PyMuPDF (Fitz) 库进行高级 PDF 处理的工具函数。
+Hinweis`backend/app/tools/inpymupdf.py` Hinweis
 
-## 功能描述
-*   **PDF 文本提取**: 高效地从 PDF 文档中提取文本内容。
-*   **PDF 结构分析**: 可能支持分析 PDF 的结构，如页面、段落、表格等。
-*   **图像提取**: 从 PDF 中提取图像。
-*   **PDF 渲染**: 可能支持将 PDF 页面渲染为图像。
+## Kommentar
+*   **PDF Kommentar**: HochKommentar
+*   **PDF Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **PDF Kommentar**: Kommentar
 
-## 逻辑实现
-该模块会直接使用 `fitz`（PyMuPDF 的导入名）库的功能。
+## Kommentar
+Hinweis`fitz`(PyMuPDF Hinweis
 
-例如，一个使用 PyMuPDF 进行 PDF 文本提取的示例：
+Hinweis
 ```python
 import fitz # PyMuPDF
 import logging
@@ -37,7 +37,7 @@ def extract_text_from_pdf_pymupdf(pdf_path: str) -> str:
         raise
     return "\n\n".join(text_content)
 
-# 更多高级功能，如提取图片、渲染页面等
+# Kommentar
 # def extract_images_from_pdf(pdf_path: str, output_dir: str):
 #     doc = fitz.open(pdf_path)
 #     for i in range(len(doc)):
@@ -52,5 +52,5 @@ def extract_text_from_pdf_pymupdf(pdf_path: str) -> str:
 #             pix = None
 ```
 
-## 路径
+## Kommentar
 `/backend/app/tools/inpymupdf.py`

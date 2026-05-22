@@ -1,9 +1,9 @@
-# 技术说明概述
+# Kommentar
 
-本节提供 Rosti 产品的技术架构、核心组件和开发环境的详细说明。
+Hinweis
 
-## 目录
+## Kommentar
 
-*   [系统架构](architecture.md)
+*   [Kommentar
 
-请点击左侧导航栏或上方链接查看具体内容。
+Hinweis

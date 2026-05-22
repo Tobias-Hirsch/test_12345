@@ -21,7 +21,7 @@ from app.models.database import User, RagData
 from app.schemas import chat_schemas
 from app.services import chat_data_service, ollama_service
 from app.services.conversation_service import ConversationService
-from app.rag_knowledge.generic_knowledge import query_rag_system
+from app.rag_knowledge.generic_knowledge import retrieve_rag_context
 from app.tools.search_online_tools import duckduckgosearch
 from app.tools.document_processor import summarize_long_text
 from app.tools.deal_document import extract_text_from_file_content
@@ -32,7 +32,7 @@ from app.modules.minio_module import get_document_from_minio, get_document_bytes
 logger = logging.getLogger(__name__)
 
 # System prompt for direct AI chat mode, encouraging detailed responses.
-DIRECT_CHAT_SYSTEM_PROMPT = 'You are a helpful assistant. You always answer in a comprehensive manner and provide detailed explanations, your response always in not less than 1000 words.'
+DIRECT_CHAT_SYSTEM_PROMPT = 'Du bist ein hilfreicher Assistent. Antworte umfassend, strukturiert und mit nachvollziehbaren Erklärungen. Deine Antwort soll grundsätzlich ausführlich sein und, sofern die Anfrage es zulässt, mindestens 1000 Wörter umfassen.'
 
 class ChatResponseService:
     def __init__(self, db: Session, redis_client, conversation_service: ConversationService):
@@ -149,6 +149,8 @@ class ChatResponseService:
         
         # DEBUG: Log context information
         logger.info(f"=== FINAL CONTEXT DEBUG ===")
+        logger.info(f"rag_context length: {len(rag_context)}")
+        logger.info(f"rag_context preview: {rag_context[:300] if rag_context else 'Empty'}...")
         logger.info(f"attachment_context length: {len(attachment_context)}")
         logger.info(f"attachment_context preview: {attachment_context[:300] if attachment_context else 'Empty'}...")
         logger.info(f"=== END CONTEXT DEBUG ===")
@@ -160,19 +162,21 @@ class ChatResponseService:
         source_documents = self._deduplicate_sources(rag_sources + online_sources)
 
         # --- Dual-mode prompt logic ---
-        # Create a version of the query for the LLM, which may include commands.
+        # Keep the user's visible question clean. Backend options decide whether
+        # thought output is shown; model-control tokens should not leak into the
+        # semantic prompt, especially for file/RAG questions.
         final_user_query_for_llm = message_create.content
-        if not message_create.show_think_process:
-            if "/no_think" not in final_user_query_for_llm:
-                final_user_query_for_llm += " /no_think"
-        
-        # The RAG query should always be clean, regardless of the LLM command.
-        final_user_query_for_rag = self._clean_query(message_create.content)
 
         # If RAG or Online Search is active, use the structured prompt
         if message_create.search_rosti_active or message_create.search_online_active or message_create.attachments:
-            system_prompt = self._construct_rag_system_prompt(final_user_query_for_llm, search_results_context, conversation_state, message_create)
-            llm_messages = [{'role': 'system', 'content': system_prompt}, {'role': 'user', 'content': final_user_query_for_llm}]
+            rag_prompt = self._construct_rag_system_prompt(final_user_query_for_llm, search_results_context, conversation_state, message_create)
+            llm_messages = [
+                {
+                    'role': 'system',
+                    'content': 'Du bist ein fachkundiger KI-Assistent. Beantworte die Anfrage anhand der bereitgestellten Kontextinformationen.'
+                },
+                {'role': 'user', 'content': rag_prompt}
+            ]
         else:
             # "Direct Chat" mode: just use the history and a simple system message
             # Restore history and use a simple prompt. Temperature will be added later.
@@ -186,13 +190,13 @@ class ChatResponseService:
             is_rag_mode = message_create.search_rosti_active or message_create.search_online_active or message_create.attachments
             temperature = 0.3 if is_rag_mode else 0.8
             
+            # Ollama option names are not identical to OpenAI option names.
+            # Use num_predict instead of max_tokens and avoid unsupported penalty fields.
             llm_options = {
-                "max_tokens": 4096,
+                "num_predict": settings.OLLAMA_NUM_PREDICT,
                 "temperature": temperature,
                 "top_p": 0.95,
                 "top_k": 40,
-                "presence_penalty": 0.0,
-                "frequency_penalty": 0.0,
             }
             async for chunk in ollama_service.get_chat_response_stream(
                 llm_messages,
@@ -231,17 +235,10 @@ class ChatResponseService:
             if not permitted_rag_items:
                 return "No relevant Rosti Data found (due to permissions).", []
 
-            context, sources = "", []
-            rag_gen = query_rag_system(
+            return await retrieve_rag_context(
                 query_text=query_text, db_session=self.db,
-                permitted_rag_items=permitted_rag_items, show_think_process=show_think_process
+                permitted_rag_items=permitted_rag_items
             )
-            async for chunk in rag_gen:
-                if isinstance(chunk, str):
-                    context += chunk
-                elif isinstance(chunk, dict) and "source_documents" in chunk:
-                    sources.extend(chunk["source_documents"])
-            return context, sources
         except Exception as e:
             logger.error(f"Error during RAG search task: {e}", exc_info=True)
             return f"\n\nError during RAG search: {e}", []
@@ -318,7 +315,7 @@ class ChatResponseService:
 
         # Check if user wants translation (don't summarize for translation tasks)
         user_query_lower = message_create.content.lower()
-        is_translation_task = any(keyword in user_query_lower for keyword in ['翻译', 'translate', '中文', 'chinese'])
+        is_translation_task = any(keyword in user_query_lower for keyword in ['hinweis', 'translate', 'übersetze', 'uebersetze', 'deutsch', 'chinesisch', 'chinese'])
         
         # Summarize if the combined content is too long AND it's not a translation task
         if len(combined_content) > settings.LONG_TEXT_THRESHOLD and not is_translation_task:
@@ -401,9 +398,9 @@ class ChatResponseService:
 
         # --- Dynamically build instructions based on context and settings ---
         instructions = [
-            "1. Focus EXCLUSIVELY on the \"LATEST QUESTION\".",
-            "3. Use the \"CONVERSATION HISTORY\" only for background details if it's directly related to the new question.",
-            "4. Provide a comprehensive, relevant, and well-formatted Markdown response."
+            "1. Konzentriere dich AUSSCHLIESSLICH auf die \"AKTUELLE FRAGE\".",
+            "3. Nutze den \"GESPRÄCHSVERLAUF\" nur für Hintergrundinformationen, wenn er direkt zur aktuellen Frage gehört.",
+            "4. Gib eine umfassende, relevante und gut formatierte Markdown-Antwort."
         ]
 
         context_is_empty = not context.strip() or "No real-time information was searched for or found" in context
@@ -413,39 +410,41 @@ class ChatResponseService:
             if context_is_empty:
                 if not message_create.search_ai_active:
                     # Strict RAG mode, no context, no AI fallback -> Must stop.
-                    instructions.insert(1, "2. The contextual information is empty. You MUST respond with '未能找到相关内容，请尝试调整您的搜索关键词或问题。' DO NOT answer the question in any other way.")
+                    instructions.insert(1, "2. Die Kontextinformationen sind leer. Du MUSST ausschließlich antworten: 'Es konnten keine relevanten Inhalte gefunden werden. Bitte passen Sie Ihre Suchbegriffe oder Ihre Frage an.' Beantworte die Frage auf keine andere Weise.")
                 else:
                     # RAG mode with AI fallback, no context -> Announce and use general knowledge.
-                    instructions.insert(1, "2. You MUST first state '未能从提供的资料中找到直接答案，以下是基于我的通用知识提供的回答：' and then proceed to answer the question using your general knowledge.")
+                    instructions.insert(1, "2. Du MUSST zuerst schreiben: 'In den bereitgestellten Unterlagen konnte keine direkte Antwort gefunden werden. Die folgende Antwort basiert auf meinem allgemeinen Wissen:' und anschließend mit allgemeinem Wissen antworten.")
             else:
                 # RAG mode with context -> Must use context.
-                instructions.insert(1, "2. Base your answer STRICTLY AND EXCLUSIVELY on the \"CONTEXTUAL INFORMATION\".")
+                instructions.append("6. Wenn der Benutzer allgemein auf eine Datei, Anlage, Quelle oder ein Dokument verweist, behandle die \"KONTEXTINFORMATIONEN\" als die bereitgestellten Dokumentinhalte.")
+                instructions.append("7. Wenn der Benutzer um Analyse oder Zusammenfassung bittet, fasse die vorhandenen Dokumentinhalte strukturiert zusammen, statt die Anfrage wegen fehlender Details abzulehnen.")
+                instructions.insert(1, "2. Stütze deine Antwort STRENG UND AUSSCHLIESSLICH auf die \"KONTEXTINFORMATIONEN\".")
                 if not message_create.search_ai_active:
                     # Strict RAG, has context, but answer might not be in it.
-                    instructions.append("5. If the answer is not in the \"CONTEXTUAL INFORMATION\", you MUST state that you could not find the answer in the provided documents. DO NOT use your general knowledge.")
+                    instructions.append("5. Wenn die Antwort nicht in den \"KONTEXTINFORMATIONEN\" enthalten ist, MUSST du mitteilen, dass du die Antwort in den bereitgestellten Dokumenten nicht finden konntest. Nutze KEIN allgemeines Wissen.")
                 else:
                     # RAG with AI fallback, has context, but can use general knowledge if needed.
-                    instructions.append("5. If the answer is not in the \"CONTEXTUAL INFORMATION\", you may use your general knowledge to supplement the answer, but you MUST state that the primary information was not found in the documents.")
+                    instructions.append("5. Wenn die Antwort nicht in den \"KONTEXTINFORMATIONEN\" enthalten ist, darfst du allgemeines Wissen ergänzen. Du MUSST aber klar sagen, dass die primäre Information nicht in den Dokumenten gefunden wurde.")
         else:
             # This case should ideally not use this prompt function, but as a fallback:
-            instructions.insert(1, "2. Use your general knowledge and reasoning to answer the user's question directly.")
+            instructions.insert(1, "2. Nutze dein allgemeines Wissen und deine Schlussfolgerungen, um die Frage des Benutzers direkt zu beantworten.")
 
         instructions_str = "\n            ".join(instructions)
         # --- End of dynamic instructions ---
 
-        return f"""You are an expert AI assistant. Your primary goal is to answer the user's LATEST QUESTION directly and accurately.
+        return f"""Du bist ein fachkundiger KI-Assistent. Dein Hauptziel ist es, die AKTUELLE FRAGE des Benutzers direkt und präzise zu beantworten.
 
-            **LATEST QUESTION:**
+            **AKTUELLE FRAGE:**
             "{latest_user_query}"
 
-            **CONTEXTUAL INFORMATION (Use this to answer the question):**
-            {context if context.strip() else "No real-time information was searched for or found for this query."}
+            **KONTEXTINFORMATIONEN (zur Beantwortung der Frage nutzen):**
+            {context if context.strip() else "Für diese Anfrage wurden keine Echtzeitinformationen gesucht oder gefunden."}
 
-            **CONVERSATION HISTORY (For reference only, ignore if not relevant to the latest question):**
-            {history_context if history_context.strip() else "No previous conversation history."}
+            **GESPRÄCHSVERLAUF (nur als Referenz, ignorieren, wenn nicht relevant):**
+            {history_context if history_context.strip() else "Kein vorheriger Gesprächsverlauf."}
 
             ---
-            INSTRUCTIONS:
+            ANWEISUNGEN:
             {instructions_str}
             """
 

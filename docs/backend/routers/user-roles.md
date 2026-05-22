@@ -1,19 +1,19 @@
-# `routers/user_roles.py` - 用户角色关联路由
+# `routers/user_roles.py` - BenutzerRolleKommentar
 
-本文档描述了 `backend/app/routers/user_roles.py` 文件，该文件定义了与用户和角色之间关联关系管理相关的 API 路由。
+Hinweis`backend/app/routers/user_roles.py` Hinweis
 
-## 功能描述
-*   **分配角色**: 提供为用户分配一个或多个角色的接口。
-*   **撤销角色**: 提供从用户撤销角色的接口。
-*   **获取用户角色**: 提供获取特定用户所有角色的接口。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-1.  **依赖注入**: 路由函数通常会使用 `Depends` 来注入数据库会话和当前用户（通常是管理员或具有相应权限的用户）。
-2.  **关联操作**: 实现用户与角色之间多对多关系的添加和删除。
+## Kommentar
+1.  **Hinweis**: Hinweis`Depends` Hinweis
+2.  **Hinweis**: Hinweisöschen. 
     *   `@router.post("/assign")`
     *   `@router.delete("/revoke")`
     *   `@router.get("/{user_id}/roles")`
-3.  **权限检查**: 在执行用户角色管理操作之前，通常会进行权限检查，确保只有授权用户才能执行这些操作。
+3.  **BerechtigungHinweis**: Hinweisührt ausBenutzerRollenverwaltungAktionenHinweisührt ausHinweis
 
-## 路径
+## Kommentar
 `/backend/app/routers/user_roles.py`

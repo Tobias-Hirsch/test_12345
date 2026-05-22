@@ -60,7 +60,7 @@ def is_ollama_running() -> bool:
     except requests.RequestException:
         return False
     
-# 提供api获取ollama 模型列表
+# Kommentar
 def get_llm() -> List[str]:
     try:
         if not is_ollama_running():

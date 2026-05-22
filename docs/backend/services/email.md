@@ -1,17 +1,17 @@
-# `services/email.py` - 邮件服务
+# `services/email.py` - Kommentar
 
-本文档描述了 `backend/app/services/email.py` 文件，该文件包含了用于发送电子邮件的业务逻辑，例如账户激活邮件、密码重置邮件和测试邮件。
+Hinweis`backend/app/services/email.py` Hinweis
 
-## 功能描述
-*   **SMTP 配置**: 从应用程序配置中读取 SMTP 服务器设置。
-*   **邮件发送**: 封装了使用 `smtplib` 或其他邮件库发送电子邮件的功能。
-*   **邮件模板**: 可能支持使用模板来构建邮件内容。
-*   **激活邮件**: 发送包含账户激活链接的邮件。
-*   **重置密码邮件**: 发送包含密码重置链接的邮件。
-*   **测试邮件**: 用于验证邮件服务配置是否正确。
+## Kommentar
+*   **SMTP Kommentar**: Kommentar
+*   **Kommentar**: Kommentar`smtplib` OderKommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: SendenKommentar
+*   **Passwort zurücksetzenKommentar**: SendenKommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-1.  **SMTP 客户端**: 使用 `smtplib` 库连接到 SMTP 服务器，并进行认证。
+## Kommentar
+1.  **SMTP Hinweis**: Hinweis`smtplib` Hinweis
     ```python
     import smtplib
     from email.mime.text import MIMEText
@@ -48,13 +48,13 @@
             raise
     ```
 2.  **`send_activation_email(email: str, username: str, token: str)`**:
-    *   构建账户激活邮件的主题和内容，包含一个激活链接。
-    *   调用 `send_email` 发送邮件。
+    *   Kommentar
+    *   Kommentar`send_email` SendenKommentar
 3.  **`send_reset_password_email(email: str, username: str, token: str)`**:
-    *   构建密码重置邮件的主题和内容，包含一个重置链接。
-    *   调用 `send_email` 发送邮件。
+    *   Kommentar
+    *   Kommentar`send_email` SendenKommentar
 4.  **`send_test_email(email: str)`**:
-    *   发送一个简单的测试邮件。
+    *   SendenKommentar
 
-## 路径
+## Kommentar
 `/backend/app/services/email.py`

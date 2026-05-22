@@ -16,7 +16,7 @@ const pinia = createPinia(); // Create a Pinia instance
 // Initialize Pinia and the app store
 app.use(pinia);
 const appStore = useAppStore();
-appStore.setLanguage(localStorage.getItem('language') || 'en'); // Set initial language from localStorage
+appStore.setLanguage(localStorage.getItem('language') || 'de'); // Set initial language from localStorage
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

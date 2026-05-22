@@ -5,32 +5,32 @@ mailbox: admin@de-manufacturing.cn
 
 <template>
   <div class="chat-container" :class="{ 'dark-mode': isDarkMode }">
-    <!-- 只保留聊天主内容 -->
+    <!-- Chatbereich -->
     <div class="chat-area">
-      <!-- 消息发送状态指示器 -->
+      <!-- Statusanzeige -->
       <div v-if="isSending || retryState.isRetrying" class="status-indicator">
         <div class="loading-spinner" />
         <span class="status-text">
           <template v-if="retryState.isRetrying">
-            {{ retryState.progress || `正在重试... (${retryState.retryCount}/3)` }}
+            {{ retryState.progress || `Wiederholungsversuch läuft ... (${retryState.retryCount}/3)` }}
           </template>
           <template v-else-if="isSending">
-            {{ retryState.progress || '发送消息中...' }}
+            {{ retryState.progress || 'Nachricht wird gesendet ...' }}
           </template>
         </span>
       </div>
 
-      <!-- 错误和恢复选项 -->
+      <!-- FehlerKommentaräge -->
       <div v-if="retryState.error" class="error-recovery-panel">
         <div class="error-message">
           <el-icon class="error-icon"><WarningFilled /></el-icon>
-          <span>消息发送失败: {{ retryState.error }}</span>
+          <span>Nachricht konnte nicht gesendet werden: {{ retryState.error }}</span>
         </div>
         
-        <!-- 部分响应恢复选项 -->
+        <!-- Kommentaräge -->
         <div v-if="retryState.partialResponse" class="recovery-options">
           <div class="partial-response-preview">
-            <h4>已接收部分响应:</h4>
+            <h4>Teilantwort empfangen:</h4>
             <div class="response-preview">
               {{ retryState.partialResponse.substring(0, 200) }}
               <span v-if="retryState.partialResponse.length > 200">...</span>
@@ -44,7 +44,7 @@ mailbox: admin@de-manufacturing.cn
               size="small"
               :disabled="isSending"
             >
-              使用部分响应
+              Teilantwort verwenden
             </el-button>
             <el-button 
               @click="retryLastMessage" 
@@ -52,12 +52,12 @@ mailbox: admin@de-manufacturing.cn
               size="small"
               :disabled="!canRetry || isSending"
             >
-              重新发送
+              Erneut senden
             </el-button>
           </div>
         </div>
 
-        <!-- 普通重试选项 -->
+        <!-- Kommentaräge -->
         <div v-else class="retry-actions">
           <el-button 
             @click="retryLastMessage" 
@@ -65,19 +65,19 @@ mailbox: admin@de-manufacturing.cn
             size="small"
             :disabled="!canRetry || isSending"
           >
-            重新发送消息
+            Nachricht erneut senden
           </el-button>
           <el-button 
             @click="dismissError" 
             type="info"
             size="small"
           >
-            取消
+            Abbrechen
           </el-button>
         </div>
       </div>
       
-      <!-- 聊天消息区域 -->
+      <!-- Chat-Nachrichtenbereich -->
       <div class="messages-container" ref="messagesContainerRef">
         <div v-if="messages && !messages.some((message: Message) => message.sender === 'user')" class="welcome-top">
           <div class="welcome-message">{{ t('rostiChat.welcome') }}</div>
@@ -146,7 +146,7 @@ mailbox: admin@de-manufacturing.cn
                 </div>
               </div>
 
-              <!-- 机器人消息操作按钮 -->
+              <!-- Aktionen für Bot-Nachrichten -->
               <div v-if="message.sender === 'bot' && !message.loading" class="message-actions">
                 <el-tooltip :content="t('rostiChat.copyMessage')" placement="top">
                   <el-icon class="action-icon" @click="copyMessage(message.content)"><CopyDocument /></el-icon>
@@ -165,7 +165,7 @@ mailbox: admin@de-manufacturing.cn
                   <el-icon class="action-icon" @click="handleFeedback(message.messageId, 'dislike')"><Bottom /></el-icon>
                 </el-tooltip>
               </div>
-              <!-- 在这里添加新的操作按钮 -->
+              <!-- Aktionen für Nutzer-Nachrichten -->
               <div v-if="message.sender === 'user'" class="message-actions">
                 <el-tooltip :content="t('rostiChat.editMessage')" placement="top">
                   <el-icon class="action-icon" @click="editMessage(message.content)"><Edit /></el-icon>
@@ -178,7 +178,7 @@ mailbox: admin@de-manufacturing.cn
           </div>
         </template>
       </div>
-     <!-- 输入区域 -->
+     <!-- Eingabebereich -->
       <div class="input-area">
         <div class="input-container input-flex">
           <el-input
@@ -230,7 +230,7 @@ mailbox: admin@de-manufacturing.cn
               :loading="isSending"
             >
               <template v-if="isSending">
-                {{ retryState.isRetrying ? '重试中...' : '发送中...' }}
+                {{ retryState.isRetrying ? 'Wird erneut versucht ...' : 'Wird gesendet ...' }}
               </template>
               <template v-else>
                 {{ t('rostiChat.send') }}

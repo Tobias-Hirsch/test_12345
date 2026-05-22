@@ -1,16 +1,16 @@
-# `llm/llm.py` - LLM 客户端管理
+# `llm/llm.py` - LLM Kommentar
 
-本文档描述了 `backend/app/llm/llm.py` 文件，该文件负责初始化和管理大语言模型（LLM）客户端，根据配置选择不同的 LLM 提供商。
+Hinweis`backend/app/llm/llm.py` Hinweis
 
-## 功能描述
-*   **LLM 客户端实例化**: 根据环境变量配置（如 OpenAI API 密钥或 Ollama URL），实例化相应的 LLM 客户端。
-*   **统一接口**: 提供一个统一的函数来获取 LLM 客户端实例，方便其他模块调用。
-*   **模型选择**: 支持根据配置选择不同的 LLM 模型。
+## Kommentar
+*   **LLM Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-该模块会检查环境变量，并根据检测到的配置返回相应的 LLM 客户端。
+## Kommentar
+Hinweis
 
-例如，选择 OpenAI 或 Ollama 客户端：
+Hinweis
 ```python
 import os
 from backend.app.core.config import settings
@@ -18,7 +18,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# 缓存LLM客户端实例
+# Kommentar
 _llm_client = None
 
 def get_llm_client():
@@ -34,7 +34,7 @@ def get_llm_client():
         try:
             from openai import OpenAI
             _llm_client = OpenAI(api_key=settings.OPENAI_API_KEY)
-            _llm_client.model = os.getenv("OPENAI_CHAT_MODEL", "gpt-3.5-turbo") # 默认模型
+            _llm_client.model = os.getenv("OPENAI_CHAT_MODEL", "gpt-3.5-turbo") # Hinweis
             logger.info(f"Initialized OpenAI LLM client with model: {_llm_client.model}")
             return _llm_client
         except ImportError:
@@ -45,7 +45,7 @@ def get_llm_client():
             raise
     elif settings.OLLAMA_BASE_URL and settings.OLLAMA_CHAT_MODEL:
         try:
-            from openai import OpenAI # Ollama兼容OpenAI API
+            from openai import OpenAI # OllamaHinweis
             _llm_client = OpenAI(
                 base_url=settings.OLLAMA_BASE_URL,
                 api_key="ollama" # Ollama API key is typically not required or can be a placeholder
@@ -64,5 +64,5 @@ def get_llm_client():
 
 ```
 
-## 路径
+## Kommentar
 `/backend/app/llm/llm.py`

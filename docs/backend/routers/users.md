@@ -1,24 +1,24 @@
-# `routers/users.py` - 用户管理路由
+# `routers/users.py` - BenutzerverwaltungKommentar
 
-本文档描述了 `backend/app/routers/users.py` 文件，该文件定义了与用户账户管理相关的 API 路由。
+Hinweis`backend/app/routers/users.py` Hinweis
 
-## 功能描述
-*   **创建用户**: 提供创建新用户账户的接口（通常由管理员或注册流程使用）。
-*   **获取用户列表**: 提供获取所有用户列表的接口。
-*   **获取用户详情**: 提供获取特定用户详细信息的接口。
-*   **更新用户**: 提供更新现有用户信息（如用户名、邮箱、密码）的接口。
-*   **删除用户**: 提供删除用户账户的接口。
-*   **禁用/启用用户**: 提供禁用或启用用户账户的接口。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **LöschenBenutzer**: KommentaröschenBenutzerKommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-1.  **依赖注入**: 路由函数通常会使用 `Depends` 来注入数据库会话和当前用户（对于需要认证的接口）。
-2.  **CRUD 操作**: 实现用户的创建、读取、更新和删除 (CRUD) 功能。
+## Kommentar
+1.  **Hinweis**: Hinweis`Depends` Hinweis
+2.  **CRUD Aktionen**: Hinweisöschen (CRUD) Hinweis
     *   `@router.post("/")`
     *   `@router.get("/")`
     *   `@router.get("/{user_id}")`
     *   `@router.put("/{user_id}")`
     *   `@router.delete("/{user_id}")`
-3.  **权限检查**: 在执行用户管理操作之前，通常会进行权限检查，确保只有授权用户（如管理员）才能执行这些操作。
+3.  **BerechtigungHinweis**: Hinweisührt ausBenutzerverwaltungAktionenHinweisührt ausHinweis
 
-## 路径
+## Kommentar
 `/backend/app/routers/users.py`

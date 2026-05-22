@@ -1,17 +1,17 @@
-# `modules/ollama_module.py` - Ollama 模块
+# `modules/ollama_module.py` - Ollama Kommentar
 
-本文档描述了 `backend/app/modules/ollama_module.py` 文件，该文件可能用于与本地运行的 Ollama 服务进行交互，以使用本地大语言模型。
+Hinweis`backend/app/modules/ollama_module.py` Hinweis
 
-## 功能描述
-*   **Ollama 连接**: 提供与 Ollama 服务建立连接的功能。
-*   **模型管理**: 可能包含列出可用模型、下载模型等功能。
-*   **文本生成**: 通过 Ollama 服务调用本地模型进行文本生成。
-*   **嵌入生成**: 通过 Ollama 服务生成文本嵌入。
+## Kommentar
+*   **Ollama Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-该模块通常会使用 `httpx` 或 `requests` 库与 Ollama 的 REST API 进行通信。
+## Kommentar
+Hinweis`httpx` Oder `requests` Hinweis
 
-例如，一个简单的 Ollama 文本生成示例：
+Hinweis
 ```python
 import httpx
 from backend.app.core.config import settings
@@ -31,7 +31,7 @@ async def generate_text_with_ollama(model_name: str, prompt: str) -> str:
                     "prompt": prompt,
                     "stream": False
                 },
-                timeout=600.0 # 增加超时时间
+                timeout=600.0 # Hinweis
             )
             response.raise_for_status()
             data = response.json()
@@ -71,5 +71,5 @@ async def generate_embedding_with_ollama(model_name: str, text: str) -> list[flo
         raise
 ```
 
-## 路径
+## Kommentar
 `/backend/app/modules/ollama_module.py`

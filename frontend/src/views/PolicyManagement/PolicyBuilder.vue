@@ -1,44 +1,42 @@
 <template>
   <div class="policy-builder-container">
     <el-form :model="policy" label-position="top">
-      <h3>基础信息</h3>
+      <h3>Basisinformationen</h3>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="策略名称">
-            <el-input v-model="policy.name" placeholder="例如：允许经理查看所有文档"></el-input>
+          <el-form-item label="Richtlinienname">
+            <el-input v-model="policy.name" placeholder="Eingabe"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="效果">
+          <el-form-item label="Wirkung">
             <el-select v-model="policy.effect" style="width: 100%;">
-              <el-option label="允许 (Allow)" value="allow"></el-option>
-              <el-option label="拒绝 (Deny)" value="deny"></el-option>
+              <el-option label="Erlauben (Allow)" value="allow"></el-option>
+              <el-option label="Ablehnen (Deny)" value="deny"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="描述">
-        <el-input type="textarea" v-model="policy.description" placeholder="详细说明此策略的目的和范围"></el-input>
+      <el-form-item label="Beschreibung">
+        <el-input type="textarea" v-model="policy.description" placeholder="Eingabe"></el-input>
       </el-form-item>
 
       <el-divider></el-divider>
 
-      <h3>规则定义：构建一个策略句子</h3>
+      <h3>Regeldefinition: Richtliniensatz erstellen</h3>
       <p class="policy-sentence">
-        此策略 <strong>{{ policy.effect === 'allow' ? '允许' : '拒绝' }}</strong>
-        <strong>[主体]</strong>
-        对 <strong>[资源]</strong>
-        执行 <strong>[操作]</strong>
-        在 <strong>[条件]</strong> 满足时。
+        Diese Richtlinie <strong>{{ policy.effect === 'allow' ? 'erlaubt' : 'verweigert' }}</strong>
+        <strong>[Subjekt]</strong> den Zugriff auf <strong>[Ressource]</strong>
+        für <strong>[Aktionen]</strong>, wenn die definierten Bedingungen erfüllt sind.
       </p>
 
-      <!-- 主体 (Subjects) -->
+      <!-- Subjekte (Subjects) -->
       <div class="rule-block">
-        <h4>主体 (Subject)</h4>
-        <p class="description">定义“谁”受此策略影响。一个主体必须满足 <strong>所有</strong> 以下规则。</p>
+        <h4>Subjekt (Subject)</h4>
+        <p class="description">Definiert, wer von dieser Richtlinie betroffen ist. Ein Subjekt muss alle angegebenen Regeln erfüllen.</p>
         
         <div v-for="(rule, index) in subjectRules" :key="index" class="rule-row">
-          <el-select v-model="rule.key" placeholder="选择主体属性" filterable style="width: 250px;" @change="onAttributeChange(rule, 'subject')">
+          <el-select v-model="rule.key" placeholder="Subjekteigenschaft auswählen" filterable style="width: 250px;" @change="onAttributeChange(rule, 'subject')">
             <el-option
               v-for="attr in subjectAttributes"
               :key="attr.key"
@@ -49,7 +47,7 @@
             </el-option>
           </el-select>
 
-          <el-select v-model="rule.operator" placeholder="选择操作符" style="width: 150px; margin-left: 10px;">
+          <el-select v-model="rule.operator" placeholder="Operator auswählen" style="width: 150px; margin-left: 10px;">
             <el-option
               v-for="op in getOperatorsForType(rule.type)"
               :key="op.value"
@@ -64,7 +62,7 @@
             filterable
             allow-create
             default-first-option
-            placeholder="选择或输入值"
+            placeholder="Wert auswählen oder eingeben"
             style="width: 300px; margin-left: 10px;"
           >
             <el-option
@@ -74,21 +72,21 @@
               :value="item.value"
             />
           </el-select>
-          <el-input v-else v-model="rule.value" placeholder="输入期望值" style="width: 300px; margin-left: 10px;" />
+          <el-input v-else v-model="rule.value" placeholder="Erwarteten Wert eingeben" style="width: 300px; margin-left: 10px;" />
 
           <el-button type="danger" :icon="ElIconDelete" circle plain @click="removeSubjectRule(index)" style="margin-left: 10px;" />
         </div>
 
-        <el-button @click="addSubjectRule" :icon="ElIconPlus">添加主体规则</el-button>
+        <el-button @click="addSubjectRule" :icon="ElIconPlus">Subjektregel hinzufügen</el-button>
       </div>
 
-      <!-- 资源 (Resources) -->
+      <!-- Ressource (Resources) -->
       <div class="rule-block">
-        <h4>资源 (Resource)</h4>
-        <p class="description">定义此策略应用于“什么事物”。一个资源必须满足 <strong>所有</strong> 以下规则。</p>
+        <h4>Ressource (Resource)</h4>
+        <p class="description">Definiert, worauf diese Richtlinie angewendet wird. Eine Ressource muss alle angegebenen Regeln erfüllen.</p>
 
         <div v-for="(rule, index) in resourceRules" :key="index" class="rule-row">
-          <el-select v-model="rule.key" placeholder="选择资源属性" filterable style="width: 250px;" @change="onAttributeChange(rule, 'resource')">
+          <el-select v-model="rule.key" placeholder="Eingabe" filterable style="width: 250px;" @change="onAttributeChange(rule, 'resource')">
             <el-option
               v-for="attr in resourceAttributes"
               :key="attr.key"
@@ -99,7 +97,7 @@
             </el-option>
           </el-select>
 
-          <el-select v-model="rule.operator" placeholder="选择操作符" style="width: 150px; margin-left: 10px;">
+          <el-select v-model="rule.operator" placeholder="Operator auswählen" style="width: 150px; margin-left: 10px;">
             <el-option
               v-for="op in getOperatorsForType(rule.type)"
               :key="op.value"
@@ -114,7 +112,7 @@
             filterable
             allow-create
             default-first-option
-            placeholder="选择或输入值"
+            placeholder="Wert auswählen oder eingeben"
             style="width: 300px; margin-left: 10px;"
           >
             <el-option
@@ -124,18 +122,18 @@
               :value="item.value"
             />
           </el-select>
-          <el-input v-else v-model="rule.value" placeholder="输入期望值" style="width: 300px; margin-left: 10px;" />
+          <el-input v-else v-model="rule.value" placeholder="Erwarteten Wert eingeben" style="width: 300px; margin-left: 10px;" />
 
           <el-button type="danger" :icon="ElIconDelete" circle plain @click="removeResourceRule(index)" style="margin-left: 10px;" />
         </div>
 
-        <el-button @click="addResourceRule" :icon="ElIconPlus">添加资源规则</el-button>
+        <el-button @click="addResourceRule" :icon="ElIconPlus">Ressourcenregel hinzufügen</el-button>
       </div>
 
-      <!-- 操作 (Actions) -->
+      <!-- Aktionen (Actions) -->
       <div class="rule-block">
-        <h4>操作 (Action)</h4>
-        <p class="description">定义允许或拒绝的具体操作。</p>
+        <h4>Aktionen (Action)</h4>
+        <p class="description">Definiert die konkret erlaubte oder verweigerte Aktion.</p>
         <el-checkbox-group v-model="policy.actions">
           <el-checkbox v-for="action in availableActions" :key="action" :label="action" :value="action">
             {{ action }}
@@ -143,13 +141,13 @@
         </el-checkbox-group>
       </div>
 
-      <!-- 条件 (Conditions) - Optional -->
+      <!-- Bedingung (Conditions) - Optional -->
       <div class="rule-block">
-        <h4>条件 (Condition) <el-tag size="small">可选</el-tag></h4>
-        <p class="description">定义策略生效所需的额外约束。一个策略必须满足 <strong>所有</strong> 以下条件。</p>
+        <h4>Bedingung (Condition) <el-tag size="small">Optional</el-tag></h4>
+        <p class="description">Definiert zusätzliche Einschränkungen, die für die Gültigkeit der Richtlinie erfüllt sein müssen. Bedingungen sind optional.</p>
         
         <div v-for="(rule, index) in conditionRules" :key="index" class="rule-row">
-          <el-select v-model="rule.key" placeholder="选择属性" filterable style="width: 250px;" @change="onAttributeChange(rule, 'condition')">
+          <el-select v-model="rule.key" placeholder="Eingabe" filterable style="width: 250px;" @change="onAttributeChange(rule, 'condition')">
             <el-option
               v-for="attr in conditionAttributes"
               :key="attr.key"
@@ -160,7 +158,7 @@
             </el-option>
           </el-select>
 
-          <el-select v-model="rule.operator" placeholder="选择操作符" style="width: 150px; margin-left: 10px;">
+          <el-select v-model="rule.operator" placeholder="Operator auswählen" style="width: 150px; margin-left: 10px;">
             <el-option
               v-for="op in getOperatorsForType(rule.type)"
               :key="op.value"
@@ -175,7 +173,7 @@
             filterable
             allow-create
             default-first-option
-            placeholder="选择或输入值"
+            placeholder="Wert auswählen oder eingeben"
             style="width: 300px; margin-left: 10px;"
           >
             <el-option
@@ -185,19 +183,19 @@
               :value="item.value"
             />
           </el-select>
-          <el-input v-else v-model="rule.value" placeholder="输入期望值或属性key (e.g. resource.owner_id)" style="width: 300px; margin-left: 10px;" />
+          <el-input v-else v-model="rule.value" placeholder="Erwarteten Wert eingeben" style="width: 300px; margin-left: 10px;" />
 
           <el-button type="danger" :icon="ElIconDelete" circle plain @click="removeConditionRule(index)" style="margin-left: 10px;" />
         </div>
 
-        <el-button @click="addConditionRule" :icon="ElIconPlus">添加条件规则</el-button>
+        <el-button @click="addConditionRule" :icon="ElIconPlus">Bedingung hinzufügen</el-button>
       </div>
 
       <el-divider />
 
       <div class="form-footer">
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="savePolicy">保存策略</el-button>
+        <el-button @click="cancel">Abbrechen</el-button>
+        <el-button type="primary" @click="savePolicy">Speichern</el-button>
       </div>
 
     </el-form>
@@ -359,7 +357,7 @@ const fetchVocabulary = async () => {
     availableRoles.value = roles;
   } catch (error) {
     console.error('Failed to fetch policy vocabulary:', error);
-    ElMessage.error('加载策略构建器所需数据失败');
+    ElMessage.error('Fehler bei der Verarbeitung');
   }
 };
 
@@ -422,7 +420,7 @@ onMounted(async () => {
         setPolicyForEditing(existingPolicy);
       }
     } catch (error) {
-      ElMessage.error('加载策略数据失败');
+      ElMessage.error('Fehler bei der Verarbeitung');
       console.error(`Failed to fetch policy ${props.policyId} for editing:`, error);
     }
   }
@@ -432,11 +430,11 @@ onMounted(async () => {
 const savePolicy = () => {
   // Basic validation
   if (!policy.value.name) {
-    ElMessage.warning('策略名称不能为空');
+    ElMessage.warning('RichtliniennameWarnhinweis');
     return;
   }
   if (policy.value.actions.length === 0) {
-    ElMessage.warning('请至少选择一个操作');
+    ElMessage.warning('Warnhinweis');
     return;
   }
 
@@ -462,16 +460,16 @@ const onAttributeChange = (rule: Rule, category: 'subject' | 'resource' | 'condi
 
 const getOperatorsForType = (type: string) => {
   const commonOperators = [
-    { label: '等于', value: 'eq' },
-    { label: '不等于', value: 'not_eq' }, // Assuming backend supports 'not_eq'
+    { label: 'Beschriftung', value: 'eq' },
+    { label: 'Beschriftung', value: 'not_eq' }, // Assuming backend supports 'not_eq'
   ];
   const arrayOperators = [
-    { label: '包含其中之一', value: 'in' },
-    { label: '不包含', value: 'not_in' }, // Assuming backend supports 'not_in'
+    { label: 'Beschriftung', value: 'in' },
+    { label: 'Beschriftung', value: 'not_in' }, // Assuming backend supports 'not_in'
   ];
   const numericOperators = [
-    { label: '大于', value: 'greater_than' },
-    { label: '小于', value: 'less_than' },
+    { label: 'Beschriftung', value: 'greater_than' },
+    { label: 'Beschriftung', value: 'less_than' },
   ];
 
   switch (type) {

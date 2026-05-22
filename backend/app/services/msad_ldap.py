@@ -57,13 +57,13 @@ class LDAPService:
                 logger.info("LDAP connection established and bound.")
             except LDAPSocketOpenError as e:
                 logger.error(f"Failed to open LDAP socket: {e}")
-                raise ConnectionError(f"无法连接到 LDAP 服务器: {e}")
+                raise ConnectionError(f"Fehler bei der Verarbeitung{e}")
             except LDAPBindError as e:
                 logger.error(f"Failed to bind to LDAP server with provided credentials: {e}")
-                raise ConnectionError(f"LDAP 绑定失败，请检查绑定凭据: {e}")
+                raise ConnectionError(f"LDAP Fehler bei der Verarbeitung{e}")
             except LDAPException as e:
                 logger.error(f"LDAP connection or binding error: {e}")
-                raise ConnectionError(f"LDAP 连接或绑定错误: {e}")
+                raise ConnectionError(f"LDAP Fehler bei der Verarbeitung{e}")
         return self._connection
 
     def authenticate_user(self, username: str, password: str) -> bool:

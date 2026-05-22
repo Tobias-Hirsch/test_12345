@@ -16,13 +16,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python dependencies using a trusted mirror
 # We need paddleocr, and a web framework (fastapi) to serve the model
-RUN pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple \
-    paddleocr==3.1.0 \
-    fastapi \
-    uvicorn \
-    python-multipart \
-    Pillow \
-    opencv-python-headless
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip uninstall -y paddleocr paddlex paddlex-hpi langchain langchain-core langchain-community || true && \
+    pip install --no-cache-dir \
+        paddleocr==3.1.0 \
+        paddlex==3.1.0 \
+        langchain==0.2.17 \
+        fastapi \
+        uvicorn \
+        python-multipart \
+        Pillow \
+        opencv-python-headless
 
 # Copy the application code into the container
 COPY ./main.py /app/main.py

@@ -21,22 +21,22 @@ def get_abac_attributes():
     """
     attributes = [
         # User Attributes
-        {"key": "user.id", "name": "用户ID", "category": "subject", "type": "integer"},
-        {"key": "user.username", "name": "用户名", "category": "subject", "type": "string"},
-        {"key": "user.email", "name": "邮箱", "category": "subject", "type": "string"},
-        {"key": "user.phone", "name": "电话", "category": "subject", "type": "string"},
-        {"key": "user.department", "name": "部门", "category": "subject", "type": "string"},
-        {"key": "user.is_active", "name": "是否激活", "category": "subject", "type": "boolean"},
-        {"key": "user.security_level", "name": "安全级别", "category": "subject", "type": "integer"},
-        {"key": "user.roles", "name": "用户角色", "category": "subject", "type": "array_string"},
+        {"key": "user.id", "name": "Benutzer-ID", "category": "subject", "type": "integer"},
+        {"key": "user.username", "name": "Benutzername", "category": "subject", "type": "string"},
+        {"key": "user.email", "name": "E-Mail", "category": "subject", "type": "string"},
+        {"key": "user.phone", "name": "Telefon", "category": "subject", "type": "string"},
+        {"key": "user.department", "name": "Abteilung", "category": "subject", "type": "string"},
+        {"key": "user.is_active", "name": "Aktiv", "category": "subject", "type": "boolean"},
+        {"key": "user.security_level", "name": "Sicherheitsstufe", "category": "subject", "type": "integer"},
+        {"key": "user.roles", "name": "Benutzerrolle", "category": "subject", "type": "array_string"},
 
         # Resource Attributes
-        {"key": "resource.type", "name": "资源类型", "category": "resource", "type": "string"},
-        {"key": "resource.id", "name": "资源ID", "category": "resource", "type": "string"}, # ID can be string or integer
-        {"key": "resource.owner_id", "name": "所有者ID", "category": "resource", "type": "integer"},
+        {"key": "resource.type", "name": "Ressourcentyp", "category": "resource", "type": "string"},
+        {"key": "resource.id", "name": "Ressourcen-ID", "category": "resource", "type": "string"}, # ID can be string or integer
+        {"key": "resource.owner_id", "name": "Eigentümer-ID", "category": "resource", "type": "integer"},
 
         # Environment Attributes
-        {"key": "environment.current_time", "name": "当前时间", "category": "environment", "type": "datetime"},
+        {"key": "environment.current_time", "name": "Aktuelle Zeit", "category": "environment", "type": "datetime"},
     ]
     return attributes
 

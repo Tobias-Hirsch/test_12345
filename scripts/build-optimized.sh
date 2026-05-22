@@ -1,14 +1,14 @@
 #!/bin/bash
-# Docker构建优化脚本
+# Docker-Kommentar
 
 set -e
 
-# 配置变量
+# Kommentar
 REGISTRY="registry.your-company.com"
 PROJECT_NAME="rosti-backend"
 VERSION="${VERSION:-$(date +%Y%m%d-%H%M%S)}"
 
-# 颜色输出
+# Kommentar
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -26,21 +26,21 @@ echo_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# 检查依赖变化
+# Kommentar
 check_dependency_changes() {
     if [ -f "backend/requirements.core.txt.md5" ]; then
         CURRENT_CORE_MD5=$(md5sum backend/requirements.core.txt | cut -d' ' -f1)
         PREVIOUS_CORE_MD5=$(cat backend/requirements.core.txt.md5)
         
         if [ "$CURRENT_CORE_MD5" != "$PREVIOUS_CORE_MD5" ]; then
-            echo_warn "核心依赖发生变化，将重建核心缓存层"
+            echo_warn "Warnhinweis"
             REBUILD_CORE=true
         else
-            echo_info "核心依赖未变化，将使用缓存"
+            echo_info "Hinweis"
             REBUILD_CORE=false
         fi
     else
-        echo_warn "首次构建，创建所有缓存层"
+        echo_warn "Warnhinweis"
         REBUILD_CORE=true
     fi
 
@@ -49,10 +49,10 @@ check_dependency_changes() {
         PREVIOUS_EXTRAS_MD5=$(cat backend/requirements.extras.txt.md5)
         
         if [ "$CURRENT_EXTRAS_MD5" != "$PREVIOUS_EXTRAS_MD5" ]; then
-            echo_warn "可变依赖发生变化，将重建可变依赖层"
+            echo_warn "Warnhinweis"
             REBUILD_EXTRAS=true
         else
-            echo_info "可变依赖未变化，将使用缓存"
+            echo_info "Hinweis"
             REBUILD_EXTRAS=false
         fi
     else
@@ -60,12 +60,12 @@ check_dependency_changes() {
     fi
 }
 
-# 构建缓存层
+# Kommentar
 build_cache_layers() {
-    echo_info "开始构建缓存层..."
+    echo_info "Hinweis"
     
     if [ "$REBUILD_CORE" = true ]; then
-        echo_info "构建核心依赖缓存层..."
+        echo_info "Hinweis"
         docker build \
             --target core-dependencies \
             --cache-from $REGISTRY/$PROJECT_NAME:cache-core \
@@ -75,7 +75,7 @@ build_cache_layers() {
     fi
     
     if [ "$REBUILD_EXTRAS" = true ] || [ "$REBUILD_CORE" = true ]; then
-        echo_info "构建可变依赖缓存层..."
+        echo_info "Hinweis"
         docker build \
             --target variable-dependencies \
             --cache-from $REGISTRY/$PROJECT_NAME:cache-core \
@@ -86,9 +86,9 @@ build_cache_layers() {
     fi
 }
 
-# 构建最终镜像
+# Kommentar
 build_final_image() {
-    echo_info "构建最终应用镜像..."
+    echo_info "Hinweis"
     
     docker build \
         --cache-from $REGISTRY/$PROJECT_NAME:cache-core \
@@ -99,10 +99,10 @@ build_final_image() {
         backend/
 }
 
-# 推送镜像到注册表
+# Kommentar
 push_images() {
     if [ "$PUSH_TO_REGISTRY" = "true" ]; then
-        echo_info "推送镜像到注册表..."
+        echo_info "Hinweis"
         
         if [ "$REBUILD_CORE" = true ]; then
             docker push $REGISTRY/$PROJECT_NAME:cache-core
@@ -119,50 +119,50 @@ push_images() {
     fi
 }
 
-# 更新MD5哈希
+# Kommentar
 update_checksums() {
-    echo_info "更新依赖文件校验和..."
+    echo_info "Hinweis"
     md5sum backend/requirements.core.txt > backend/requirements.core.txt.md5
     md5sum backend/requirements.extras.txt > backend/requirements.extras.txt.md5
 }
 
-# 清理临时镜像
+# Kommentar
 cleanup() {
-    echo_info "清理临时镜像..."
-    # 删除未标记的镜像
+    echo_info "Hinweis"
+    # LöschenKommentar
     docker image prune -f
 }
 
-# 主执行流程
+# Kommentarührt ausKommentar
 main() {
-    echo_info "=== Docker优化构建开始 ==="
-    echo_info "版本标签: $VERSION"
+    echo_info "=== Docker-Build==="
+    echo_info "Hinweis$VERSION"
     
-    # 启用Docker BuildKit
+    # AktivDocker BuildKit
     export DOCKER_BUILDKIT=1
     export COMPOSE_DOCKER_CLI_BUILD=1
     
-    # 检查依赖变化
+    # Kommentar
     check_dependency_changes
     
-    # 拉取现有缓存镜像
-    echo_info "拉取现有缓存镜像..."
-    docker pull $REGISTRY/$PROJECT_NAME:cache-core || echo_warn "核心缓存镜像不存在"
-    docker pull $REGISTRY/$PROJECT_NAME:cache-extras || echo_warn "可变依赖缓存镜像不存在"
-    docker pull $REGISTRY/$PROJECT_NAME:latest || echo_warn "最新镜像不存在"
+    # Kommentar
+    echo_info "Hinweis"
+    docker pull $REGISTRY/$PROJECT_NAME:cache-core || echo_warn "Warnhinweis"
+    docker pull $REGISTRY/$PROJECT_NAME:cache-extras || echo_warn "Warnhinweis"
+    docker pull $REGISTRY/$PROJECT_NAME:latest || echo_warn "Warnhinweis"
     
-    # 构建过程
+    # Kommentar
     build_cache_layers
     build_final_image
     push_images
     update_checksums
     cleanup
     
-    echo_info "=== Docker优化构建完成 ==="
-    echo_info "新镜像标签: $REGISTRY/$PROJECT_NAME:$VERSION"
+    echo_info "=== Docker-Build==="
+    echo_info "Hinweis$REGISTRY/$PROJECT_NAME:$VERSION"
 }
 
-# 参数处理
+# Kommentar
 while [[ $# -gt 0 ]]; do
     case $1 in
         --push)
@@ -178,11 +178,11 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         *)
-            echo_error "未知参数: $1"
+            echo_error "Fehler bei der Verarbeitung$1"
             exit 1
             ;;
     esac
 done
 
-# 执行主流程
+# führt ausKommentar
 main

@@ -160,7 +160,7 @@ class FileProcessingAgent(BaseAgent):
                         # Convert DataFrame dict to string for DeepSeek
                         excel_string_content = ""
                         for sheet_name, df in excel_data.items():
-                            excel_string_content += f"工作表: {sheet_name}\n"
+                            excel_string_content += f"Arbeitsblatt: {sheet_name}\n"
                             excel_string_content += df.to_string()
                             excel_string_content += "\n" + "-" * 50 + "\n"
                         file_content = excel_string_content
@@ -291,7 +291,7 @@ class FileProcessingAgent(BaseAgent):
 #     context = {
 #         "files": [
 #             MockUploadFile(
-#                 filename="南航硕士论文：小型农用无人直升机飞行控制技术研究 (朱兖植) (Z-Library).pdf",
+#                 filename="Kommentar",
 #                 content=b"This is a mock PDF content for testing purposes.",
 #                 content_type="application/pdf"
 #             )

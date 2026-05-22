@@ -5,7 +5,7 @@ import { useChatStore, Message } from '@/stores/chat';
 import { uploadFiles } from '@/services/apiService';
 import { storeToRefs } from 'pinia';
 
-// 重连状态接口
+// Kommentar
 interface RetryState {
   isRetrying: boolean
   retryCount: number
@@ -15,7 +15,7 @@ interface RetryState {
   lastHeartbeat: number
 }
 
-// 定义附件接口
+// Kommentar
 interface Attachment {
   _id?: string | null;
   filename: string;
@@ -37,7 +37,7 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
   const searchOnlineActive = ref(false);
   const MAX_WORD_COUNT = 200000;
 
-  // 弹性重连状态
+  // Kommentar
   const retryState = ref<RetryState>({
     isRetrying: false,
     retryCount: 0,
@@ -47,20 +47,20 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
     lastHeartbeat: Date.now()
   });
 
-  // 保存最后一次发送的消息数据用于重试
+  // SpeichernKommentar
   const lastMessageData = ref<any>(null);
   const lastBotMessageId = ref<string | null>(null);
 
-  // 重试配置
+  // Kommentar
   const retryConfig = {
     maxRetries: 3,
     retryDelay: 2000,
-    timeoutMs: 900000, // 15分钟
+    timeoutMs: 900000, // 15Hinweis
     backoffMultiplier: 1.5,
-    heartbeatTimeout: 30000 // 30秒心跳超时
+    heartbeatTimeout: 30000 // 30Hinweis
   };
 
-  // 计算属性
+  // Kommentar
   const canRetry = computed(() => 
     !chatStore.isSending && 
     retryState.value.error && 
@@ -69,7 +69,7 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
 
   const isSending = computed(() => chatStore.isSending || retryState.value.isRetrying);
 
-  // 重置重连状态
+  // Kommentar
   const resetRetryState = () => {
     retryState.value = {
       isRetrying: false,
@@ -81,7 +81,7 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
     };
   };
 
-  // 检查是否为网络错误
+  // Kommentar
   const isNetworkError = (error: any): boolean => {
     if (!error) return false;
     
@@ -100,12 +100,12 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
     return networkErrors.some(errorType => errorString.includes(errorType));
   };
 
-  // 延迟函数
+  // Kommentar
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 
 
-  // 增强的消息发送函数
+  // Kommentar
   const sendMessage = async (isRetry: boolean = false) => {
     console.log('resilient sendMessage called. userInput:', userInput.value, 'selectedFiles:', selectedFiles.value, 'isRetry:', isRetry);
     
@@ -114,15 +114,15 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
       return;
     }
 
-    // 设置发送状态
+    // Kommentar
     chatStore.isSending = true;
 
-    // 如果不是重试，重置重连状态
+    // Kommentar
     if (!isRetry) {
       resetRetryState();
     }
 
-    // 检查会话字数限制
+    // Kommentar
     let currentWordCount = 0;
     if (chatStore.messages && Array.isArray(chatStore.messages)) {
       currentWordCount = chatStore.messages.reduce((count: number, message: Message) => {
@@ -140,16 +140,16 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
     let messageContent = '';
 
     try {
-      // 处理文件上传或使用之前的数据
+      // Kommentar
       if (!isRetry) {
-        // 首次发送，处理文件上传
+        // Kommentar
         if (selectedFiles.value.length > 0) {
           const formData = new FormData();
           selectedFiles.value.forEach((file: File) => {
             formData.append('files', file);
           });
 
-          // 如果有当前会话，使用其ID；否则传undefined让后端处理
+          // Kommentar
           const conversationId = chatStore.currentConversation?._id;
           const response = await uploadFiles(formData, conversationId);
           console.log("Upload response:", response);
@@ -159,7 +159,7 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
 
         messageContent = userInput.value.trim();
         
-        // 保存消息数据用于重试
+        // SpeichernKommentar
         lastMessageData.value = {
           sender: 'user',
           content: messageContent,
@@ -170,16 +170,16 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
           show_think_process: showThinkProcess.value,
         };
       } else {
-        // 重试时使用之前保存的数据
+        // Kommentar
         if (!lastMessageData.value) {
-          ElMessage.error('没有可重试的消息数据');
+          ElMessage.error('Fehler bei der Verarbeitung');
           return;
         }
         messageContent = lastMessageData.value.content;
         uploadedFilesInfo = lastMessageData.value.attachments || [];
       }
 
-      // 发送消息
+      // SendenKommentar
       if (messageContent || uploadedFilesInfo.length > 0) {
         const searchOptions = {
           search_ai_active: searchAIActive.value,
@@ -188,10 +188,10 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
           show_think_process: showThinkProcess.value,
         };
 
-        // 直接调用chat store方法，不使用弹性重连包装
-        // 因为chat store方法内部已有完整的错误处理和UI更新逻辑
+        // Kommentar
+        // Kommentar
         if (chatStore.currentConversation) {
-          // 有当前会话，向现有会话添加消息
+          // Kommentar
           console.log('Adding message to existing conversation:', chatStore.currentConversation._id);
           
           const newMessage: Message = {
@@ -203,7 +203,7 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
           
           await chatStore.addMessageToConversation(chatStore.currentConversation._id, newMessage);
         } else {
-          // 没有当前会话，创建新会话并添加消息
+          // Kommentar
           console.log('Creating new conversation and adding message');
           await chatStore.createConversationAndAddMessage(messageContent, uploadedFilesInfo, searchOptions);
         }
@@ -212,43 +212,43 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
           userInput.value = '';
         }
         
-        // 成功完成，清理重试状态
+        // Kommentar
         resetRetryState();
       }
 
     } catch (error: any) {
       console.error("Error in message sending:", error);
       
-      // 检查是否为网络错误，如果是，设置重试状态
+      // Kommentar
       if (isNetworkError(error)) {
         retryState.value.error = error.message;
-        retryState.value.retryCount = 0; // 重置重试计数
-        ElMessage.warning('消息发送失败，您可以选择重试');
+        retryState.value.retryCount = 0; // Hinweis
+        ElMessage.warning('Nachricht konnte nicht gesendet werden, Warnhinweis');
       } else {
-        // 非网络错误，由chat store处理，我们不干预
+        // Kommentar
         console.log('Non-network error, letting chat store handle it');
       }
     } finally {
-      // 清除发送状态
+      // Kommentar
       chatStore.isSending = false;
     }
   };
 
-  // 手动重试函数
+  // Kommentar
   const retryLastMessage = async () => {
     if (!canRetry.value) {
-      ElMessage.warning('当前无法重试');
+      ElMessage.warning('Warnhinweis');
       return;
     }
     
-    ElMessage.info('正在重试发送消息...');
+    ElMessage.info('Hinweis');
     await sendMessage(true);
   };
 
-  // 使用部分响应
+  // Teilantwort verwenden
   const usePartialResponse = () => {
     if (!retryState.value.partialResponse) {
-      ElMessage.warning('没有可用的部分响应');
+      ElMessage.warning('Warnhinweis');
       return;
     }
 
@@ -259,10 +259,10 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
     }
     
     resetRetryState();
-    ElMessage.success('已使用部分响应');
+    ElMessage.success('Hinweis');
   };
 
-  // 取消错误状态
+  // AbbrechenFehlerStatus
   const dismissError = () => {
     resetRetryState();
   };
@@ -274,7 +274,7 @@ export function useResilientChatSending(userInput: Ref<string>, selectedFiles: R
     MAX_WORD_COUNT,
     sendMessage,
     
-    // 弹性重连相关
+    // Kommentar
     retryState: computed(() => retryState.value),
     canRetry,
     isSending,

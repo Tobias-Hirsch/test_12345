@@ -1,13 +1,13 @@
 <template>
   <div class="policy-management-container">
-    <h2>ABAC 策略管理</h2>
+    <h2>ABAC-Richtlinienverwaltung</h2>
 
-    <!-- 策略列表 -->
+    <!-- Richtlinienliste -->
     <el-table :data="policies" style="width: 100%" border>
       <el-table-column prop="id" label="ID" width="80"></el-table-column>
-      <el-table-column prop="name" label="策略名称"></el-table-column>
-      <el-table-column prop="description" label="描述"></el-table-column>
-      <el-table-column label="是否启用" width="100">
+      <el-table-column prop="name" label="Richtlinienname"></el-table-column>
+      <el-table-column prop="description" label="Beschreibung"></el-table-column>
+      <el-table-column label="Aktiv" width="100">
         <template #default="scope">
           <el-switch
             v-model="scope.row.is_active"
@@ -15,17 +15,17 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="280">
+      <el-table-column label="Aktionen" width="280">
         <template #default="scope">
-          <el-button size="small" @click="editPolicy(scope.row)">编辑</el-button>
-          <el-button size="small" type="primary" plain @click="clonePolicy(scope.row)">复制</el-button>
-          <el-button size="small" type="danger" @click="deletePolicy(scope.row.id)">删除</el-button>
+          <el-button size="small" @click="editPolicy(scope.row)">Bearbeiten</el-button>
+          <el-button size="small" type="primary" plain @click="clonePolicy(scope.row)">Duplizieren</el-button>
+          <el-button size="small" type="danger" @click="deletePolicy(scope.row.id)">Löschen</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 创建/编辑策略对话框 -->
-    <!-- 创建/编辑策略对话框 -->
+    <!-- Dialog zum Erstellen/Bearbeiten einer Richtlinie -->
+    <!-- Dialog zum Erstellen/Bearbeiten einer Richtlinie -->
     <el-dialog
       v-model="dialogVisible"
       :title="dialogTitle"
@@ -43,7 +43,7 @@
       />
     </el-dialog>
 
-    <el-button type="primary" @click="createNewPolicy">创建新策略</el-button>
+    <el-button type="primary" @click="createNewPolicy">Neue Richtlinie erstellen</el-button>
   </div>
 </template>
 
@@ -73,22 +73,20 @@ const clonedPolicyData = ref<Policy | null>(null);
 
 const fetchPolicies = async () => {
   try {
-    const data = await get('/policies/'); // 直接获取数据
-    // 检查 data 是否存在且为数组
+    const data = await get('/policies/');
     if (Array.isArray(data)) {
-      // 转换 is_active 字段为布尔值
       policies.value = data.map((policy: Policy) => ({
         ...policy,
-        is_active: !!policy.is_active // 将 1 转换为 true，0 转换为 false
+        is_active: !!policy.is_active
       }));
     } else {
-      console.error('API 返回的数据无效或不是数组:', data);
-      policies.value = []; // 清空策略列表
-      ElMessage.error('获取策略失败: API 返回数据格式不正确或为空');
+      console.error('API Fehler bei der Verarbeitung', data);
+      policies.value = [];
+      ElMessage.error('Fehler bei der Verarbeitung');
     }
   } catch (error: any) {
-    console.error('获取策略时发生错误:', error);
-    ElMessage.error(`获取策略失败: ${error.message || '未知错误'}`);
+    console.error('Fehler bei der Verarbeitung', error);
+    ElMessage.error(`Fehler beim Laden der Richtlinien: ${error.message || 'Unbekannter Fehler'}`);
   }
 };
 
@@ -114,12 +112,12 @@ const clonePolicy = async (policy: Policy) => {
     clonedPolicyData.value = {
       ...policyToClone,
       id: undefined,
-      name: `${policyToClone.name} - copy`,
+      name: `${policyToClone.name} - Kopie`,
       is_active: false,
     };
     dialogVisible.value = true;
   } catch (error: any) {
-    ElMessage.error(`复制策略失败: ${error.message}`);
+    ElMessage.error(`Fehler beim Duplizieren der Richtlinie: ${error.message}`);
   }
 };
 
@@ -136,15 +134,15 @@ const handleSavePolicy = async (policyToSave: Omit<Policy, 'id'>) => {
 
     if (isEditMode.value && editingPolicyId.value) {
       await put(`/policies/${editingPolicyId.value}`, payload);
-      ElMessage.success('策略更新成功');
+      ElMessage.success('Richtlinie gespeichert');
     } else {
       await post('/policies/', payload);
-      ElMessage.success('策略创建成功');
+      ElMessage.success('Richtlinie gespeichert');
     }
     dialogVisible.value = false;
-    fetchPolicies(); // 刷新列表
+    fetchPolicies();
   } catch (error: any) {
-    ElMessage.error(`保存策略失败: ${error.message}`);
+    ElMessage.error(`Fehler beim Speichern der Richtlinie: ${error.message}`);
   }
 };
 
@@ -154,42 +152,41 @@ const handleDialogClose = () => {
 
 const dialogTitle = computed(() => {
   if (isEditMode.value) {
-    return '编辑策略';
+    return 'Richtlinie bearbeiten';
   }
   if (clonedPolicyData.value) {
-    return '从现有策略创建 (复制)';
+    return 'Richtlinie duplizieren';
   }
-  return '创建新策略';
+  return 'Neue Richtlinie erstellen';
 });
 
 const deletePolicy = async (id: number) => {
-  ElMessageBox.confirm('确定要删除此策略吗？', '警告', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  ElMessageBox.confirm('Möchten Sie diese Richtlinie wirklich löschen?', 'Warnung', {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Abbrechen',
     type: 'warning',
   })
     .then(async () => {
       try {
         await del(`/policies/${id}`);
-        ElMessage.success('策略删除成功');
-        fetchPolicies(); // 刷新列表
+        ElMessage.success('Richtlinie gelöscht');
+        fetchPolicies();
       } catch (error: any) {
-        ElMessage.error(`删除策略失败: ${error.message}`);
+        ElMessage.error(`Fehler beim Löschen der Richtlinie: ${error.message}`);
       }
     })
     .catch(() => {
-      ElMessage.info('已取消删除');
+      ElMessage.info('Löschen abgebrochen');
     });
 };
 
 const togglePolicyStatus = async (policy: Policy) => {
   try {
-    // 仅更新 is_active 状态
     await put(`/policies/${policy.id}`, { is_active: policy.is_active });
-    ElMessage.success('策略状态更新成功');
+    ElMessage.success('Richtlinie gespeichert');
   } catch (error: any) {
-    ElMessage.error(`更新策略状态失败: ${error.message}`);
-    policy.is_active = !policy.is_active; // 恢复原状态
+    ElMessage.error(`Fehler beim Aktualisieren des Richtlinienstatus: ${error.message}`);
+    policy.is_active = !policy.is_active;
   }
 };
 

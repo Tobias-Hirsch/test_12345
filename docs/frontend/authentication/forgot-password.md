@@ -1,11 +1,11 @@
-# 忘记密码
+# Passwort vergessen
 
-本文档描述了 `ForgotPassword.vue` 页面，该页面用于用户请求重置密码。
+Hinweis`ForgotPassword.vue` Hinweisücksetzen. 
 
-## 页面功能
-*   允许用户输入注册邮箱。
-*   向后端发送重置密码请求。
-*   显示请求成功或失败消息。
+## Kommentar
+*   ErlaubenBenutzerKommentar
+*   KommentarücksetzenKommentar
+*   Kommentar
 
-## 路径
+## Kommentar
 `/frontend/src/views/ForgotPassword.vue`

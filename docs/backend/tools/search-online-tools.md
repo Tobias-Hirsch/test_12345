@@ -1,16 +1,16 @@
-# `tools/search_online_tools.py` - 在线搜索工具
+# `tools/search_online_tools.py` - Kommentar
 
-本文档描述了 `backend/app/tools/search_online_tools.py` 文件，该文件包含了用于执行在线搜索的工具函数，例如通过 Bing 搜索 API 获取实时信息。
+Hinweis`backend/app/tools/search_online_tools.py` Hinweisührt ausHinweis
 
-## 功能描述
-*   **在线搜索**: 封装了调用外部搜索引擎 API 的逻辑。
-*   **结果解析**: 解析搜索 API 返回的结果，提取相关信息。
-*   **信息检索**: 为 LLM 或代理提供实时、最新的信息。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **ErgebnisseKommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-该模块通常会使用 `httpx` 或 `requests` 库与搜索引擎的 API 进行通信，并解析 JSON 响应。
+## Kommentar
+Hinweis`httpx` Oder `requests` Hinweis
 
-例如，使用 Bing Web Search API：
+Hinweis
 ```python
 import httpx
 import os
@@ -19,7 +19,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# 从环境变量获取 Bing Search API 密钥
+# Kommentar
 BING_SEARCH_API_KEY = os.getenv("BING_SEARCH_API_KEY")
 BING_SEARCH_ENDPOINT = "https://api.bing.microsoft.com/v7.0/search"
 
@@ -61,7 +61,7 @@ async def bing_web_search(query: str, num_results: int = 3) -> list[dict]:
         logger.error(f"An unexpected error occurred during Bing search: {e}")
         return []
 
-# 示例用法：
+# Kommentar
 # async def main():
 #     results = await bing_web_search("latest AI news")
 #     for r in results:
@@ -72,5 +72,5 @@ async def bing_web_search(query: str, num_results: int = 3) -> list[dict]:
 #     asyncio.run(main())
 ```
 
-## 路径
+## Kommentar
 `/backend/app/tools/search_online_tools.py`

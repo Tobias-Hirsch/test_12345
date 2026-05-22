@@ -1,5 +1,5 @@
 <template>
-  <!-- 聊天消息区域 -->
+  <!-- Chat-Nachrichtenbereich -->
   <div class="messages-container" ref="messagesContainerRef">
     <div v-if="messages && !messages.some((message: Message) => message.sender === 'user')" class="welcome-top">
       <div class="welcome-message">{{ t('rostiChat.welcome') }}</div>

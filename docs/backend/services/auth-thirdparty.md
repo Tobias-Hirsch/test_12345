@@ -1,19 +1,19 @@
-# `services/auth_thirdparty.py` - 第三方认证服务
+# `services/auth_thirdparty.py` - Kommentar
 
-本文档描述了 `backend/app/services/auth_thirdparty.py` 文件，该文件可能包含了与第三方认证（如 OAuth2、OpenID Connect）相关的业务逻辑。
+Hinweis`backend/app/services/auth_thirdparty.py` Hinweis
 
-## 功能描述
-*   **OAuth 客户端配置**: 配置用于与第三方身份提供商（如 Google、GitHub、Facebook）交互的 OAuth 客户端。
-*   **授权 URL 生成**: 生成用于引导用户到第三方登录页面的授权 URL。
-*   **令牌交换**: 处理从第三方获取的授权码，并交换为访问令牌。
-*   **用户信息获取**: 使用访问令牌从第三方获取用户资料。
-*   **用户注册/登录**: 根据第三方用户信息在本地数据库中创建或查找用户。
+## Kommentar
+*   **OAuth Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **BenutzerKommentar**: Kommentar
+*   **BenutzerRegistrieren/Anmelden**: Kommentar
 
-## 逻辑实现
-该模块通常会使用 `Authlib` 或其他 OAuth 客户端库来实现第三方认证流程。
+## Kommentar
+Hinweis`Authlib` OderHinweis
 
-例如，Google OAuth2 流程：
-1.  **配置客户端**:
+Hinweis
+1.  **Hinweis**:
     ```python
     from authlib.integrations.starlette_client import OAuth
     from backend.app.core.config import settings
@@ -29,7 +29,7 @@
         client_kwargs={'scope': 'openid email profile'},
     )
     ```
-2.  **授权重定向**:
+2.  **Hinweis**:
     ```python
     from starlette.requests import Request
     from starlette.responses import RedirectResponse
@@ -38,14 +38,14 @@
         redirect_uri = request.url_for('auth_google')
         return await oauth.google.authorize_redirect(request, redirect_uri)
     ```
-3.  **回调处理**:
+3.  **Hinweis**:
     ```python
     async def auth_google(request: Request, db: Session = Depends(get_db)):
         token = await oauth.google.authorize_access_token(request)
         user_info = await oauth.google.parse_id_token(token)
-        # 根据 user_info 在本地数据库中查找或创建用户
-        # 生成并返回本地 JWT
+        # Kommentar
+        # Kommentar
     ```
 
-## 路径
+## Kommentar
 `/backend/app/services/auth_thirdparty.py`

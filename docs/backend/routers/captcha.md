@@ -1,22 +1,22 @@
-# `routers/captcha.py` - 验证码路由
+# `routers/captcha.py` - CaptchaKommentar
 
-本文档描述了 `backend/app/routers/captcha.py` 文件，该文件定义了与验证码生成和验证相关的 API 路由。
+Hinweis`backend/app/routers/captcha.py` Hinweis
 
-## 功能描述
-*   **生成验证码**: 提供一个接口用于生成图像验证码及其对应的文本值。
-*   **验证验证码**: 提供一个接口用于验证用户输入的验证码是否正确。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-1.  **验证码生成**:
-    *   通常会使用一个库（如 `captcha` 或自定义实现）来生成图像验证码。
-    *   生成的验证码文本会存储在服务器端（例如，使用 Redis 或会话管理），并将其 ID 或其他标识符返回给前端。
-    *   图像数据（通常是 base64 编码的 PNG）也会返回给前端显示。
+## Kommentar
+1.  **CaptchaHinweis**:
+    *   Kommentar`captcha` OderKommentar
+    *   Kommentar
+    *   Kommentar
     *   `@router.get("/captcha")`
-2.  **验证码验证**:
-    *   接收前端发送的验证码 ID 和用户输入的文本。
-    *   从服务器端存储中检索对应的验证码文本。
-    *   比较用户输入和存储的文本，判断是否匹配。
+2.  **CaptchaHinweis**:
+    *   Kommentar
+    *   Kommentar
+    *   Kommentar
     *   `@router.post("/captcha/verify")`
 
-## 路径
+## Kommentar
 `/backend/app/routers/captcha.py`

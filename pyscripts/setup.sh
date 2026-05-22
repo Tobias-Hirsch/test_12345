@@ -1,13 +1,13 @@
 #!/bin/bash
 # prepare for docker-compose
-# 创建 Nginx 目录
+# Kommentar
 mkdir -p ./nginx/html
 
-# 创建 MySQL 数据卷目录
+# Kommentar
 mkdir -p ./mysql_data
 
-# 创建 Milvus 数据卷目录
+# Kommentar
 mkdir -p ./milvus_data
 
-# 创建 Minio 数据卷目录
+# Kommentar
 mkdir -p ./minio_data

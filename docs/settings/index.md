@@ -1,9 +1,9 @@
-# 设置概述
+# Kommentar
 
-本节介绍 Rosti 产品的各项设置，包括用户个人设置和系统管理设置。
+HinweisägeHinweis
 
-## 目录
+## Kommentar
 
-*   [用户设置](user-settings.md)
+*   [BenutzerKommentar
 
-请点击左侧导航栏或上方链接查看具体内容。
+Hinweis

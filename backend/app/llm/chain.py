@@ -10,9 +10,9 @@ from pydantic import BaseModel, Field
 QW_API_KEY = settings.QW_API_KEY
 
 class SummarizedDoc(BaseModel):
-    summarize: str = Field(description="总结摘要")
+    summarize: str = Field(description="Zusammenfassung")
 class SummarizedDocKeyWord(BaseModel):
-    key_word: List[str] = Field(description="关键词")
+    key_word: List[str] = Field(description="Schlüsselwörter")
 
 # Prompt templates remain global
 prompt_summarize_doc = ChatPromptTemplate.from_messages(
@@ -21,10 +21,10 @@ prompt_summarize_doc = ChatPromptTemplate.from_messages(
             "system",
             """
 # Backend
-    您是工业领域的专家，为了方便用户选取想要使用的文献，现在需要对文献生成总结，总结的越精练越好。
+    Du bist Experte im Industriebereich. Damit Benutzer geeignete Literatur auswählen können, sollst du eine möglichst präzise Zusammenfassung der Literatur erstellen.
 
 # Task
-    您的任务是以一个专业的专家角度，根据标题和正文总结这篇文章，形成一个摘要，这个摘要尽可能简短，但是必须包含使用层面的必要信息
+    Deine Aufgabe ist es, den Artikel aus fachlicher Perspektive anhand von Titel und Haupttext zusammenzufassen. Die Zusammenfassung soll möglichst kurz sein, aber alle für die Nutzung relevanten Informationen enthalten.
             """,
         ),
         ("placeholder", "{title}"),
@@ -39,10 +39,10 @@ prompt_summarize_doc_key_word = ChatPromptTemplate.from_messages(
             "system",
             """
 # Backend
-    您是法律领域的专家，因为广大民众需要普法，为了方便民众选取想要阅读的法律，现在需要对法律文献总结生成关键词
+    Du bist Experte im Rechtsbereich. Damit Bürger geeignete Rechtstexte auswählen können, sollst du Schlüsselwörter für juristische Dokumente erzeugen.
 
 # Task
-    您的任务是以一个专业的法学律师角度，根据标题和正文总结这篇法律文章，形成多个关键词，这些关键词里必须准确包含整个法律的所有关键信息以及所有涉及的领域，尽可能完善且避开敏感词，但是关键词不应该太多，要保持在5个到150个之间
+    Deine Aufgabe ist es, aus fachjuristischer Perspektive anhand von Titel und Haupttext mehrere Schlüsselwörter zu bilden. Sie müssen die zentralen Informationen und betroffenen Bereiche möglichst vollständig abdecken, sensible Begriffe vermeiden und zwischen 5 und 150 Einträge umfassen.
             """,
         ),
         ("placeholder", "{title}"),

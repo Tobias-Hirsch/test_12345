@@ -1,15 +1,15 @@
-# `rag_knowledge/embedding_service.py` - 嵌入服务
+# `rag_knowledge/embedding_service.py` - Kommentar
 
-本文档描述了 `backend/app/rag_knowledge/embedding_service.py` 文件，该文件负责生成文本嵌入（embeddings），这些嵌入用于向量数据库（如 Milvus）中的相似度搜索。
+Hinweis`backend/app/rag_knowledge/embedding_service.py` Hinweis
 
-## 功能描述
-*   **文本嵌入生成**: 使用预训练的模型（如 OpenAI 的 `text-embedding-ada-002` 或本地 Ollama 模型）将文本转换为高维向量。
-*   **模型抽象**: 封装了不同嵌入模型的调用逻辑，提供统一的接口。
+## Kommentar
+*   **Kommentar**: Kommentar`text-embedding-ada-002` OderKommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-该模块通常会根据配置选择不同的嵌入提供商。
+## Kommentar
+Hinweis
 
-例如，使用 OpenAI 或 Ollama 生成嵌入：
+Hinweis
 ```python
 import os
 from typing import List
@@ -61,5 +61,5 @@ async def _get_openai_embedding(text: str) -> List[float]:
         raise
 ```
 
-## 路径
+## Kommentar
 `/backend/app/rag_knowledge/embedding_service.py`

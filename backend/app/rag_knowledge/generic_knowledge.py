@@ -47,7 +47,7 @@ OLLAMA_DEVICE= settings.OLLAMA_DEVICE  # Default to mps:0 if not set
 # Import the LLM object
 from app.llm.llm import get_llm
 
-# 假设get_embedding函数已经存在
+# Kommentar
 from app.rag_knowledge.embedding_service import get_embedding, rerank_documents
 from app.services import ollama_service # Import the central service
 from app.services.paddleocr_service import call_paddleocr_service
@@ -103,9 +103,9 @@ def ocr_image(image_path: str):
         logger.error(f"Error processing image {image_path}: {str(e)}", exc_info=True)
         raise # Re-raise the exception after printing
 
-# 连接到Milvus
+# Kommentar
 async def connect_to_milvus(host: Optional[str] = None, port: Optional[str] = None):
-    """连接到Milvus数据库"""
+    """Hinweis"""
     # Use passed host/port if available, otherwise use environment variables,
     # otherwise use hardcoded defaults.
     milvus_host = host if host is not None else MILVUS_HOST
@@ -116,18 +116,18 @@ async def connect_to_milvus(host: Optional[str] = None, port: Optional[str] = No
         connections.connect(
             host=milvus_host,
             port=milvus_port,
-            timeout=30.0,  # 增加超时时间到30秒
-            wait_timeout=30  # 等待超时也设置为30秒
+            timeout=30.0,  # Hinweis
+            wait_timeout=30  # Hinweis
         )
-        logger.info("已连接到Milvus")
+        logger.info("Hinweis")
     except Exception as e:
-        logger.error(f"连接到Milvus失败: {str(e)}", exc_info=True)
+        logger.error(f"Fehler bei der Verarbeitung{str(e)}", exc_info=True)
         raise
 
 
-# 创建集合
+# Kommentar
 async def create_collection(collection_name: str = "markdown_data", dim: int = 1024):
-    """创建Milvus集合，如果不存在的话"""
+    """Hinweis"""
     # if Collection(collection_name).exists():
     #     return Collection(collection_name)
 
@@ -142,33 +142,33 @@ async def create_collection(collection_name: str = "markdown_data", dim: int = 1
     schema = CollectionSchema(fields=fields)
     collection = Collection(name=collection_name, schema=schema)
 
-    # 创建索引
+    # Kommentar
     index_params = {
         "metric_type": "L2",
         "index_type": "HNSW",
         "params": {"M": 8, "efConstruction": 64}
     }
     collection.create_index(field_name="vector", index_params=index_params)
-    logger.info(f"已创建集合: {collection_name}")
+    logger.info(f"Hinweis{collection_name}")
     return collection
 
 
 async def read_markdown_file(file_path: str) -> str:
-    """异步读取Markdown文件内容"""
+    """Hinweis"""
     async with aiofiles.open(file_path, 'r', encoding='utf-8') as f:
         content = await f.read()
     return content
 
 
 async def parse_markdown(content: str, base_path: str, image_base_path: str) -> List[Dict[str, Any]]:
-    """解析Markdown内容，分割为文本块和图片"""
-    # 将Markdown转换为HTML
+    """Hinweis"""
+    # Kommentar
     html = markdown.markdown(content)
     soup = BeautifulSoup(html, 'html.parser')
 
     chunks = []
 
-    # 处理文本段落
+    # Kommentar
     # Expand the list of tags to extract text from, ensuring comprehensive content capture.
     # This now includes all header levels, paragraphs, list items, and table cells.
     for element in soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'td', 'th']):
@@ -179,27 +179,27 @@ async def parse_markdown(content: str, base_path: str, image_base_path: str) -> 
                 "filepath": base_path
             })
 
-    # 处理图片
+    # Kommentar
     for img in soup.find_all('img'):
         img_src = img.get('src', '')
         if img_src:
             logger.info(img_src)
-            # 处理相对路径
+            # Kommentar
             if not os.path.isabs(img_src):
                 # Use the provided image_base_path for joining
                 img_path = os.path.join(image_base_path, os.path.basename(img_src))
             else:
                 img_path = img_src
 
-            # 提取图片文字
+            # Kommentar
             try:
                 ocr_text = ocr_image(img_path)
 
-                # 获取图片上下文（前后的文本块）
+                # Kommentar
                 context = ""
                 img_index = soup.find_all().index(img)
 
-                # 查找前面的文本
+                # Kommentar
                 for i in range(img_index - 1, -1, -1):
                     element = soup.find_all()[i]
                     # if element.name in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'] and element.text.strip():
@@ -207,7 +207,7 @@ async def parse_markdown(content: str, base_path: str, image_base_path: str) -> 
                         context += element.text.strip() + " "
                         break
 
-                # 查找后面的文本
+                # Kommentar
                 for i in range(img_index + 1, len(soup.find_all())):
                     element = soup.find_all()[i]
                     # if element.name in ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'] and element.text.strip():
@@ -215,8 +215,8 @@ async def parse_markdown(content: str, base_path: str, image_base_path: str) -> 
                         context += element.text.strip()
                         break
 
-                # 图片内容为OCR文本+上下文
-                img_content = f"{ocr_text} [上下文: {context.strip()}]"
+                # Kommentar+Kommentar
+                img_content = f"{ocr_text} [Hinweis{context.strip()}]"
 
                 chunks.append({
                     "content": img_content,
@@ -224,20 +224,20 @@ async def parse_markdown(content: str, base_path: str, image_base_path: str) -> 
                     "filepath": img_path
                 })
             except Exception as e:
-                logger.error(f"处理图片时出错: {img_path}, 错误: {str(e)}", exc_info=True)
+                logger.error(f"Fehler bei der Bildverarbeitung: {img_path}, Fehler: {str(e)}", exc_info=True)
     logger.debug(f"Parsed chunks: {chunks}")
     return chunks
 
 
 async def process_chunks(chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """处理文本块，添加向量嵌入"""
+    """Hinweis"""
     processed_chunks = []
 
     for chunk in chunks:
-        # 生成唯一ID
+        # Kommentar
         chunk_id = str(uuid.uuid4())
 
-        # 获取向量嵌入
+        # Kommentar
         vector = await get_embedding(chunk["content"])
  
         # Check if embedding was successful before appending
@@ -256,24 +256,24 @@ async def process_chunks(chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 
 async def insert_to_milvus(collection: Collection, data: List[Dict[str, Any]]):
-    """将数据插入Milvus"""
+    """Hinweis"""
     if not data:
         return
 
-    # 准备数据
+    # Kommentar
     ids = [item["id"] for item in data]
     vectors = [item["vector"] for item in data]
     filepaths = [item["filepath"] for item in data]
     contents = [item["content"] for item in data]
     is_images = [item["is_image"] for item in data]
 
-    # 确保 vectors 是一个列表的列表
+    # Kommentar
     # if not all(isinstance(vec, list) and all(isinstance(x, float) for x in vec) for vec in vectors):
     #     raise ValueError("Vectors must be a list of lists of floats")
 
-    # 插入数据
+    # Kommentar
     collection.insert([ids, vectors, filepaths, contents, is_images])
-    logger.info(f"已插入 {len(ids)} 条记录到Milvus")
+    logger.info(f"Hinweis{len(ids)} Hinweis")
 
     # Flush and load the collection to make data searchable immediately
     logger.info("Flushing collection...")
@@ -327,18 +327,18 @@ async def search_in_milvus(
     recall_limit: int = 10,
     filter_expr: Optional[str] = None
 ) -> List[Dict[str, Any]]:
-    """在Milvus中搜索相似内容，支持元数据过滤。"""
+    """Hinweis"""
     await connect_to_milvus()
     collection = Collection(collection_name)
     collection.load()
 
-    # 获取查询向量
+    # Kommentar
     query_vector = await get_embedding(query_text)
     if query_vector is None:
         logger.error(f"Failed to generate embedding for query: {query_text}")
         return []
 
-    # 执行搜索
+    # führt ausSuchen
     search_params = {"metric_type": "L2", "params": {"ef": 64}}
     results = collection.search(
         data=[query_vector],
@@ -349,7 +349,7 @@ async def search_in_milvus(
         output_fields=["filepath", "content", "is_image"]
     )
 
-    # 处理结果
+    # Kommentar
     search_results = []
     for hits in results:
         for hit in hits:
@@ -363,6 +363,149 @@ async def search_in_milvus(
 
     # Return all results up to the recall_limit for reranking
     return search_results
+
+
+def _normalize_document_summary(summary: Any) -> str:
+    """Filters technical artifacts out of stored document summaries."""
+    if not isinstance(summary, str):
+        return "No reliable summary available."
+
+    cleaned_summary = " ".join(summary.split()).strip()
+    if not cleaned_summary:
+        return "No reliable summary available."
+
+    invalid_markers = (
+        "multiple items of type",
+        "requires a single string output",
+        "single string output",
+        "format_instructions",
+        "jsonoutputparser",
+    )
+    if any(marker in cleaned_summary.lower() for marker in invalid_markers):
+        return "No reliable summary available."
+
+    return cleaned_summary
+
+
+async def retrieve_rag_context(
+    query_text: str,
+    db_session: Session,
+    permitted_rag_items: Optional[List[Dict[str, Any]]] = None,
+    limit: int = 5
+) -> Tuple[str, List[Dict[str, Any]]]:
+    """
+    Retrieves raw RAG context and source metadata without asking the LLM.
+
+    Chat response generation needs the original document chunks, not a
+    pre-synthesized answer, otherwise a first-pass model can turn a valid
+    retrieval result into an unhelpful refusal.
+    """
+    await connect_to_milvus()
+
+    all_search_results = []
+
+    if permitted_rag_items:
+        for rag_item in permitted_rag_items:
+            rag_item_id = rag_item.get("id")
+            rag_item_name = rag_item.get("name")
+
+            if not rag_item_id or not rag_item_name:
+                continue
+
+            # Keep this in sync with the embedding pipeline in routers/embeddings.py.
+            sanitized_rag_item_name = rag_item_name.lower().replace(" ", "_")
+            collection_name = f"rag_{sanitized_rag_item_name}"
+
+            if not utility.has_collection(collection_name):
+                logger.warning(f"Skipping RAG item '{rag_item_name}': Collection '{collection_name}' does not exist.")
+                continue
+
+            try:
+                search_results = await search_in_milvus(query_text, collection_name=collection_name, recall_limit=50)
+
+                for result in search_results:
+                    result["rag_item_id"] = rag_item_id
+                    result["rag_item_name"] = rag_item_name
+                all_search_results.extend(search_results)
+
+            except Exception as e:
+                logger.error(f"Error querying RAG item '{rag_item_name}' (collection: {collection_name}): {e}", exc_info=True)
+
+    if all_search_results:
+        logger.info(f"--- Reranking: Starting with {len(all_search_results)} initial candidates. ---")
+
+        reranked_results = await rerank_documents(query_text, all_search_results)
+        all_search_results = reranked_results[:limit]
+
+        logger.info(f"--- Reranking Complete: Top {len(all_search_results)} results selected. ---")
+        for i, doc in enumerate(all_search_results):
+            score_info = f"Score: {doc.get('relevance_score'):.4f}" if 'relevance_score' in doc else f"Dist: {doc.get('distance'):.4f}"
+            logger.info(f"  [{i+1}] ID: {doc.get('id')}, {score_info}, Path: {doc.get('filepath')}")
+            logger.info(f"      Content: {doc.get('content', '')[:300]}...")
+        logger.info("-" * 50)
+
+    mongo_client = get_mongo_client()
+    if not mongo_client:
+        logger.error("Failed to connect to MongoDB. Cannot retrieve additional context.")
+        return "", []
+
+    combined_context = []
+    source_documents = []
+
+    try:
+        for result in all_search_results:
+            chunk_id = result.get("id")
+            rag_item_name = result.get("rag_item_name")
+            if not rag_item_name:
+                logger.warning(f"Skipping result due to missing rag_item_name: {result}")
+                continue
+
+            sanitized_rag_item_name = rag_item_name.lower().replace(" ", "_")
+            mongo_db_name_for_rag = f"rag_db_{sanitized_rag_item_name}"
+            mongo_collection_name_for_rag = f"documents_{sanitized_rag_item_name}"
+
+            try:
+                db = mongo_client[mongo_db_name_for_rag]
+                documents_collection = db[mongo_collection_name_for_rag]
+
+                if chunk_id:
+                    document = documents_collection.find_one({"milvus_chunks.chunk_id": chunk_id})
+                    if document:
+                        original_filename = document.get('original_filename', 'N/A')
+                        chunk_content = result.get('content', 'N/A')
+                        summary = _normalize_document_summary(document.get('summary'))
+                        context_text = f"From document '{original_filename}' (Summary: {summary}):\n---\nContent Chunk: {chunk_content}\n---"
+                        combined_context.append(context_text)
+
+                        logger.debug(f"--- DEBUG: Attempting to find download URL for filename: '{original_filename}' in RAG ID: {result.get('rag_item_id')} ---")
+                        file_gist_with_url = get_file_gist_by_filename_and_rag_id(
+                            db_session,
+                            filename=original_filename,
+                            rag_id=result.get("rag_item_id")
+                        )
+
+                        source_doc_item = {
+                            "type": "RAG",
+                            "rag_item_name": rag_item_name,
+                            "source": original_filename,
+                            "content_preview": chunk_content[:100] + '...' if len(chunk_content) > 100 else chunk_content,
+                            "summary": summary
+                        }
+
+                        if file_gist_with_url:
+                            logger.debug(f"  [SUCCESS] Found file_gist with ID: {file_gist_with_url.id} for filename '{original_filename}'")
+                            source_doc_item["file_id"] = file_gist_with_url.id
+                            source_doc_item["filename"] = file_gist_with_url.filename
+                        else:
+                            logger.warning(f"  [WARNING] Could not find a file_gist for '{original_filename}'.")
+
+                        source_documents.append(source_doc_item)
+            except Exception as e:
+                logger.error(f"Error accessing MongoDB for RAG item '{rag_item_name}' (DB: {mongo_db_name_for_rag}, Collection: {mongo_collection_name_for_rag}): {e}", exc_info=True)
+    finally:
+        mongo_client.close()
+
+    return "\n\n".join(combined_context), source_documents
 
 
 async def query_rag_system(
@@ -451,7 +594,7 @@ async def query_rag_system(
     mongo_client = get_mongo_client()
     if not mongo_client:
         logger.error("Failed to connect to MongoDB. Cannot retrieve additional context.")
-        yield {"answer": "错误：无法连接到元数据数据库。请检查系统配置。", "source_documents": []}
+        yield {"answer": "Fehler: Verbindung zur Metadatenbank nicht möglich. Bitte prüfen Sie die Systemkonfiguration.", "source_documents": []}
         return
 
     combined_context = []
@@ -464,8 +607,8 @@ async def query_rag_system(
             logger.warning(f"Skipping result due to missing rag_item_name: {result}")
             continue
 
-        # Construct MongoDB database and collection names based on rag_item_name
-        sanitized_rag_item_name = rag_item_name.replace(" ", "_")
+        # Keep this in sync with the embedding pipeline in routers/embeddings.py.
+        sanitized_rag_item_name = rag_item_name.lower().replace(" ", "_")
         mongo_db_name_for_rag = f"rag_db_{sanitized_rag_item_name}"
         mongo_collection_name_for_rag = f"documents_{sanitized_rag_item_name}"
 
@@ -482,7 +625,7 @@ async def query_rag_system(
 
                     # Add document summary and chunk content to the context for LLM
                     # Combine the document summary and the specific chunk content for richer context.
-                    summary = document.get('summary', 'No summary available.')
+                    summary = _normalize_document_summary(document.get('summary'))
                     context_text = f"From document '{original_filename}' (Summary: {summary}):\n---\nContent Chunk: {chunk_content}\n---"
                     combined_context.append(context_text)
 
@@ -501,7 +644,7 @@ async def query_rag_system(
                         "rag_item_name": rag_item_name,
                         "source": original_filename,
                         "content_preview": chunk_content[:100] + '...' if len(chunk_content) > 100 else chunk_content,
-                        "summary": document.get('summary', 'N/A') # Add summary from MongoDB
+                        "summary": summary # Add summary from MongoDB
                     }
                     
                     if file_gist_with_url:
@@ -523,22 +666,22 @@ async def query_rag_system(
 
     # Synthesize Answer
     if not combined_context:
-        synthesized_answer = "根据提供的上下文信息，我无法找到相关的答案。"
+        synthesized_answer = "Auf Basis der bereitgestellten Kontextinformationen konnte ich keine passende Antwort finden."
         yield {"answer": synthesized_answer, "source_documents": source_documents}
         return
 
     # --- New, more effective prompt structure ---
-    system_prompt = """You are a professional and rigorous Q&A assistant.
-Your task is to answer the user's question based **strictly and solely** on the context provided.
+    system_prompt = """Du bist ein professioneller und sorgfältiger Q&A-Assistent.
+Deine Aufgabe ist es, die Frage des Benutzers **streng und ausschließlich** auf Grundlage des bereitgestellten Kontexts zu beantworten.
 
-**Rules:**
-1.  **Analyze the Context:** Carefully read all the provided context sections before formulating your answer.
-2.  **Strict Grounding:** Your entire answer MUST be derived from the information within the `<context>` blocks. Do NOT use any external knowledge or make assumptions.
-3.  **Direct Answer:** Answer the question directly and comprehensively.
-4.  **Handling Missing Information:**
-    *   If the context contains enough information, provide a thorough answer.
-    *   If the context is completely irrelevant or does not contain the information needed to answer the question, you MUST respond with exactly this phrase: "根据我手上的资料，无法回答您的问题。" (According to the materials I have, I cannot answer your question.)
-    *   Do not try to guess or provide a partial answer if the information is not explicitly present.
+**Regeln:**
+1. **Kontext analysieren:** Lies alle bereitgestellten Kontextabschnitte sorgfältig, bevor du eine Antwort formulierst.
+2. **Strikte Kontextbindung:** Deine gesamte Antwort MUSS aus den Informationen innerhalb der `<context>`-Blöcke abgeleitet werden. Verwende KEIN externes Wissen und triff keine Annahmen.
+3. **Direkte Antwort:** Beantworte die Frage direkt und umfassend.
+4. **Umgang mit fehlenden Informationen:**
+   * Wenn der Kontext genügend Informationen enthält, gib eine vollständige Antwort.
+   * Wenn der Kontext irrelevant ist oder die benötigten Informationen nicht enthält, MUSST du exakt mit diesem Satz antworten: "Auf Grundlage der mir vorliegenden Materialien kann ich Ihre Frage nicht beantworten."
+   * Rate nicht und gib keine Teilantwort, wenn die Information nicht ausdrücklich im Kontext enthalten ist.
 """
 
     user_prompt_template = """
@@ -550,7 +693,7 @@ Your task is to answer the user's question based **strictly and solely** on the 
 {query}
 </question>
 
-Based on the rules I provided, please answer the question using ONLY the context above.
+Beantworte die Frage anhand der vorgegebenen Regeln ausschließlich auf Basis des obigen Kontexts.
 """
     
     user_prompt = user_prompt_template.format(context="\n\n".join(combined_context), query=query_text)
@@ -597,8 +740,8 @@ def _clean_text(text: str) -> str:
         if len(line.strip()) == 0:
             continue
         
-        # Count valid characters (alphanumeric, Chinese characters, common punctuation)
-        valid_chars = re.findall(r'[\w\s\u4e00-\u9fff.,!?;:()"\'‘’“”`~-]', line)
+        # Count valid characters (alphanumeric characters, CJK characters, common punctuation)
+        valid_chars = re.findall(r'[\w\s\u4e00-\u9fff.,!?;:()"\'''""`~-]', line)
         
         # If the line is not empty and the ratio of valid characters is too low, consider it garbled.
         if len(line) > 0 and len(valid_chars) / len(line) < 0.3:
@@ -889,7 +1032,7 @@ async def process_and_embed_pdf(
 
 
 async def process_markdown_file(file_path: str, image_dir: str, collection_name: str, mongo_db_name: str, mongo_collection_name: str = "documents"):
-    """处理Markdown文件，存入Milvus并记录到MongoDB"""
+    """Hinweis"""
     # Connect to Milvus
     await connect_to_milvus()
 
@@ -1039,34 +1182,34 @@ def get_mongo_client():
         return None
 
 
-# 主函数
+# Kommentar
 # async def main():
 #     pass
-    # # 处理pdf为markdown
-    # # 指定pp文件夹的路径
+    # # Kommentar
+    # # Kommentar
     # pp_folder = "/Users/liuzhengyin/Downloads/GB3000"
 
-    # logger.info(f"正在读取 {pp_folder} 文件夹中的所有文件...")
+    # logger.info(f"Kommentar{pp_folder} Kommentar")
     # files = read_all_files(pp_folder)
 
-    # logger.info(f"共找到 {len(files)} 个文件")
-    # logger.info("文件列表:", files)
+    # logger.info(f"Kommentar{len(files)} Kommentar")
+    # logger.info("Kommentar", files)
     # for i in files:
     #     if i.endswith(".pdf"):
     #         deal_to_md(i)
 
     # markdown_file = "/Users/liuzhengyin/Documents/AI/websev/chr/lib/deal_documents/output/IEC+60601-1+2012A1.md"
-    # markdown_file = "/Users/Jinglu/Downloads/md、SP04_P001_Nonconforming control procedure不合格品控制程序_A3.md"
+    # markdown_file = "/Users/Jinglu/Downloads/md, SP04_P001_Nonconforming control procedureKommentar"
     # collection_name = "markdown_data"
     #
-    # 处理Markdown文件
+    # Kommentar
     # files = read_all_files(md_path)
     # for i in files:
         #  if i.endswith(".pdf"):
     # count = await process_markdown_file(markdown_file, collection_name)
-    # logger.info(f"已处理并存储 {count} 个内容块")
+    # logger.info(f"Kommentar{count} Kommentar")
 
-    # # 示例查询
+    # # Kommentar
     # query = (
     #     "If however there is some insulation at both points A and B, then no part of the "
     #     "SECONDARY CIRCUIT is 'live' according to the definition in the second edition, so "
@@ -1078,13 +1221,13 @@ def get_mongo_client():
     # await connect_to_milvus()
     # collection = Collection(collection_name)
     # results = await search_in_milvus(collection, query)
-    # logger.info("\n查询结果:")
+    # logger.info("\nAbfragenErgebnisse:")
     # for i, result in enumerate(results):
-    #     logger.info(f"\n结果 {i + 1}:")
-    #     logger.info(f"相似度: {1 - result['distance']:.4f}")
-    #     logger.info(f"类型: {'图片' if result['is_image'] == 'True' else '文本'}")
-    #     logger.info(f"文件路径: {result['filepath']}")
-    #     logger.info(f"内容: {result['content'][:100]}..." if len(result['content']) > 100 else result['content'])
+    #     logger.info(f"\nErgebnisse {i + 1}:")
+    #     logger.info(f"Kommentar{1 - result['distance']:.4f}")
+    #     logger.info(f"Typ: {'Kommentar' if result['is_image'] == 'True' else 'Kommentar'}")
+    #     logger.info(f"Kommentar{result['filepath']}")
+    #     logger.info(f"Kommentar{result['content'][:100]}..." if len(result['content']) > 100 else result['content'])
 
 
 # if __name__ == "__main__":

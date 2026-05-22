@@ -456,8 +456,8 @@ async def process_document_for_preview(
        # Call the improved function that handles the entire preview process
        processed_text = await get_text_from_uploaded_file(file)
        
-       # 检查是否为错误信息
-       is_error = processed_text and (processed_text.startswith("错误") or processed_text.startswith("无法"))
+       # Kommentar
+       is_error = processed_text and (processed_text.startswith("Fehler") or processed_text.startswith("Fehler bei der Verarbeitung"))
        
        return JSONResponse(
            status_code=status.HTTP_200_OK,
@@ -466,17 +466,17 @@ async def process_document_for_preview(
                "processed_text": processed_text,
                "success": not is_error,
                "file_size": file.size if hasattr(file, 'size') else len(await file.read()) if file else 0,
-               "message": "文档处理成功" if not is_error else "文档处理遇到问题，请查看详细信息"
+               "message": "Dokument erfolgreich verarbeitet" if not is_error else "Bei der Dokumentverarbeitung ist ein Problem aufgetreten. Bitte Details prüfen"
            }
        )
    except Exception as e:
        # Log the exception for debugging
        import traceback
-       logger.error(f"文档预览处理发生异常: {e}")
-       logger.error(f"详细错误信息: {traceback.format_exc()}")
+       logger.error(f"Bei der Dokumentvorschau ist eine Ausnahme aufgetreten: {e}")
+       logger.error(f"Detaillierte Fehlerinformationen: {traceback.format_exc()}")
        
-       # 提供更友好的错误信息
-       error_detail = f"文档处理失败。可能的原因：\n1. 文件格式不受支持或已损坏\n2. 文件过大或包含复杂内容\n3. 服务器处理能力不足\n\n技术详情: {str(e)}"
+       # Kommentar
+       error_detail = f"Dokumentverarbeitung fehlgeschlagen. Mögliche Ursachen:\n1. Dateiformat wird nicht unterstützt oder ist beschädigt\n2. Datei ist zu groß oder enthält komplexe Inhalte\n3. Serverressourcen reichen für die Verarbeitung nicht aus\n\nTechnische Details: {str(e)}"
        
        raise HTTPException(
            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

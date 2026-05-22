@@ -1,4 +1,4 @@
-// 简化的流式重连组合式函数 - 修复TypeScript编译错误
+// Kommentar
 import { ref, computed } from 'vue'
 
 export interface RetryConfig {
@@ -20,7 +20,7 @@ export function useStreamingWithRetry(defaultConfig: Partial<RetryConfig> = {}) 
   const config: RetryConfig = {
     maxRetries: 3,
     retryDelay: 2000,
-    timeoutMs: 600000, // 10分钟
+    timeoutMs: 600000, // 10Hinweis
     backoffMultiplier: 1.5,
     ...defaultConfig
   }
@@ -70,7 +70,7 @@ export function useStreamingWithRetry(defaultConfig: Partial<RetryConfig> = {}) 
         state.value.isStreaming = true
         state.value.error = null
 
-        // 创建超时控制
+        // Kommentar
         const timeoutPromise = new Promise<never>((_, reject) => {
           setTimeout(() => reject(new Error('Request timeout')), config.timeoutMs)
         })
@@ -80,7 +80,7 @@ export function useStreamingWithRetry(defaultConfig: Partial<RetryConfig> = {}) 
           timeoutPromise
         ])
 
-        // 成功完成
+        // Kommentar
         state.value.isStreaming = false
         state.value.isRetrying = false
         return result
@@ -90,7 +90,7 @@ export function useStreamingWithRetry(defaultConfig: Partial<RetryConfig> = {}) 
         
         state.value.error = error instanceof Error ? error.message : String(error)
         
-        // 检查是否应该重试
+        // Kommentar
         if (!isNetworkError(error) || state.value.retryCount >= config.maxRetries) {
           state.value.isStreaming = false
           state.value.isRetrying = false
@@ -100,10 +100,10 @@ export function useStreamingWithRetry(defaultConfig: Partial<RetryConfig> = {}) 
         state.value.retryCount++
         state.value.isRetrying = true
         
-        // 通知重试
+        // Kommentar
         onRetry?.(state.value.retryCount, error)
 
-        // 指数退避延迟
+        // Kommentar
         const delay = config.retryDelay * Math.pow(config.backoffMultiplier, state.value.retryCount - 1)
         await sleep(delay)
       }

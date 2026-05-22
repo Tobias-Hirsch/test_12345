@@ -1,24 +1,24 @@
-# `routers/roles.py` - 角色管理路由
+# `routers/roles.py` - RollenverwaltungKommentar
 
-本文档描述了 `backend/app/routers/roles.py` 文件，该文件定义了与用户角色管理相关的 API 路由。
+Hinweis`backend/app/routers/roles.py` Hinweis
 
-## 功能描述
-*   **创建角色**: 提供创建新角色的接口。
-*   **获取角色列表**: 提供获取所有角色列表的接口。
-*   **获取角色详情**: 提供获取特定角色详细信息的接口。
-*   **更新角色**: 提供更新现有角色信息的接口。
-*   **删除角色**: 提供删除角色的接口。
-*   **角色权限管理**: 可能包含为角色分配和撤销权限的接口。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **LöschenRolle**: KommentaröschenRolleKommentar
+*   **RolleRechteverwaltung**: Kommentar
 
-## 逻辑实现
-1.  **依赖注入**: 路由函数通常会使用 `Depends` 来注入数据库会话和当前用户（通常是管理员或具有相应权限的用户）。
-2.  **CRUD 操作**: 实现角色的创建、读取、更新和删除 (CRUD) 功能。
+## Kommentar
+1.  **Hinweis**: Hinweis`Depends` Hinweis
+2.  **CRUD Aktionen**: Hinweisöschen (CRUD) Hinweis
     *   `@router.post("/")`
     *   `@router.get("/")`
     *   `@router.get("/{role_id}")`
     *   `@router.put("/{role_id}")`
     *   `@router.delete("/{role_id}")`
-3.  **权限检查**: 在执行角色管理操作之前，通常会进行权限检查，确保只有授权用户才能执行这些操作。
+3.  **BerechtigungHinweis**: Hinweisührt ausRollenverwaltungAktionenHinweisührt ausHinweis
 
-## 路径
+## Kommentar
 `/backend/app/routers/roles.py`

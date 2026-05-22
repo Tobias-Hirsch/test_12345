@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useAppStore = defineStore('app', () => {
-  const language = ref(localStorage.getItem('language') || 'en');
+  const language = ref(localStorage.getItem('language') || 'de');
 
   function setLanguage(lang: string) {
     language.value = lang;

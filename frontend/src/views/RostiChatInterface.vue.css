@@ -12,7 +12,7 @@
   display: none;
 }
 
-/* 聊天区域样式 */
+/* Hinweis*/
 .chat-area {
   flex-grow: 1; /* Allow chat area to grow */
   flex-shrink: 1; /* Allow chat area to shrink */
@@ -28,7 +28,7 @@
   transition: margin-right 0.3s ease; /* Add transition for smooth movement */
 }
 
-/* 状态指示器样式 */
+/* Status: */
 .status-indicator {
   display: flex;
   align-items: center;
@@ -60,7 +60,7 @@
   font-size: 0.875rem;
 }
 
-/* 错误恢复面板样式 */
+/* Fehlerhinweis*/
 .error-recovery-panel {
   background: #fef2f2;
   border: 1px solid #fecaca;
@@ -522,22 +522,22 @@
 /* New styles for message actions */
 .message-actions {
   display: flex;
-  gap: 8px; /* 按钮之间的间距 */
-  margin-top: 5px; /* 与消息内容的间距 */
-  justify-content: flex-end; /* 靠右对齐 */
+  gap: 8px; /* Hinweis*/
+  margin-top: 5px; /* Hinweis*/
+  justify-content: flex-end; /* Hinweis*/
 }
 
 .message-bubble.start .message-actions {
-  justify-content: flex-start; /* 机器人消息靠左对齐 */
+  justify-content: flex-start; /* Hinweis*/
 }
 
 .action-icon {
   cursor: pointer;
   font-size: 16px;
-  color: var(--el-text-color-secondary); /* 使用 Element Plus 的次要文本颜色 */
+  color: var(--el-text-color-secondary); /* Hinweis*/
   transition: color 0.2s ease;
 }
 
 .action-icon:hover {
-  color: var(--el-color-primary); /* 鼠标悬停时使用主题主色 */
+  color: var(--el-color-primary); /* Hinweis*/
 }

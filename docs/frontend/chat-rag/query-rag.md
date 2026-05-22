@@ -1,11 +1,11 @@
-# RAG 查询页面
+# RAG AbfragenKommentar
 
-本文档描述了 `QueryRAG.vue` 页面，该页面可能用于直接查询 RAG 系统。
+Hinweis`QueryRAG.vue` Hinweis
 
-## 页面功能
-*   （待补充：根据实际功能描述）
-*   可能提供输入框用于 RAG 查询。
-*   显示 RAG 查询结果。
+## Kommentar
+*   (Kommentar
+*   Kommentar
+*   Kommentar
 
-## 路径
+## Kommentar
 `/frontend/src/views/QueryRAG.vue`

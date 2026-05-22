@@ -33,6 +33,16 @@ class Settings(BaseSettings):
     OLLAMA_EMBEDDING_URL: str = ""
     OLLAMA_SERVING_URL: str = ""
     OLLAMA_RERANKER_MODEL: str = ""
+
+    # Legacy Ollama settings used by backend/app/modules/ollama_module.py.
+    # Keeping them here prevents AttributeError when the optional model-management
+    # module is imported in local deployments.
+    OLLAMA_HOST: str = "host.docker.internal"
+    OLLAMA_PORT: int = 11434
+    OLLAMA_MODEL: str = "qwen3:0.6b"
+    OLLAMA_EMBEDDING_MODEL: str = "mxbai-embed-large:latest"
+    OLLAMA_RERANK_MODEL: str = ""
+
     LOCAL_EMBEDDING_MODEL: str = ""
     LOCAL_RERANKER_MODEL: str = ""
     OLLAMA_QWEN_MODEL: str = ""

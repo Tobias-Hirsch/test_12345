@@ -1,41 +1,41 @@
- 更新的文件列表：
+ Hinweis
 
-  1. 后端配置文件
+  1. Hinweis
 
   - rosti_ai/backend/app/core/config.py
-    - 进行了APP_NAME的更改（最终保持为"Rosti"）
+    - Hinweis"Rosti")
 
-  2. MinerU服务增强
+  2. MinerUHinweis
 
   - rosti_ai/backend/app/services/mineru_service.py
-    - 集成了 formula_enable=True 和 table_enable=True 参数
-    - 更新了 pipeline_doc_analyze 调用以支持公式和表格识别
+    - Hinweis=True Hinweis=True Hinweis
+    - Hinweis
 
-  3. 文档处理工具增强
+  3. DokumenteHinweis
 
   - rosti_ai/backend/app/tools/deal_document.py
-    - 完整的 _extract_text_from_mineru_result
-  函数用于提取MinerU结构化输出
-    - _extract_text_with_pymupdf_fallback 后备功能
-    - 改进的 extract_text_from_file_content 函数
+    - Hinweis
+  Hinweis
+    - _extract_text_with_pymupdf_fallback Hinweis
+    - Hinweis
 
-  4. MinerU解析器
+  4. MinerUHinweis
 
   - rosti_ai/backend/app/services/mineru_parser.py
-    - 确认已有 formula_enable 和 table_enable 参数设置
+    - BestätigenHinweis
 
-  主要更新内容：
+  Hinweis
 
-  功能增强：
-  - ✅ 公式识别功能集成 (formula_enable=True)
-  - ✅ 表格识别功能集成 (table_enable=True)
-  - ✅ 文本提取增强功能
-  - ✅ MinerU结构化输出处理
+  Hinweis
+  - ✅ Hinweis=True)
+  - ✅ Hinweis=True)
+  - ✅ Hinweis
+  - ✅ MinerUHinweis
 
-  配置保持：
-  - ✅ 保持了项目原有的"Rosti"品牌名称
-  - ✅ 验证了配置文件兼容性
+  Hinweis
+  - ✅ HinweisägeHinweis"Rosti"Hinweis
+  - ✅ Hinweis
 
-  这次更新主要是将您的klugai_rag项目中的MinerU文档处理增强功能移植到
-  了rosti-running-rag项目，使其具备更好的公式识别、表格处理和文本提
-  取能力。
+  HinweisägeHinweis
+  HinweisägeHinweis
+  Hinweis

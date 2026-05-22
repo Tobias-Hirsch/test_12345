@@ -1,11 +1,11 @@
-# 账户激活
+# Kommentar
 
-本文档描述了 `ActivateAccount.vue` 页面，该页面用于用户通过电子邮件链接激活其账户。
+Hinweis`ActivateAccount.vue` Hinweis
 
-## 页面功能
-*   接收激活令牌。
-*   向后端发送激活请求。
-*   显示激活成功或失败消息。
+## Kommentar
+*   Kommentar
+*   Kommentar
+*   Kommentar
 
-## 路径
+## Kommentar
 `/frontend/src/views/ActivateAccount.vue`

@@ -28,7 +28,7 @@ export default defineConfig({
       bundler: 'vite',
     }),
     visualizer({
-      open: true, // Automatically open the report in your browser
+      open: false, // Automatically open the report in your browser
       gzipSize: true, // Show gzip size
       brotliSize: true, // Show brotli size
     }),

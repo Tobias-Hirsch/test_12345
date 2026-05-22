@@ -22,7 +22,7 @@ def do_parse(
     output_dir,  # Output directory for storing parsing results
     pdf_file_names: list[str],  # List of PDF file names to be parsed
     pdf_bytes_list: list[bytes],  # List of PDF bytes to be parsed
-    p_lang_list: list[str],  # List of languages for each PDF, default is 'ch' (Chinese)
+    p_lang_list: list[str],  # Liste der OCR-Sprachen je PDF, Standard im lokalen Setup: 'german'
     backend="pipeline",  # The backend for parsing PDF, default is 'pipeline'
     parse_method="auto",  # The method for parsing PDF, default is 'auto'
     formula_enable=True,  # Enable formula parsing
@@ -165,7 +165,7 @@ def do_parse(
 def parse_doc(
         path_list: list[Path],
         output_dir,
-        lang="ch",
+        lang="german",
         backend="pipeline",
         method="auto",
         server_url=None,
@@ -174,11 +174,11 @@ def parse_doc(
 ):
     """
         Parameter description:
-        path_list: List of document paths to be parsed, can be PDF or image files.
-        output_dir: Output directory for storing parsing results.
-        lang: Language option, default is 'ch', optional values include['ch', 'ch_server', 'ch_lite', 'en', 'korean', 'japan', 'chinese_cht', 'ta', 'te', 'ka']。
-            Input the languages in the pdf (if known) to improve OCR accuracy.  Optional.
-            Adapted only for the case where the backend is set to "pipeline"
+        path_list: Liste der zu verarbeitenden Dokumentpfade, z. B. PDF- oder Bilddateien.
+        output_dir: Ausgabeverzeichnis für die Parsing-Ergebnisse.
+        lang: Sprachoption für die OCR. Im lokalen Setup ist 'german' voreingestellt.
+            Gib die Sprache des PDFs an, falls bekannt, um die OCR-Genauigkeit zu verbessern. Optional.
+            Wirkt nur, wenn das Backend auf "pipeline" gesetzt ist.
         backend: the backend for parsing pdf:
             pipeline: More general.
             vlm-transformers: More general.
@@ -233,7 +233,7 @@ if __name__ == '__main__':
         if doc_path.suffix in pdf_suffixes + image_suffixes:
             doc_path_list.append(doc_path)
 
-    """如果您由于网络问题无法下载模型，可以设置环境变量MINERU_MODEL_SOURCE为modelscope使用免代理仓库下载模型"""
+    """Falls Modelle aufgrund von Netzwerkproblemen nicht heruntergeladen werden können, kann MINERU_MODEL_SOURCE auf modelscope gesetzt werden, um ein proxyfreies Repository zu verwenden."""
     # os.environ['MINERU_MODEL_SOURCE'] = "modelscope"
 
     """Use pipeline mode if your environment does not support VLM"""

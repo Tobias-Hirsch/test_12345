@@ -52,11 +52,11 @@ async def llm_qwen_vl_max_ainvoke(message:str,url,model:str=OLLAMA_QWEN_VL_MAX_L
 
     completion = client.chat.completions.create(
         model=model,
-        # 此处以qwen-vl-max-latest为例，可按需更换模型名称。模型列表：https://help.aliyun.com/model-studio/getting-started/models
+        # Kommentar
         messages=[
             {
                 "role": "system",
-                "content": [{"type": "text", "text": "# backend\n根据用户的问题，总结图片的内容分，并将其输入到后续的智能体中进行回答。\n# task\n您的任务，是根据问题总结图片中对问题有帮助的关键信息,请你以JSON格式输出，不要输出```json```代码段”"}],
+                "content": [{"type": "text", "text": "# backend\nFasse anhand der Benutzerfrage die relevanten Bildinhalte zusammen und übergib sie zur weiteren Beantwortung an nachgelagerte Agenten.\n# task\nDeine Aufgabe ist es, die für die Frage hilfreichen Schlüsselinformationen aus dem Bild zusammenzufassen. Gib das Ergebnis im JSON-Format aus und verwende keinen ```json```-Codeblock."}],
             },
             {
                 "role": "user",
@@ -79,15 +79,15 @@ async def llm_qwen_vl_max_ainvoke(message:str,url,model:str=OLLAMA_QWEN_VL_MAX_L
 
 async def llm_ollama_deepseek_ainvoke(message: str, model: str = OLLAMA_COT_MODEL, base_url: str = settings.OLLAMA_SERVING_URL) -> str:
     """
-    使用本地Ollama模型(deepseek-r1:8b)异步生成文本响应
+    Hinweis
 
     Args:
-        message: 用户输入的消息
-        model: Ollama模型名称 (默认为 deepseek-r1:8b, 可通过环境变量 OLLAMA_COT_MODEL 配置)
-        base_url: Ollama服务的URL (默认为 http://localhost:11434, 可通过环境变量 OLLAMA_URL 配置)
+        message: BenutzerHinweis
+        model: OllamaHinweis
+        base_url: OllamaHinweis
 
     Returns:
-        生成的文本响应
+        Hinweis
     """
     try:
         # client = OpenAI(
@@ -113,15 +113,15 @@ async def llm_ollama_deepseek_ainvoke(message: str, model: str = OLLAMA_COT_MODE
 
 async def llm_ollama_qwen_ainvoke(message: str, model: str = OLLAMA_QWEN_MODEL, base_url: str = settings.OLLAMA_SERVING_URL) -> str:
     """
-    使用本地Ollama模型(qwen2:7b)异步生成文本响应，支持function calling。
+    Hinweis
 
     Args:
-        message: 用户输入的消息
-        model: Ollama模型名称 (默认为 qwen2:7b, 可通过环境变量 OLLAMA_QWEN_MODEL 配置)
-        base_url: Ollama服务的URL (默认为 http://localhost:11434, 可通过环境变量 OLLAMA_URL 配置)
+        message: BenutzerHinweis
+        model: OllamaHinweis
+        base_url: OllamaHinweis
 
     Returns:
-        生成的文本响应
+        Hinweis
     """
     try:
         # Robustly clean up the base URL to prevent issues with duplicate /api paths
@@ -140,22 +140,22 @@ async def llm_ollama_qwen_ainvoke(message: str, model: str = OLLAMA_QWEN_MODEL, 
 
 async def llm_ollama_vision_ainvoke(question: str, image_bytes: bytes, model: str = settings.OLLAMA_QWEN_VL_MAX_LATEST) -> str:
     """
-    使用本地Ollama视觉模型异步处理图片并生成文本响应。
+    Hinweis
 
     Args:
-        question: 用户关于图片的问题。
-        image_bytes: 图片文件的字节内容。
-        model: Ollama视觉模型的名称。
+        question: BenutzerHinweis
+        image_bytes: Hinweis
+        model: OllamaHinweis
 
     Returns:
-        生成的文本响应。
+        Hinweis
     """
     try:
-        # 将图片字节编码为Base64字符串
+        # Kommentar
         base64_image = base64.b64encode(image_bytes).decode('utf-8')
         image_url = f"data:image/jpeg;base64,{base64_image}"
 
-        # 获取Ollama实例
+        # Kommentar
         cleaned_base_url = settings.OLLAMA_SERVING_URL.rstrip("/")
         if cleaned_base_url.endswith("/api"):
             cleaned_base_url = cleaned_base_url[:-4]
@@ -163,7 +163,7 @@ async def llm_ollama_vision_ainvoke(question: str, image_bytes: bytes, model: st
         
         llm = ChatOllama(model=model, base_url=cleaned_base_url)
 
-        # 构建多模态消息
+        # Kommentar
         message = HumanMessage(
             content=[
                 {
@@ -177,7 +177,7 @@ async def llm_ollama_vision_ainvoke(question: str, image_bytes: bytes, model: st
             ]
         )
 
-        # 调用模型并获取响应
+        # Kommentar
         response = await llm.ainvoke([message])
         return response.content
 

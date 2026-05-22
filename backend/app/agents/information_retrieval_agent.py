@@ -58,16 +58,27 @@ class InformationRetrievalAgent(BaseAgent):
             thoughts.append(f"Found {len(permitted_rag_items_dict)} permitted RAG items to query.")
             # Call the centralized RAG query system
             # This function now handles everything: searching, ranking, and synthesizing the answer.
-            rag_results = await query_rag_system(
+            answer_parts = []
+            source_documents = []
+            rag_result_stream = query_rag_system(
                 query_text=query,
                 db_session=db_session,
                 permitted_rag_items=permitted_rag_items_dict,
                 show_think_process=show_think_process # Pass the flag here
             )
+            async for chunk in rag_result_stream:
+                if isinstance(chunk, str):
+                    answer_parts.append(chunk)
+                elif isinstance(chunk, dict):
+                    if chunk.get("answer"):
+                        answer_parts.append(chunk["answer"])
+                    if "source_documents" in chunk:
+                        source_documents.extend(chunk["source_documents"])
 
-            # The result from query_rag_system is a list containing one dictionary.
-            if rag_results:
-                output = rag_results[0] # The structure is [{"answer": ..., "source_documents": [...]}]
+            answer = "".join(answer_parts).strip()
+            if answer or source_documents:
+                output["answer"] = answer or "No direct answer was generated from the knowledge base."
+                output["source_documents"] = source_documents
                 thoughts.append("Successfully retrieved and synthesized response from RAG system.")
             else:
                 thoughts.append("RAG system returned no results.")

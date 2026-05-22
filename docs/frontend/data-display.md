@@ -1,22 +1,22 @@
-# 数据展示
+# Kommentar
 
-本节描述 Rosti 产品中数据的展示方式，包括聊天消息、知识库文件和搜索结果。
+Hinweis
 
-## 1. 聊天消息
+## 1. Kommentar
 
-*   **文本消息**: 普通文本内容的显示。
-*   **附件消息**: 显示附件的名称、类型，并提供下载链接。
-*   **RAG 引用**: 在聊天回复中引用知识库内容时，显示源文件名称和可点击的 MinIO 下载链接。
-*   **在线搜索引用**: 在聊天回复中引用在线搜索结果时，显示标题和可点击的 URL。
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **RAG Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 2. 知识库文件列表
+## 2. Kommentar
 
-*   **文件名称**: 显示上传到知识库的文件名称。
-*   **文件类型**: 显示文件类型图标或文本（如 PDF, DOCX, XLSX）。
-*   **上传时间**: 显示文件的上传日期和时间。
-*   **下载链接**: 提供可点击的 MinIO 预签名下载链接。
+*   **DateinameKommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **HochladenKommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 3. 搜索结果
+## 3. SuchenErgebnisse
 
-*   **RAG 搜索结果**: 显示来自知识库的匹配文档片段、文件名和下载链接。
-*   **在线搜索结果**: 显示在线搜索结果的标题、URL 和摘要。
+*   **RAG SuchenErgebnisse**: Kommentar
+*   **Kommentar**: Kommentar

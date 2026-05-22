@@ -1,15 +1,15 @@
 """
-MinerU统一配置管理模块
-简化和集中管理所有MinerU相关配置
+MinerUHinweis
+Hinweis
 
-主要功能：
-1. 配置验证和规范化
-2. 智能策略选择
-3. 环境适配
-4. 性能优化设置
+Hinweis
+1. Hinweis
+2. Hinweis
+3. Hinweis
+4. Hinweis
 
-作者: Assistant
-日期: 2025-01-26
+Hinweis
+Hinweis
 """
 
 import os
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ProcessingConfig:
-    """处理配置数据类"""
+    """Hinweis"""
     strategy: str
     max_retries: int
     timeout_seconds: int
@@ -35,7 +35,7 @@ class ProcessingConfig:
 
 @dataclass
 class ServerConfig:
-    """服务器配置数据类"""
+    """Hinweis"""
     sglang_url: Optional[str]
     health_check_timeout: int
     connection_pool_size: int
@@ -44,7 +44,7 @@ class ServerConfig:
 
 @dataclass
 class PerformanceConfig:
-    """性能配置数据类"""
+    """Hinweis"""
     max_concurrent_jobs: int
     memory_limit_mb: int
     cache_enabled: bool
@@ -52,29 +52,29 @@ class PerformanceConfig:
 
 
 class MinerUConfigManager:
-    """MinerU配置管理器"""
+    """MinerUHinweis"""
     
     def __init__(self):
-        """初始化配置管理器"""
+        """Hinweis"""
         self._processing_config = None
         self._server_config = None
         self._performance_config = None
         self._config_cache = {}
         self._last_validation = None
         
-        # 初始化配置
+        # Kommentar
         self._initialize_configs()
         
-        logger.info("MinerU配置管理器初始化完成")
+        logger.info("MinerUHinweis")
     
     def _initialize_configs(self):
-        """初始化所有配置"""
+        """Hinweis"""
         self._processing_config = self._build_processing_config()
         self._server_config = self._build_server_config()
         self._performance_config = self._build_performance_config()
     
     def _build_processing_config(self) -> ProcessingConfig:
-        """构建处理配置"""
+        """Hinweis"""
         return ProcessingConfig(
             strategy=self.get_optimal_strategy(),
             max_retries=getattr(settings, 'MINERU_MAX_RETRIES', 3),
@@ -84,7 +84,7 @@ class MinerUConfigManager:
         )
     
     def _build_server_config(self) -> ServerConfig:
-        """构建服务器配置"""
+        """Hinweis"""
         return ServerConfig(
             sglang_url=self._validate_and_normalize_url(settings.MINERU_SGLANG_SERVER_URL),
             health_check_timeout=getattr(settings, 'MINERU_HEALTH_CHECK_TIMEOUT', 10),
@@ -93,7 +93,7 @@ class MinerUConfigManager:
         )
     
     def _build_performance_config(self) -> PerformanceConfig:
-        """构建性能配置"""
+        """Hinweis"""
         return PerformanceConfig(
             max_concurrent_jobs=getattr(settings, 'MINERU_MAX_CONCURRENT_JOBS', 3),
             memory_limit_mb=getattr(settings, 'MINERU_MEMORY_LIMIT_MB', 2048),
@@ -102,132 +102,132 @@ class MinerUConfigManager:
         )
     
     def get_optimal_strategy(self) -> str:
-        """获取最优处理策略"""
-        # 检查强制模式
+        """Hinweis"""
+        # Kommentar
         force_mode = getattr(settings, 'MINERU_FORCE_MODE', '').lower()
         if force_mode in ['sglang', 'vlm', 'pipeline', 'fallback']:
-            logger.info(f"使用强制指定策略: {force_mode}")
+            logger.info(f"Hinweis{force_mode}")
             return force_mode
         
-        # 智能策略选择
+        # Kommentar
         environment = settings.ENVIRONMENT.lower()
         current_hour = datetime.now().hour
         
-        # 检查夜间时间
+        # Kommentar
         is_nighttime = self._is_nighttime(current_hour)
         
-        # 检查服务器可用性
+        # Kommentar
         sglang_available = bool(settings.MINERU_SGLANG_SERVER_URL)
         
-        # 策略选择逻辑
+        # Kommentar
         if environment == "production":
             if is_nighttime and sglang_available:
                 strategy = "sglang"
-                reason = "生产环境夜间，使用远程SGLang"
+                reason = "Hinweis"
             else:
                 strategy = "fallback"
-                reason = "生产环境白天，使用本地降级方案"
+                reason = "Hinweis"
         elif environment == "development":
             if sglang_available:
                 strategy = "sglang"
-                reason = "开发环境，SGLang服务器可用"
+                reason = "Hinweis"
             else:
                 strategy = "fallback"
-                reason = "开发环境，SGLang服务器不可用"
+                reason = "Hinweis"
         elif environment == "test":
             strategy = "fallback"
-            reason = "测试环境，使用稳定的降级方案"
+            reason = "Hinweis"
         else:
             strategy = "fallback"
-            reason = "未知环境，使用默认降级方案"
+            reason = "Hinweis"
         
-        logger.info(f"智能策略选择: {strategy} ({reason})")
+        logger.info(f"Hinweis{strategy} ({reason})")
         return strategy
     
     def _is_nighttime(self, current_hour: int) -> bool:
-        """判断是否为夜间时间"""
+        """Hinweis"""
         try:
             night_hours = getattr(settings, 'MINERU_NIGHTTIME_HOURS', '22-6')
             hours = night_hours.split('-')
             
             if len(hours) != 2:
-                logger.warning(f"夜间时间配置格式错误: {night_hours}，使用默认值")
+                logger.warning(f"Warnhinweis{night_hours}, Warnhinweis")
                 return False
             
             night_start = int(hours[0])
             night_end = int(hours[1])
             
-            # 验证时间范围
+            # Kommentar
             if not (0 <= night_start <= 23 and 0 <= night_end <= 23):
-                logger.warning(f"夜间时间配置超出范围: {night_hours}")
+                logger.warning(f"Warnhinweis{night_hours}")
                 return False
             
-            # 判断是否在夜间时间范围内
-            if night_start > night_end:  # 跨越午夜
+            # Kommentar
+            if night_start > night_end:  # Hinweis
                 return current_hour >= night_start or current_hour < night_end
-            else:  # 不跨越午夜
+            else:  # Hinweis
                 return night_start <= current_hour < night_end
                 
         except (ValueError, AttributeError) as e:
-            logger.error(f"解析夜间时间配置失败: {e}")
+            logger.error(f"Fehler bei der Verarbeitung{e}")
             return False
     
     def _validate_and_normalize_url(self, url: Optional[str]) -> Optional[str]:
-        """验证和规范化URL"""
+        """Hinweis"""
         if not url:
             return None
         
-        # 基本URL格式验证
+        # Kommentar
         if not url.startswith(('http://', 'https://')):
-            logger.warning(f"URL缺少协议前缀，自动添加http://: {url}")
+            logger.warning(f"URLWarnhinweis{url}")
             url = f"http://{url}"
         
-        # 移除尾部斜杠
+        # Kommentar
         url = url.rstrip('/')
         
         return url
     
     def validate_all_configurations(self) -> Dict[str, bool]:
-        """验证所有配置项"""
+        """Hinweisäge"""
         validations = {}
         
-        # 基本配置验证
+        # Kommentar
         validations['environment_valid'] = settings.ENVIRONMENT.lower() in ['production', 'development', 'test']
         validations['nighttime_hours_valid'] = self._validate_nighttime_hours()
         
-        # 服务器配置验证
+        # Kommentar
         validations['sglang_url_valid'] = self._validate_sglang_url()
         
-        # 处理配置验证
+        # Kommentar
         validations['strategy_valid'] = self._processing_config.strategy in ['sglang', 'vlm', 'pipeline', 'fallback']
         validations['retries_valid'] = 1 <= self._processing_config.max_retries <= 10
         validations['timeout_valid'] = 30 <= self._processing_config.timeout_seconds <= 1800
         
-        # 性能配置验证
+        # Kommentar
         validations['concurrent_jobs_valid'] = 1 <= self._performance_config.max_concurrent_jobs <= 20
         validations['memory_limit_valid'] = 512 <= self._performance_config.memory_limit_mb <= 8192
         
-        # 依赖项验证
+        # KommentarägeKommentar
         try:
             from mineru.cli.common import convert_pdf_bytes_to_bytes_by_pypdfium2
             validations['pdf_preprocessing_available'] = True
         except ImportError:
             validations['pdf_preprocessing_available'] = False
         
-        # 缓存验证结果
+        # Kommentar
         self._last_validation = validations
         
-        # 记录验证结果
+        # Kommentar
         failed_validations = [k for k, v in validations.items() if not v]
         if failed_validations:
-            logger.warning(f"配置验证失败项目: {failed_validations}")
+            logger.warning(f"WarnhinweisägeWarnhinweis{failed_validations}")
         else:
-            logger.info("所有配置验证通过")
+            logger.info("Hinweis")
         
         return validations
     
     def _validate_nighttime_hours(self) -> bool:
-        """验证夜间时间配置"""
+        """Hinweis"""
         try:
             night_hours = getattr(settings, 'MINERU_NIGHTTIME_HOURS', '22-6')
             hours = night_hours.split('-')
@@ -242,34 +242,34 @@ class MinerUConfigManager:
             return False
     
     def _validate_sglang_url(self) -> bool:
-        """验证SGLang服务器URL"""
+        """Hinweis"""
         url = self._server_config.sglang_url
         if not url:
-            return True  # 可选配置，没有也算有效
+            return True  # Hinweis
         
         return url.startswith(('http://', 'https://')) and '://' in url
     
     def get_processing_config(self) -> ProcessingConfig:
-        """获取处理配置"""
+        """Hinweis"""
         return self._processing_config
     
     def get_server_config(self) -> ServerConfig:
-        """获取服务器配置"""
+        """Hinweis"""
         return self._server_config
     
     def get_performance_config(self) -> PerformanceConfig:
-        """获取性能配置"""
+        """Hinweis"""
         return self._performance_config
     
     def reload_configuration(self):
-        """重新加载配置"""
-        logger.info("重新加载MinerU配置")
+        """Hinweis"""
+        logger.info("Hinweis")
         self._config_cache.clear()
         self._initialize_configs()
         self.validate_all_configurations()
     
     def get_configuration_summary(self) -> Dict[str, Any]:
-        """获取配置摘要"""
+        """Hinweis"""
         return {
             "processing": {
                 "strategy": self._processing_config.strategy,
@@ -301,7 +301,7 @@ class MinerUConfigManager:
         }
     
     def get_strategy_for_environment(self, environment: str, hour: Optional[int] = None) -> str:
-        """为特定环境和时间获取推荐策略"""
+        """Hinweis"""
         if hour is None:
             hour = datetime.now().hour
         
@@ -320,11 +320,11 @@ class MinerUConfigManager:
             return "fallback"
 
 
-# 全局配置管理器实例
+# Kommentar
 _config_manager = None
 
 def get_mineru_config_manager() -> MinerUConfigManager:
-    """获取MinerU配置管理器实例（单例模式）"""
+    """Hinweis"""
     global _config_manager
     
     if _config_manager is None:
@@ -333,23 +333,23 @@ def get_mineru_config_manager() -> MinerUConfigManager:
     return _config_manager
 
 
-# 便捷函数
+# Kommentar
 def get_optimal_strategy() -> str:
-    """获取最优处理策略"""
+    """Hinweis"""
     return get_mineru_config_manager().get_optimal_strategy()
 
 
 def validate_mineru_configuration() -> Dict[str, bool]:
-    """验证MinerU配置"""
+    """Hinweis"""
     return get_mineru_config_manager().validate_all_configurations()
 
 
 def get_mineru_configuration_summary() -> Dict[str, Any]:
-    """获取MinerU配置摘要"""
+    """Hinweis"""
     return get_mineru_config_manager().get_configuration_summary()
 
 
-# 导出接口
+# Kommentar
 __all__ = [
     "MinerUConfigManager",
     "ProcessingConfig",

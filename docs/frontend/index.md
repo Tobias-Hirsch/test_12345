@@ -1,10 +1,10 @@
-# 前端功能概述
+# Kommentar
 
-本节详细介绍了 Rosti 产品的前端功能，包括用户界面、数据展示和交互逻辑。
+Hinweis
 
-## 目录
+## Kommentar
 
-*   [用户界面](user-interface.md)
-*   [数据展示](data-display.md)
+*   [BenutzerKommentar
+*   [Kommentar
 
-请点击左侧导航栏或上方链接查看具体内容。
+Hinweis

@@ -1,14 +1,14 @@
-# `modules/mongodb_module.py` - MongoDB 数据库模块
+# `modules/mongodb_module.py` - MongoDB Kommentar
 
-本文档描述了 `backend/app/modules/mongodb_module.py` 文件，该文件封装了与 MongoDB 数据库交互的功能。
+Hinweis`backend/app/modules/mongodb_module.py` Hinweis
 
-## 功能描述
-*   **连接管理**: 提供 MongoDB 数据库的连接和客户端获取功能。
-*   **文档操作**: 支持在 MongoDB 集合中插入、查询、更新和删除文档。
-*   **集合管理**: 提供获取特定集合的引用。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **DokumenteAktionen**: KommentaröschenDokumente. 
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-1.  **MongoDB 客户端**: 使用 `pymongo` 库的 `MongoClient` 类来创建 MongoDB 客户端实例，配置包括连接 URI。
+## Kommentar
+1.  **MongoDB Hinweis**: Hinweis`pymongo` Hinweis`MongoClient` Hinweis
     ```python
     from pymongo import MongoClient
     from pymongo.errors import ConnectionFailure
@@ -44,13 +44,13 @@
     def get_collection(collection_name: str):
         return get_database()[collection_name]
     ```
-2.  **数据库和集合获取**: 提供函数来获取数据库实例和特定集合的引用，方便后续的 CRUD 操作。
-3.  **CRUD 操作**: 虽然文件中没有直接展示所有 CRUD 函数，但通常会在此模块中实现或通过 `get_collection` 返回的 PyMongo 集合对象进行操作。例如：
+2.  **Hinweis**: Hinweis
+3.  **CRUD Aktionen**: Hinweis`get_collection` Hinweis
     *   `insert_one(document)`
     *   `find_one(query)`
     *   `find(query)`
     *   `update_one(query, update)`
     *   `delete_one(query)`
 
-## 路径
+## Kommentar
 `/backend/app/modules/mongodb_module.py`

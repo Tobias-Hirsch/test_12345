@@ -1,212 +1,212 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  // 根路径，如果部署在子路径下，例如 example.com/docs/
-  // 在多语言模式下，base 通常不需要在顶层设置，而是在每个 locale 中设置
+  // Kommentar
+  // Kommentar
   base: '/docs/', // Set the base path for deployment
   head: [
     ['meta', { property: 'og:locale', content: 'en_US' }],
     ['meta', { property: 'og:locale:alternate', content: 'zh_CN' }],
   ],
 
-  themeConfig: {}, // 添加一个空的顶层 themeConfig
+  themeConfig: {}, // Hinweis
   locales: {
-    '/': { // 将 root 键名改为 '/'
-      label: '简体中文',
+    '/': { // Hinweis'/'
+      label: 'Beschriftung',
       lang: 'zh-CN',
-      title: "Rosti 产品文档",
-      description: "Rosti 产品用户手册和技术说明。",
-      link: '/', // 默认语言的链接，指向其语言根目录
+      title: "Rosti Titel",
+      description: "Rosti Hinweis",
+      link: '/', // Hinweis
       themeConfig: {
-        i18nRouting: true, // 明确启用 i18n 路由
+        i18nRouting: true, // Hinweis
         nav: [
-          { text: '首页', link: '/' }, // 调整为指向语言根目录
-          { text: '前端功能', link: '/frontend/' },
-          { text: '后端功能', link: '/backend/' },
-          { text: '设置', link: '/settings/' },
-          { text: '技术说明', link: '/tech-specs/' }
+          { text: 'Hinweis', link: '/' }, // Hinweis
+          { text: 'Hinweis', link: '/frontend/' },
+          { text: 'Hinweis', link: '/backend/' },
+          { text: 'Hinweis', link: '/settings/' },
+          { text: 'Hinweis', link: '/tech-specs/' }
         ],
         sidebar: {
           '/frontend/': [
             {
-              text: '前端功能',
+              text: 'Hinweis',
               items: [
-                { text: '概述', link: '/frontend/' },
-                { text: '用户界面', link: '/frontend/user-interface' },
-                { text: '数据展示', link: '/frontend/data-display' }
+                { text: 'Hinweis', link: '/frontend/' },
+                { text: 'BenutzerHinweis', link: '/frontend/user-interface' },
+                { text: 'Hinweis', link: '/frontend/data-display' }
               ]
             },
             {
-              text: '认证与用户管理',
+              text: 'Hinweis',
               items: [
-                { text: '账户激活', link: '/frontend/authentication/activate-account' },
-                { text: '忘记密码', link: '/frontend/authentication/forgot-password' },
-                { text: '用户登录', link: '/frontend/authentication/login' },
-                { text: '用户注册', link: '/frontend/authentication/register' },
-                { text: '重置密码', link: '/frontend/authentication/reset-password' }
+                { text: 'Hinweis', link: '/frontend/authentication/activate-account' },
+                { text: 'Passwort vergessen', link: '/frontend/authentication/forgot-password' },
+                { text: 'BenutzerAnmelden', link: '/frontend/authentication/login' },
+                { text: 'BenutzerRegistrieren', link: '/frontend/authentication/register' },
+                { text: 'Passwort zurücksetzen', link: '/frontend/authentication/reset-password' }
               ]
             },
             {
-              text: '聊天与 RAG',
+              text: 'Hinweis',
               items: [
-                { text: '聊天页面', link: '/frontend/chat-rag/chat-page' },
-                { text: '聊天消息区域', link: '/frontend/chat-rag/chat-message-area' },
-                { text: 'RAG 查询页面', link: '/frontend/chat-rag/query-rag' },
-                { text: 'RAG 编辑页面', link: '/frontend/chat-rag/rag-edit' },
-                { text: 'RAG 介绍页面', link: '/frontend/chat-rag/rag-intro' },
-                { text: 'RAG 文件列表', link: '/frontend/chat-rag/rag-list' },
-                { text: 'Rosti 聊天界面组件', link: '/frontend/chat-rag/rosti-chat-interface' },
-                { text: '文件上传页面', link: '/frontend/chat-rag/upload-file' },
-                { text: '文件预览组件', link: '/frontend/chat-rag/components/file-preview-drawer' },
-                { text: 'RAG 嵌入组件', link: '/frontend/chat-rag/components/rag-embedding' },
-                { text: 'RAG 文件列表组件', link: '/frontend/chat-rag/components/rag-file-list' },
-                { text: 'RAG 表单组件', link: '/frontend/chat-rag/components/rag-form' }
+                { text: 'Hinweis', link: '/frontend/chat-rag/chat-page' },
+                { text: 'Chat-Nachrichtenbereich', link: '/frontend/chat-rag/chat-message-area' },
+                { text: 'RAG AbfragenHinweis', link: '/frontend/chat-rag/query-rag' },
+                { text: 'RAG BearbeitenHinweis', link: '/frontend/chat-rag/rag-edit' },
+                { text: 'RAG Hinweis', link: '/frontend/chat-rag/rag-intro' },
+                { text: 'RAG Hinweis', link: '/frontend/chat-rag/rag-list' },
+                { text: 'Rosti Hinweis', link: '/frontend/chat-rag/rosti-chat-interface' },
+                { text: 'Hinweis', link: '/frontend/chat-rag/upload-file' },
+                { text: 'Hinweis', link: '/frontend/chat-rag/components/file-preview-drawer' },
+                { text: 'RAG Hinweis', link: '/frontend/chat-rag/components/rag-embedding' },
+                { text: 'RAG Hinweis', link: '/frontend/chat-rag/components/rag-file-list' },
+                { text: 'RAG Hinweis', link: '/frontend/chat-rag/components/rag-form' }
               ]
             },
             {
-              text: '系统设置',
+              text: 'Systemeinstellungen',
               items: [
-                { text: '策略管理', link: '/frontend/system-settings/policy-management' },
-                { text: '系统设置', link: '/frontend/system-settings/system-settings' },
-                { text: '用户资料', link: '/frontend/system-settings/user-profile' },
-                { text: '权限管理', link: '/frontend/system-settings/permission-management' },
-                { text: '角色管理', link: '/frontend/system-settings/role-management' },
-                { text: '用户管理', link: '/frontend/system-settings/user-management' }
+                { text: 'Richtlinienverwaltung', link: '/frontend/system-settings/policy-management' },
+                { text: 'Systemeinstellungen', link: '/frontend/system-settings/system-settings' },
+                { text: 'BenutzerHinweis', link: '/frontend/system-settings/user-profile' },
+                { text: 'Rechteverwaltung', link: '/frontend/system-settings/permission-management' },
+                { text: 'Rollenverwaltung', link: '/frontend/system-settings/role-management' },
+                { text: 'Benutzerverwaltung', link: '/frontend/system-settings/user-management' }
               ]
             },
             {
-              text: '错误页面',
+              text: 'Fehlerhinweis',
               items: [
-                { text: '通用错误页面', link: '/frontend/error-pages/general-error' },
-                { text: '404 页面未找到', link: '/frontend/error-pages/not-found' },
-                { text: '权限不足页面', link: '/frontend/error-pages/permission-denied' }
+                { text: 'Fehler bei der Verarbeitung', link: '/frontend/error-pages/general-error' },
+                { text: '404 Fehler bei der Verarbeitung', link: '/frontend/error-pages/not-found' },
+                { text: 'BerechtigungFehler bei der Verarbeitung', link: '/frontend/error-pages/permission-denied' }
               ]
             }
           ],
           '/backend/': [
             {
-              text: '后端功能',
+              text: 'Hinweis',
               items: [
-                { text: '概述', link: '/backend/' },
+                { text: 'Hinweis', link: '/backend/' },
                 { text: 'main.py', link: '/backend/main-py' },
                 { text: 'Dockerfile', link: '/backend/dockerfile' },
                 { text: 'requirements.txt', link: '/backend/requirements-txt' }
               ]
             },
             {
-              text: '核心模块',
+              text: 'Hinweis',
               items: [
-                { text: '配置', link: '/backend/core/config' },
-                { text: '安全', link: '/backend/core/security' }
+                { text: 'Hinweis', link: '/backend/core/config' },
+                { text: 'Hinweis', link: '/backend/core/security' }
               ]
             },
             {
-              text: '数据库模型',
+              text: 'Hinweis',
               items: [
-                { text: '数据库', link: '/backend/models/database' }
+                { text: 'Hinweis', link: '/backend/models/database' }
               ]
             },
             {
-              text: '模块',
+              text: 'Hinweis',
               items: [
-                { text: 'MinIO 模块', link: '/backend/modules/minio-module' },
-                { text: 'Milvus 模块', link: '/backend/modules/milvus-module' },
-                { text: 'MongoDB 模块', link: '/backend/modules/mongodb-module' },
-                { text: 'MySQL 模块', link: '/backend/modules/mysql-module' },
-                { text: 'Ollama 模块', link: '/backend/modules/ollama-module' },
+                { text: 'MinIO Hinweis', link: '/backend/modules/minio-module' },
+                { text: 'Milvus Hinweis', link: '/backend/modules/milvus-module' },
+                { text: 'MongoDB Hinweis', link: '/backend/modules/mongodb-module' },
+                { text: 'MySQL Hinweis', link: '/backend/modules/mysql-module' },
+                { text: 'Ollama Hinweis', link: '/backend/modules/ollama-module' },
                 { text: 'MagicPDF MinIO', link: '/backend/modules/magicpdf-minio' }
               ]
             },
             {
-              text: 'RAG 知识',
+              text: 'RAG Hinweis',
               items: [
-                { text: '嵌入服务', link: '/backend/rag-knowledge/embedding-service' },
-                { text: '通用知识', link: '/backend/rag-knowledge/generic-knowledge' }
+                { text: 'Hinweis', link: '/backend/rag-knowledge/embedding-service' },
+                { text: 'Hinweis', link: '/backend/rag-knowledge/generic-knowledge' }
               ]
             },
             {
-              text: 'API 路由',
+              text: 'API Hinweis',
               items: [
-                { text: '认证', link: '/backend/routers/authentication' },
-                { text: '验证码', link: '/backend/routers/captcha' },
-                { text: '聊天', link: '/backend/routers/chat' },
-                { text: '文件', link: '/backend/routers/files' },
+                { text: 'Hinweis', link: '/backend/routers/authentication' },
+                { text: 'Captcha', link: '/backend/routers/captcha' },
+                { text: 'Hinweis', link: '/backend/routers/chat' },
+                { text: 'Hinweis', link: '/backend/routers/files' },
                 { text: 'RAG', link: '/backend/routers/rag' },
-                { text: '嵌入', link: '/backend/routers/embeddings' },
-                { text: '角色', link: '/backend/routers/roles' },
-                { text: '权限', link: '/backend/routers/permissions' },
-                { text: '用户角色', link: '/backend/routers/user-roles' },
-                { text: '用户', link: '/backend/routers/users' },
-                { text: '设置', link: '/backend/routers/settings' },
+                { text: 'Hinweis', link: '/backend/routers/embeddings' },
+                { text: 'Rolle', link: '/backend/routers/roles' },
+                { text: 'Berechtigung', link: '/backend/routers/permissions' },
+                { text: 'BenutzerRolle', link: '/backend/routers/user-roles' },
+                { text: 'Benutzer', link: '/backend/routers/users' },
+                { text: 'Hinweis', link: '/backend/routers/settings' },
                 { text: 'SMTP', link: '/backend/routers/smtp' },
-                { text: '策略', link: '/backend/routers/policies' },
-                { text: '代理聊天', link: '/backend/routers/agent-chat' },
-                { text: '聊天页面', link: '/backend/routers/chatpage' }
+                { text: 'Hinweis', link: '/backend/routers/policies' },
+                { text: 'Hinweis', link: '/backend/routers/agent-chat' },
+                { text: 'Hinweis', link: '/backend/routers/chatpage' }
               ]
             },
             {
-              text: '数据模式',
+              text: 'Hinweis',
               items: [
-                { text: '通用模式', link: '/backend/schemas/schemas' },
-                { text: '聊天模式', link: '/backend/schemas/chat-schemas' }
+                { text: 'Hinweis', link: '/backend/schemas/schemas' },
+                { text: 'Hinweis', link: '/backend/schemas/chat-schemas' }
               ]
             },
             {
-              text: '业务服务',
+              text: 'Hinweis',
               items: [
-                { text: '认证服务', link: '/backend/services/auth' },
-                { text: '第三方认证', link: '/backend/services/auth-thirdparty' },
-                { text: '邮件服务', link: '/backend/services/email' },
-                { text: 'RAG 文件服务', link: '/backend/services/rag-file-service' },
-                { text: '会话清理器', link: '/backend/services/conversation-cleaner' },
-                { text: '不活跃用户清理器', link: '/backend/services/inactive-user-cleaner' },
-                { text: '日志服务', link: '/backend/services/logging' },
+                { text: 'Hinweis', link: '/backend/services/auth' },
+                { text: 'Hinweis', link: '/backend/services/auth-thirdparty' },
+                { text: 'Hinweis', link: '/backend/services/email' },
+                { text: 'RAG Hinweis', link: '/backend/services/rag-file-service' },
+                { text: 'Hinweis', link: '/backend/services/conversation-cleaner' },
+                { text: 'Hinweis', link: '/backend/services/inactive-user-cleaner' },
+                { text: 'Hinweis', link: '/backend/services/logging' },
                 { text: 'MSAD LDAP', link: '/backend/services/msad-ldap' },
                 { text: 'Ollama DeepSeek', link: '/backend/services/ollama-deepseek' },
-                { text: 'Ollama 服务', link: '/backend/services/ollama-service' },
-                { text: 'RAG 权限服务', link: '/backend/services/rag-permission-service' },
-                { text: '聊天数据服务', link: '/backend/services/chat-data-service' },
-                { text: 'ABAC 属性提取器', link: '/backend/services/abac-attribute-extractor' },
-                { text: 'ABAC 函数', link: '/backend/services/abac-functions' },
-                { text: 'ABAC 策略评估器', link: '/backend/services/abac-policy-evaluator' }
+                { text: 'Ollama Hinweis', link: '/backend/services/ollama-service' },
+                { text: 'RAG BerechtigungHinweis', link: '/backend/services/rag-permission-service' },
+                { text: 'Hinweis', link: '/backend/services/chat-data-service' },
+                { text: 'ABAC Hinweis', link: '/backend/services/abac-attribute-extractor' },
+                { text: 'ABAC Hinweis', link: '/backend/services/abac-functions' },
+                { text: 'ABAC Hinweis', link: '/backend/services/abac-policy-evaluator' }
               ]
             },
             {
-              text: '工具',
+              text: 'Hinweis',
               items: [
-                { text: 'PDF 工具', link: '/backend/tools/pdf' },
-                { text: '文档处理工具', link: '/backend/tools/deal-document' },
-                { text: 'Excel 工具', link: '/backend/tools/exlsx' },
-                { text: 'PyMuPDF 工具', link: '/backend/tools/inpymupdf' },
-                { text: '重试工具', link: '/backend/tools/retry-tools' },
-                { text: '在线搜索工具', link: '/backend/tools/search-online-tools' },
-                { text: '分割工具', link: '/backend/tools/split-tools' },
-                { text: 'Word 工具', link: '/backend/tools/word' }
+                { text: 'PDF Hinweis', link: '/backend/tools/pdf' },
+                { text: 'DokumenteHinweis', link: '/backend/tools/deal-document' },
+                { text: 'Excel Hinweis', link: '/backend/tools/exlsx' },
+                { text: 'PyMuPDF Hinweis', link: '/backend/tools/inpymupdf' },
+                { text: 'Hinweis', link: '/backend/tools/retry-tools' },
+                { text: 'Hinweis', link: '/backend/tools/search-online-tools' },
+                { text: 'Hinweis', link: '/backend/tools/split-tools' },
+                { text: 'Word Hinweis', link: '/backend/tools/word' }
               ]
             },
             {
-              text: 'LLM 相关',
+              text: 'LLM Hinweis',
               items: [
-                { text: '链', link: '/backend/llm/chain' },
-                { text: 'LLM 客户端', link: '/backend/llm/llm' }
+                { text: 'Hinweis', link: '/backend/llm/chain' },
+                { text: 'LLM Hinweis', link: '/backend/llm/llm' }
               ]
             }
           ],
           '/settings/': [
             {
-              text: '设置',
+              text: 'Hinweis',
               items: [
-                { text: '概述', link: '/settings/' },
-                { text: '用户设置', link: '/settings/user-settings' }
+                { text: 'Hinweis', link: '/settings/' },
+                { text: 'BenutzerHinweis', link: '/settings/user-settings' }
               ]
             }
           ],
           '/tech-specs/': [
             {
-              text: '技术说明',
+              text: 'Hinweis',
               items: [
-                { text: '概述', link: '/tech-specs/' },
-                { text: '系统架构', link: '/tech-specs/architecture' }
+                { text: 'Hinweis', link: '/tech-specs/' },
+                { text: 'Hinweis', link: '/tech-specs/architecture' }
               ]
             }
           ]
@@ -215,8 +215,8 @@ export default defineConfig({
         //   { icon: 'github', link: 'https://github.com/your-org/your-repo' }
         // ],
         footer: {
-          message: '基于 MIT 许可发布。',
-          copyright: '版权所有 © 2017-至今 上海德制信息科技有限公司'
+          message: 'Hinweis',
+          copyright: 'Hinweis© 2017-Hinweis'
         }
       }
     },
@@ -227,7 +227,7 @@ export default defineConfig({
       description: "Rosti Product User Manual and Technical Specifications.",
       link: '/en/',
       themeConfig: {
-        i18nRouting: true, // 明确启用 i18n 路由
+        i18nRouting: true, // Hinweis
         nav: [
           { text: 'Home', link: '/en/' },
           { text: 'Frontend Features', link: '/en/frontend/' },

@@ -1,24 +1,24 @@
-# 用户设置
+# BenutzerKommentar
 
-本节详细说明 Rosti 产品中用户可以配置的个人设置。
+Hinweis
 
-## 1. 个人资料
+## 1. Kommentar
 
-*   **头像**: 上传和更改用户头像。
-*   **用户名**: 显示和修改用户名。
-*   **邮箱**: 显示用户注册邮箱。
+*   **Kommentar**: HochladenKommentar
+*   **Benutzername**: Kommentar
+*   **E-Mail**: Kommentar
 
-## 2. 偏好设置
+## 2. Kommentar
 
-*   **语言**: 选择界面语言（如中文、英文）。
-*   **主题**: 选择界面主题（如亮色、暗色模式）。
-*   **通知**: 配置通知偏好（如新消息提醒）。
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 3. 安全设置
+## 3. Kommentar
 
-*   **修改密码**: 更改用户登录密码。
-*   **两步验证**: 启用或禁用两步验证。
+*   **Kommentar**: Kommentar
+*   **Kommentar**: AktivOderKommentar
 
-## 4. 知识库权限
+## 4. Kommentar
 
-*   **RAG 访问权限**: 查看用户对不同知识库条目的访问权限。
+*   **RAG Kommentar**: Kommentar

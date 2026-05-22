@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session, joinedload
 from app.models.database import User, RagData, Policy
 from app.services.abac_attribute_extractor import ABACAttributeExtractor
 from app.services.abac_policy_evaluator import ABACPolicyEvaluator
-from app.core.redis_client import get_redis_client
 from app.core.config import settings
 import json
 
@@ -38,7 +37,7 @@ class RagPermissionService:
                     "actions": p.actions,
                     "subjects": p.subjects,
                     "resources": p.resources,
-                    "conditions": p.conditions,
+                    "query_conditions": p.query_conditions,
                     "is_active": p.is_active
                 } for p in policies
             ]
@@ -51,7 +50,7 @@ class RagPermissionService:
 
     def get_accessible_rags(self, current_user: User) -> List[Dict[str, Any]]:
         """
-        Gets all RAG items accessible by the user, based on the User -> Role -> Permission model.
+        Gets all RAG items accessible by the user for retrieval.
         """
         # 1. Admin check: Admins can see everything.
         if any(role.name == 'admin' for role in current_user.roles):
@@ -63,40 +62,33 @@ class RagPermissionService:
                 } for rag in all_rags
             ]
 
-        # 2. Get all permissions for the current user.
-        user_permissions = []
-        for role in current_user.roles:
-            # This line is a remnant of the old RBAC system and is no longer needed.
-            # Permissions are now handled by the ABAC policy engine.
-            pass
-
-        # 3. Filter for permissions related to 'ragitem'.
-        rag_permissions = [p for p in user_permissions if p.type == 'ragitem']
-
-        # 4. Get all RAG items.
+        policies = self._load_policies()
         all_rags = self.db.query(RagData).all()
         accessible_rags = []
 
-        # 5. Determine access for each RAG item.
         for rag in all_rags:
-            determined_access_level = "none"
-            
-            # Check for ownership first
             if rag.owner_id == current_user.id:
-                determined_access_level = "all" # Owner gets full access
-            else:
-                # Check permissions from roles
-                for perm in rag_permissions:
-                    # Check for wildcard resource '*'
-                    if perm.resource == '*':
-                        determined_access_level = max(determined_access_level, perm.access_level, key=lambda x: ["none", "read-only", "edit", "all"].index(x))
-                    # Check for specific resource match
-                    elif perm.resource == str(rag.id):
-                         determined_access_level = max(determined_access_level, perm.access_level, key=lambda x: ["none", "read-only", "edit", "all"].index(x))
-
-            if determined_access_level != "none":
                 rag_dict = {c.name: getattr(rag, c.name) for c in rag.__table__.columns}
-                rag_dict["access_level"] = determined_access_level
+                rag_dict["access_level"] = "all"
+                accessible_rags.append(rag_dict)
+                continue
+
+            attributes = self.attribute_extractor.get_all_attributes(
+                user=current_user,
+                action_type="query",
+                resource_type="rag_data",
+                resource_id=rag.id,
+            )
+            can_query = self.evaluator.evaluate(
+                policies=policies,
+                attributes=attributes,
+                action="query",
+                resource_type="rag_data",
+                resource_id=rag.id,
+            )
+            if can_query:
+                rag_dict = {c.name: getattr(rag, c.name) for c in rag.__table__.columns}
+                rag_dict["access_level"] = "read-only"
                 accessible_rags.append(rag_dict)
 
         return accessible_rags

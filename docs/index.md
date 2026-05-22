@@ -1,16 +1,16 @@
-# 欢迎来到 Rosti 产品文档
+# Kommentar
 
-这是 Rosti 产品的用户手册和技术说明文档。
+Hinweis
 
-您可以通过左侧的导航栏或顶部的导航菜单浏览不同部分的内容。
+Hinweis
 
-## 文档结构
+## DokumenteKommentar
 
-*   **前端功能**: 介绍 Rosti 产品的前端用户界面和交互功能。
-*   **后端功能**: 详细说明 Rosti 产品的后端服务、API 接口和数据处理逻辑。
-*   **设置**: 提供关于产品配置和用户个性化设置的指南。
-*   **技术说明**: 深入探讨产品的系统架构、技术选型和开发细节。
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-希望这些文档能帮助您更好地理解和使用 Rosti 产品！
+Hinweis
 
 

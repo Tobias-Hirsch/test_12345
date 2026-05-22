@@ -1,9 +1,9 @@
 /**
- * 通用css样式布局处理
+ * Kommentar
  * Copyright (c) 2019 ruoyi
  */
 
- /** 基础通用 **/
+ /** Hinweis**/
 .pt5 {
 	padding-top: 5px;
 }
@@ -91,7 +91,7 @@
 	}
 }
 
-/** 表单布局 **/
+/** Hinweis**/
 .form-header {
     font-size:15px;
 	color:#6379bb;
@@ -100,7 +100,7 @@
 	padding-bottom:5px
 }
 
-/** 表格布局 **/
+/** Hinweis**/
 .pagination-container {
   display: flex;
   justify-content: flex-end;
@@ -108,7 +108,7 @@
   background-color: transparent !important;
 }
 
-/* 弹窗中的分页器 */
+/* Hinweis*/
 .el-dialog .pagination-container {
   position: static !important;
   margin: 10px 0 0 0;
@@ -119,7 +119,7 @@
   }
 }
 
-/* 移动端适配 */
+/* Hinweis*/
 @media (max-width: 768px) {
   .pagination-container {
     .el-pagination {
@@ -148,7 +148,7 @@
 	width: inherit;
 }
 
-/** 表格更多操作下拉样式 */
+/** Hinweis*/
 .el-table .el-dropdown-link {
 	cursor: pointer;
 	color: #409EFF;
@@ -274,19 +274,19 @@
 	overflow: hidden;
 }
 
-/* 拖拽列样式 */
+/* Hinweis*/
 .sortable-ghost{
 	opacity: .8;
 	color: #fff!important;
 	background: #42b983!important;
 }
 
-/* 表格右侧工具栏样式 */
+/* Hinweis*/
 .top-right-btn {
 	margin-left: auto;
 }
 
-/* 分割面板样式 */
+/* Hinweis*/
 .splitpanes.default-theme .splitpanes__pane {
   background-color: var(--splitpanes-default-bg) !important;
 }

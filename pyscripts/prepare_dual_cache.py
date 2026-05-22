@@ -4,15 +4,15 @@ from pathlib import Path
 import shutil
 
 # --- Configuration ---
-# 分别定义两个缓存目录
+# Kommentar
 HF_CACHE_DIR = Path("/home/cjb/.cache/huggingface/hub")
 MS_CACHE_DIR = Path("/home/cjb/.cache/modelscope/hub")
 
-# 设置 HF 环境变量
+# Kommentar
 os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 os.environ['HUGGINGFACE_HUB_CACHE'] = str(HF_CACHE_DIR)
 
-# 设置 MS 环境变量
+# Kommentar
 os.environ['MODELSCOPE_CACHE'] = str(MS_CACHE_DIR)
 
 
@@ -65,7 +65,7 @@ def main():
     hf_success = download_hf_model("opendatalab/PDF-Extract-Kit-1.0")
 
     print("\nStep 2: Downloading ModelScope models...")
-    # 使用从您本地缓存中确认的、100%正确的ID
+    # KommentarätigenKommentar%Kommentar
     ms_success = download_ms_model("damo/MFD-yolov8-l")
 
     print("-" * 50)

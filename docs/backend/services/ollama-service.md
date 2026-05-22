@@ -1,16 +1,16 @@
-# `services/ollama_service.py` - Ollama 通用服务
+# `services/ollama_service.py` - Ollama Kommentar
 
-本文档描述了 `backend/app/services/ollama_service.py` 文件，该文件可能提供了与 Ollama 服务进行通用交互的业务逻辑，不限于特定模型。
+Hinweis`backend/app/services/ollama_service.py` Hinweis
 
-## 功能描述
-*   **Ollama API 封装**: 封装了 Ollama REST API 的通用调用，如列出模型、拉取模型、删除模型等。
-*   **健康检查**: 检查 Ollama 服务是否可用。
-*   **通用文本/聊天接口**: 提供与 Ollama 上任何模型进行文本生成或聊天补全的通用接口。
+## Kommentar
+*   **Ollama API Kommentar**: KommentaröschenKommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
 
-## 逻辑实现
-该模块会直接或间接使用 `ollama_module.py` 中的低级 HTTP 客户端，并提供更高级别的业务逻辑。
+## Kommentar
+Hinweis`ollama_module.py` MittelHinweis
 
-例如，一个通用的 Ollama 聊天服务：
+Hinweis
 ```python
 import httpx
 from backend.app.core.config import settings
@@ -63,5 +63,5 @@ async def chat_with_ollama(messages: list[dict], model_name: str) -> str:
         raise
 ```
 
-## 路径
+## Kommentar
 `/backend/app/services/ollama_service.py`

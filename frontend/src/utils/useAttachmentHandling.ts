@@ -45,7 +45,7 @@ export function useAttachmentHandling() {
   const handleAttachmentAction = async (action: 'preview' | 'download' | 'delete', messageId: string | undefined, attachmentId: string | undefined, filename?: string, downloadUrl?: string) => {
     if (!messageId || !attachmentId || attachmentId === 'None' || !currentConversation.value?._id) {
       console.error("Missing information for attachment action.");
-      ElMessage.error("附件信息不完整，无法执行操作。请联系管理员。"); // More specific error message
+      ElMessage.error("Die Anhangsinformationen sind unvollständig. Die Aktion kann nicht ausgeführt werden. Bitte kontaktieren Sie den Administrator."); // More specific error message
       return;
     }
 
@@ -129,8 +129,8 @@ export function useAttachmentHandling() {
 
       for (const file of files) {
         if (!allowedFileTypes.includes(file.type)) {
-          console.warn(`Skipping file "${file.name}": 附件的格式仅限于pdf,docx和xslx三种。`);
-          ElMessage.warning(`附件的格式仅限于pdf,docx和xslx三种。`);
+          console.warn(`Skipping file "${file.name}": Anhänge sind nur in den Formaten PDF, DOCX und XLSX erlaubt.`);
+          ElMessage.warning(`Anhänge sind nur in den Formaten PDF, DOCX und XLSX erlaubt.`);
           continue;
         }
 

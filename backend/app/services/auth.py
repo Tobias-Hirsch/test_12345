@@ -98,7 +98,7 @@ def authenticate_user(db: Session, username: str, password: str):
                 headers={"WWW-Authenticate": "Bearer"},
             )
         
-        # LDAP 认证成功后，同步用户属性到本地数据库
+        # LDAP Kommentar
         user_attrs = ldap_service.get_user_attributes(username)
         if not user_attrs:
             raise HTTPException(
@@ -107,32 +107,32 @@ def authenticate_user(db: Session, username: str, password: str):
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        # 检查用户在 AD 中的禁用/启用状态
+        # Kommentar
         account_status = ldap_service.parse_user_account_control(user_attrs.get(ldap_service.user_account_control_attr, 0))
         is_active_in_ad = account_status["is_active"]
 
         user = get_user_by_username(db, username)
         if user:
-            # 更新现有用户
+            # Kommentar
             user.email = user_attrs.get("email", user.email)
             user.department = user_attrs.get("department", user.department)
             user.security_level = user_attrs.get("security_level", user.security_level)
-            user.is_active = is_active_in_ad # 同步 AD 中的活跃状态
-            # TODO: 根据 memberOf 属性更新用户角色和权限
+            user.is_active = is_active_in_ad # Hinweis
+            # TODO: Kommentar
             # user.roles = ...
             # user.permissions = ...
         else:
-            # 创建新用户
+            # Kommentar
             user = database.User(
                 username=username,
                 email=user_attrs.get("email"),
                 department=user_attrs.get("department"),
                 security_level=user_attrs.get("security_level"),
                 is_active=is_active_in_ad,
-                # 对于 SSO 用户，hashed_password 可以为空或设置为一个占位符
+                # Kommentar
                 hashed_password=None,
-                provider="msad_ldap", # 标记为 LDAP 用户
-                provider_id=username # 使用 username 作为 provider_id
+                provider="msad_ldap", # Hinweis
+                provider_id=username # Hinweis
             )
             db.add(user)
         
@@ -140,7 +140,7 @@ def authenticate_user(db: Session, username: str, password: str):
         db.refresh(user)
         return user
     else:
-        # 使用本地认证
+        # Kommentar
         user = get_user_by_username(db, username)
         if not user:
             user = get_user_by_email(db, username)

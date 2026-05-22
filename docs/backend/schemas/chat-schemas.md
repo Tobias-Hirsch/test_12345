@@ -1,16 +1,16 @@
-# `schemas/chat_schemas.py` - 聊天数据模式
+# `schemas/chat_schemas.py` - Kommentar
 
-本文档描述了 `backend/app/schemas/chat_schemas.py` 文件，该文件专门定义了与聊天功能相关的数据模式（Schema）。
+Hinweis`backend/app/schemas/chat_schemas.py` Hinweis
 
-## 功能描述
-*   **聊天请求**: 定义用户发送聊天消息的请求体结构。
-*   **聊天响应**: 定义聊天系统返回的响应体结构，包括消息内容、会话 ID、消息 ID、时间戳等。
-*   **RAG 源文档**: 定义 RAG 功能中检索到的源文档的结构，包括文件名、下载 URL 和摘要。
+## Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **RAG Kommentar**: Kommentar
 
-## 逻辑实现
-该文件通常包含继承自 `pydantic.BaseModel` 的类，用于定义聊天相关的输入和输出数据结构。
+## Kommentar
+Hinweis`pydantic.BaseModel` Hinweis
 
-例如，可能包含以下模式：
+Hinweis
 *   **`AgentChatRequest`**:
     ```python
     from typing import Optional, List
@@ -40,5 +40,5 @@
         source_documents: Optional[List[SourceDocument]] = Field(None, description="List of source documents used for RAG.")
     ```
 
-## 路径
+## Kommentar
 `/backend/app/schemas/chat_schemas.py`

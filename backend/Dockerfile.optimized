@@ -1,7 +1,7 @@
-# 优化版Dockerfile - 减少依赖更新时的重构时间
+# Optimiertes Dockerfile - reduziert die Neubauzeit bei Abhängigkeitsänderungen
 FROM python:3.12-slim AS base-dependencies
 
-# 1. 系统依赖层 - 很少变化
+# 1. Systemabhängigkeitsebene - ändert sich selten
 RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -13,54 +13,54 @@ RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.li
 
 WORKDIR /app
 
-# 2. 核心稳定依赖层 - 分离基础依赖和可变依赖
+# 2. Stabile Kernabhängigkeitsebene - trennt Basis- und variable Abhängigkeiten
 FROM base-dependencies AS core-dependencies
 
-# 复制分离的核心依赖文件
+# Getrennte Kernabhängigkeitsdateien kopieren
 COPY requirements.core.txt ./
 RUN pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.core.txt
 
-# 3. 可变依赖层 - 经常变化的依赖
+# 3. Variable Abhängigkeitsebene - ändert sich häufig
 FROM core-dependencies AS variable-dependencies
 
-# 复制经常变化的依赖文件
+# Häufig geänderte Abhängigkeitsdateien kopieren
 COPY requirements.extras.txt ./
 RUN pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.extras.txt
 
-# 4. 应用构建层
+# 4. Anwendungs-Build-Ebene
 FROM python:3.12-slim AS builder
 
 WORKDIR /usr/src/app
 
-# 安装构建工具
+# Build-Werkzeuge installieren
 RUN pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple wheel setuptools
 
-# 复制构建所需文件
+# Für den Build benötigte Dateien kopieren
 COPY setup.py requirements.txt ./
 COPY app ./app
 
-# 构建应用wheel包
+# Wheel-Paket der Anwendung bauen
 RUN python setup.py bdist_wheel
 
-# 5. 最终生产镜像
+# 5. Finales Produktionsimage
 FROM variable-dependencies AS final
 
-# 创建非root用户
+# Nicht-Root-Benutzer erstellen
 RUN addgroup --system app && adduser --system --ingroup app --home /app app
 
-# 创建日志目录
+# Logverzeichnis erstellen
 RUN mkdir -p /app/logs/api_log && chown -R app:app /app/logs
 
-# 复制并安装应用
+# Anwendung kopieren und installieren
 COPY --from=builder /usr/src/app/dist/*.whl ./
 RUN pip install --no-cache-dir --no-deps rosti_backend-0.1.0-py3-none-any.whl && \
     rm rosti_backend-0.1.0-py3-none-any.whl
 
-# 复制Alembic配置
+# Alembic-Konfiguration kopieren
 COPY alembic.ini .
 COPY alembic ./alembic
 
-# 设置权限
+# Berechtigungen setzen
 RUN chown -R app:app /app
 ENV HOME=/app
 USER app

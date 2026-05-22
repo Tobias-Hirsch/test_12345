@@ -1,42 +1,42 @@
-# 系统架构
+# Kommentar
 
-本节描述 Rosti 产品的整体系统架构，包括前端、后端、数据库和外部服务的组件。
+Hinweis
 
-## 1. 总体架构概览
+## 1. Kommentar
 
-Rosti 产品采用前后端分离的微服务架构，通过 RESTful API 进行通信。
+Rosti Hinweis
 
-## 2. 前端架构
+## 2. Kommentar
 
-*   **技术栈**: Vue.js, TypeScript, Element Plus (UI 组件库)。
-*   **构建工具**: Vite。
-*   **模块**: 聊天界面、知识库管理、用户认证、设置。
+*   **Kommentar**: Vue.js, TypeScript, Element Plus (UI Kommentar
+*   **Kommentar**: Vite. 
+*   **Kommentar**: Kommentar
 
-## 3. 后端架构
+## 3. Kommentar
 
-*   **技术栈**: Python, FastAPI。
-*   **核心服务**:
-    *   **认证服务**: 用户注册、登录、权限管理。
-    *   **聊天服务**: 会话管理、消息存储、附件处理。
-    *   **RAG 服务**: 文档解析、向量嵌入、知识检索。
-    *   **工具服务**: 集成在线搜索、PDF/Word/Excel 内容提取等。
-*   **异步处理**: 使用 `async/await` 和 `FastAPI` 的异步特性处理高并发请求。
+*   **Kommentar**: Python, FastAPI. 
+*   **Kommentar**:
+    *   **Kommentar**: BenutzerRegistrieren, Anmelden, Rechteverwaltung. 
+    *   **Kommentar**: Kommentar
+    *   **RAG Kommentar**: DokumenteKommentar
+    *   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar`async/await` Kommentar`FastAPI` Kommentar
 
-## 4. 数据库与存储
+## 4. Kommentar
 
-*   **关系型数据库**: PostgreSQL/MySQL (通过 SQLAlchemy ORM 访问)，用于存储用户、RAG 条目等结构化数据。
-*   **文档数据库**: MongoDB (通过 PyMongo 访问)，用于存储聊天消息、附件元数据和 RAG 文档摘要。
-*   **向量数据库**: Milvus，用于存储文档块的向量嵌入，支持高效的相似性搜索。
-*   **对象存储**: MinIO，用于存储原始文档文件和聊天附件。
+*   **Kommentar**: PostgreSQL/MySQL (Kommentar
+*   **DokumenteKommentar**: MongoDB (Kommentar
+*   **Kommentar**: Milvus, Kommentar
+*   **Kommentar**: MinIO, Kommentar
 
-## 5. 外部服务与集成
+## 5. Kommentar
 
-*   **大型语言模型 (LLM)**: DeepSeek (或其他兼容 Ollama 的模型)，通过 API 进行集成，用于生成聊天回复和 RAG 答案。
-*   **MinIO**: 用于文件存储。
-*   **DuckDuckGo Search API**: 用于在线搜索功能。
+*   **Kommentar**: DeepSeek (OderKommentar
+*   **MinIO**: Kommentar
+*   **DuckDuckGo Search API**: Kommentar
 
-## 6. 部署与运维
+## 6. Kommentar
 
-*   **容器化**: 使用 Docker 进行应用容器化。
-*   **编排**: 可通过 Docker Compose 或 Kubernetes 进行部署。
-*   **监控与日志**: 集成日志系统和监控工具。
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar
+*   **Kommentar**: Kommentar

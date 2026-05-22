@@ -632,7 +632,7 @@ export const del = async (url: string): Promise<any> => {
 };
 
 
-// 检查是否为网络错误的辅助函数
+// Kommentar
 const isNetworkError = (error: any): boolean => {
   if (!error) return false;
   
@@ -658,7 +658,7 @@ export const postStream = async (url: string, data: any, onChunk: (chunk: string
   const backoffMultiplier = 1.5;
   
   let attempt = 0;
-  let accumulatedContent = ''; // 累积已接收的内容
+  let accumulatedContent = ''; // Hinweis
   
   while (attempt <= maxRetries) {
     try {
@@ -692,7 +692,7 @@ export const postStream = async (url: string, data: any, onChunk: (chunk: string
         }
         const chunk = decoder.decode(value, { stream: true });
         
-        // 累积内容用于重试时的状态恢复
+        // Kommentar
         if (chunk.includes('event: text')) {
           const dataMatch = chunk.match(/data: "([^"]+)"/);
           if (dataMatch) {
@@ -704,12 +704,12 @@ export const postStream = async (url: string, data: any, onChunk: (chunk: string
       }
       
       console.log('Stream completed successfully');
-      return; // 成功完成
+      return; // Hinweis
       
     } catch (error: any) {
       console.error(`Stream attempt ${attempt + 1} failed:`, error);
       
-      // 检查是否应该重试
+      // Kommentar
       if (!isNetworkError(error) || attempt >= maxRetries) {
         console.error('Max retries reached or non-network error, giving up');
         throw error;
@@ -718,19 +718,19 @@ export const postStream = async (url: string, data: any, onChunk: (chunk: string
       attempt++;
       console.log(`Will retry in ${retryDelay * Math.pow(backoffMultiplier, attempt - 1)}ms...`);
       
-      // 指数退避延迟
+      // Kommentar
       const delay = retryDelay * Math.pow(backoffMultiplier, attempt - 1);
       await new Promise(resolve => setTimeout(resolve, delay));
       
-      // 如果有累积内容，在重试前记录状态
+      // Kommentar
       if (accumulatedContent) {
         console.log(`Resuming from accumulated content: ${accumulatedContent.length} characters`);
-        // 可以在这里添加特殊的恢复逻辑
+        // Kommentar
       }
     }
   }
   
-  throw new Error(`流式传输重试${maxRetries}次后仍然失败`);
+  throw new Error(`Fehler bei der Verarbeitung${maxRetries}Fehler bei der Verarbeitung`);
 };
 
 export const uploadFiles = async (formData: FormData, conversationId?: string): Promise<any> => {

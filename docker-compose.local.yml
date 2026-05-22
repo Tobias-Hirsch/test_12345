@@ -1,0 +1,214 @@
+name: rosti-local
+
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    command:
+      - etcd
+      - --advertise-client-urls=http://0.0.0.0:2379
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --data-dir=/etcd
+    environment:
+      ETCD_AUTO_COMPACTION_MODE: revision
+      ETCD_AUTO_COMPACTION_RETENTION: "1000"
+      ETCD_QUOTA_BACKEND_BYTES: "4294967296"
+      ETCD_SNAPSHOT_COUNT: "50000"
+    volumes:
+      - etcd_data:/etcd
+    ports:
+      - "2379:2379"
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - rosti-local-net
+
+  minio:
+    image: minio/minio:RELEASE.2025-04-08T15-41-24Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9100:9000"
+      - "9101:9001"
+    networks:
+      - rosti-local-net
+
+  milvus:
+    image: milvusdb/milvus:latest
+    command: ["milvus", "run", "standalone"]
+    environment:
+      ETCD_ENDPOINTS: etcd:2379
+      MINIO_ADDRESS: minio:9000
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET_NAME: mm-rag-bucket
+    volumes:
+      - milvus_data:/var/lib/milvus
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    depends_on:
+      etcd:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - rosti-local-net
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rag_db
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app_password123
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks:
+      - rosti-local-net
+
+  redis:
+    image: redis:7.0
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - rosti-local-net
+
+  mongodb:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - rosti-local-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.local
+    env_file:
+      - .env.local
+    environment:
+      PYTHONUNBUFFERED: "1"
+      HOME: /app
+    volumes:
+      - backend_logs:/app/logs
+      - ./backend/alembic:/app/alembic
+      - ./models:/app/models
+    ports:
+      - "8001:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      mongodb:
+        condition: service_started
+      milvus:
+        condition: service_started
+    networks:
+      - rosti-local-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    env_file:
+      - frontend/.env
+    networks:
+      - rosti-local-net
+
+  gateway:
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Docker/nginx/local.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - rosti-local-net
+
+  # Optional GPU OCR stack. Start with:
+  # docker compose -f docker-compose.local.yml --profile gpu-ocr up -d --build
+  paddleocr:
+    profiles: ["gpu-ocr"]
+    build:
+      context: ./Docker/paddleocr
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      PADDLEOCR_LANG: "german"
+      ENABLE_PREPROCESSING: "true"
+      PREPROCESS_BLUR_KERNEL: "5"
+      PREPROCESS_ADAPTIVE_BLOCK: "11"
+      PREPROCESS_ADAPTIVE_C: "2"
+    volumes:
+      - ./models/paddlex-models:/root/.paddlex
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+    networks:
+      - rosti-local-net
+
+  latexocr:
+    profiles: ["gpu-ocr"]
+    image: lukasblecher/pix2tex:api
+    restart: unless-stopped
+    environment:
+      DEVICE: cuda
+    ports:
+      - "8002:8002"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+    networks:
+      - rosti-local-net
+
+networks:
+  rosti-local-net:
+    driver: bridge
+
+volumes:
+  etcd_data:
+  milvus_data:
+  minio_data:
+  mysql_data:
+  redis_data:
+  mongodb_data:
+  backend_logs:
