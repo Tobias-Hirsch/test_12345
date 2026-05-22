@@ -42,15 +42,78 @@ export interface Conversation {
   updated_at?: string;
   messages?: Message[]; // Changed from Ref<Message>[]
 }
+
+const SUMMARY_ARTIFACT_PATTERNS = [
+  /multiple items of type/i,
+  /requires a single string output/i,
+  /single string output/i,
+  /mehreren zeichenfolgen/i,
+  /mehrere zeichenfolgen/i,
+  /ein einzelner string/i,
+];
+
+const sanitizeMessageText = (content: unknown): string => {
+  if (typeof content !== 'string') return '';
+
+  const paragraphs = content.split(/\n\s*\n/);
+  const kept: string[] = [];
+
+  paragraphs.forEach((paragraph, index) => {
+    const trimmed = paragraph.trim();
+    const hasArtifact = SUMMARY_ARTIFACT_PATTERNS.some((pattern) => pattern.test(trimmed));
+
+    if (hasArtifact) {
+      if (kept.length > 0 && /^(hinweis|note)\s*:?\s*$/i.test(kept[kept.length - 1])) {
+        kept.pop();
+      }
+      return;
+    }
+
+    if (/^(hinweis|note)\s*:?\s*$/i.test(trimmed)) {
+      const nextParagraph = paragraphs[index + 1]?.trim() || '';
+      if (SUMMARY_ARTIFACT_PATTERNS.some((pattern) => pattern.test(nextParagraph))) {
+        return;
+      }
+    }
+
+    if (trimmed) kept.push(trimmed);
+  });
+
+  return kept.join('\n\n').trim() || content;
+};
+
+const sanitizeSourceDocuments = (sourceDocuments: unknown): any[] => {
+  if (!Array.isArray(sourceDocuments)) return [];
+
+  return sourceDocuments.map((source) => {
+    if (!source || typeof source !== 'object') return source;
+
+    const sanitizedSource = { ...(source as Record<string, any>) };
+    if (typeof sanitizedSource.summary === 'string') {
+      const hasArtifact = SUMMARY_ARTIFACT_PATTERNS.some((pattern) => pattern.test(sanitizedSource.summary));
+      if (hasArtifact) sanitizedSource.summary = 'No reliable summary available.';
+    }
+    return sanitizedSource;
+  });
+};
  
 // Helper function to convert raw message data to Message interface (plain strings)
 // Helper function to convert raw message data to Message interface (plain strings)
 const convertMessageContent = (message: any): Message => {
+  const sourceDocuments = sanitizeSourceDocuments(
+    message?.search_results?.source_documents || message?.source_documents || []
+  );
+
   return {
     ...message,
     sender: message.sender || 'bot', // Ensure sender is always present, default to 'bot'
-    content: message.content || '', // Ensure it's always a string
+    content: sanitizeMessageText(message.content || ''), // Ensure it's always a string
     thinkingProcess: message.thinkingProcess || '', // Ensure it's always a string
+    source_documents: sourceDocuments,
+    search_results: {
+      ...(message.search_results || {}),
+      source_documents: sourceDocuments,
+    },
   };
 };
 
@@ -161,7 +224,7 @@ export const useChatStore = defineStore('chat', () => {
                                     break;
                                 case 'metadata':
                                     if (!botMessage.search_results) botMessage.search_results = {};
-                                    botMessage.search_results.source_documents = parsedData.source_documents;
+                                    botMessage.search_results.source_documents = sanitizeSourceDocuments(parsedData.source_documents);
                                     break;
                                 case 'error':
                                      console.error("SSE Error:", parsedData.error);
@@ -248,7 +311,7 @@ export const useChatStore = defineStore('chat', () => {
                             break;
                         case 'metadata':
                             if (!botMessage.search_results) botMessage.search_results = {};
-                            botMessage.search_results.source_documents = parsedData.source_documents;
+                            botMessage.search_results.source_documents = sanitizeSourceDocuments(parsedData.source_documents);
                             break;
                         case 'error':
                              console.error("SSE Error:", parsedData.error);

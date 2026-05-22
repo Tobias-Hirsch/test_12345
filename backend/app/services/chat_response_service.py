@@ -221,7 +221,8 @@ class ChatResponseService:
         state = self.conversation_service.get_conversation_state(user_id, conv_id)
         loading_message = {
             "_id": bot_message_id, "sender": "bot", "content": "", "loading": True,
-            "attachments": [], "source_documents": [], "timestamp": datetime.now().isoformat()
+            "attachments": [], "source_documents": [], "search_results": {"source_documents": []},
+            "timestamp": datetime.now().isoformat()
         }
         state["history"].append(loading_message)
         self.conversation_service.save_conversation_state(user_id, conv_id, state)
@@ -418,6 +419,8 @@ class ChatResponseService:
                 # RAG mode with context -> Must use context.
                 instructions.append("6. Wenn der Benutzer allgemein auf eine Datei, Anlage, Quelle oder ein Dokument verweist, behandle die \"KONTEXTINFORMATIONEN\" als die bereitgestellten Dokumentinhalte.")
                 instructions.append("7. Wenn der Benutzer um Analyse oder Zusammenfassung bittet, fasse die vorhandenen Dokumentinhalte strukturiert zusammen, statt die Anfrage wegen fehlender Details abzulehnen.")
+                instructions.append("8. Wenn nur Auszuege oder Fragmente eines Dokuments vorliegen, analysiere genau diese Auszuege und sage klar, dass deine Analyse auf den vorliegenden Ausschnitten basiert.")
+                instructions.append("9. Sage bei vorhandenem Kontext nicht, dass keine Datei bereitgestellt wurde oder dass eine Analyse unmoeglich sei, solange verwertbare Dokumentinhalte vorliegen.")
                 instructions.insert(1, "2. Stütze deine Antwort STRENG UND AUSSCHLIESSLICH auf die \"KONTEXTINFORMATIONEN\".")
                 if not message_create.search_ai_active:
                     # Strict RAG, has context, but answer might not be in it.
@@ -471,6 +474,7 @@ class ChatResponseService:
             message_to_update["content"] = content
             message_to_update["loading"] = False
             message_to_update["source_documents"] = sources
+            message_to_update["search_results"] = {"source_documents": sources}
             self.conversation_service.save_conversation_state(user_id, conv_id, final_state)
             logger.info(f"Final bot response saved to Redis for conversation {conv_id}")
         else:

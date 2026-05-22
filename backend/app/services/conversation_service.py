@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from app.core.redis_client import get_redis_client
 from app.core.config import settings
+from app.utils.chat_message_sanitizer import sanitize_chat_history
 
 class ConversationService:
     def __init__(self, redis_client: redis.Redis):
@@ -31,7 +32,9 @@ class ConversationService:
         - "attached_files": List of attached file info (e.g., file IDs, MinIO paths)
         """
         key = self._get_conversation_key(user_id, conversation_id)
-        self.redis.setex(key, self.conversation_ttl_seconds, json.dumps(state_data, default=self._json_serial))
+        state_to_save = dict(state_data)
+        state_to_save["history"] = sanitize_chat_history(state_to_save.get("history", []))
+        self.redis.setex(key, self.conversation_ttl_seconds, json.dumps(state_to_save, default=self._json_serial))
 
     def get_conversation_state(self, user_id: int, conversation_id: str) -> Optional[Dict[str, Any]]:
         """
@@ -40,7 +43,14 @@ class ConversationService:
         key = self._get_conversation_key(user_id, conversation_id)
         data = self.redis.get(key)
         if data:
-            return json.loads(data)
+            state = json.loads(data)
+            sanitized_history = sanitize_chat_history(state.get("history", []))
+            if sanitized_history != state.get("history", []):
+                state["history"] = sanitized_history
+                self.save_conversation_state(user_id, conversation_id, state)
+            else:
+                state["history"] = sanitized_history
+            return state
         return None
 
     def delete_conversation_state(self, user_id: int, conversation_id: str):

@@ -8,6 +8,7 @@ from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId # Import ObjectId for MongoDB document IDs
 from ..core.config import settings # Global import for configuration settings
 from app.schemas.chat_schemas import Attachment # Import the Attachment schema
+from app.utils.chat_message_sanitizer import sanitize_conversation_document
 
 # Assuming MONGO_URI and MONGO_DB_NAME are available from environment variables
 MONGO_URI = settings.MONGO_URI
@@ -79,7 +80,9 @@ async def get_conversations_by_user(user_id: str) -> List[Dict[str, Any]]:
         # Find conversations for the user, sort by updated_at descending
         conversations_data = list(collection.find({"user_id": user_id}).sort("updated_at", -1))
         # Convert ObjectIds to strings for the response
-        for conv in conversations_data:
+        for index, conv in enumerate(conversations_data):
+            conv = sanitize_conversation_document(conv)
+            conversations_data[index] = conv
             conv['_id'] = str(conv['_id'])
             # Also convert message ObjectIds if needed, though typically messages are embedded
             if 'messages' in conv:
@@ -105,7 +108,9 @@ async def get_all_conversations() -> List[Dict[str, Any]]:
     try:
         conversations_data = list(collection.find({}))
         # Convert ObjectIds to strings for consistency
-        for conv in conversations_data:
+        for index, conv in enumerate(conversations_data):
+            conv = sanitize_conversation_document(conv)
+            conversations_data[index] = conv
             conv['_id'] = str(conv['_id'])
             if 'messages' in conv:
                 for msg in conv['messages']:
@@ -130,6 +135,7 @@ async def get_conversation_by_id(conversation_id: str) -> Optional[Dict[str, Any
         # Find the conversation by its ObjectId
         conversation_data = collection.find_one({"_id": ObjectId(conversation_id)})
         if conversation_data:
+            conversation_data = sanitize_conversation_document(conversation_data)
             # Convert ObjectId to string for the response
             conversation_data['_id'] = str(conversation_data['_id'])
             if 'messages' in conversation_data:
@@ -151,7 +157,7 @@ async def add_message_to_conversation(
     sender: str,
     content: str,
     attachments: Optional[List[Attachment]] = None,
-    search_results: Optional[List[Dict]] = None # Add search_results parameter
+    search_results: Optional[Dict[str, Any]] = None # Add search_results parameter
 ) -> bool:
     """Adds a new message (and optional attachments and search results) to a conversation."""
     collection = get_conversations_collection()

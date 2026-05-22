@@ -89,7 +89,9 @@ async def get_embedding_from_ollama(text: str) -> Optional[np.ndarray]:
     }
     
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        # Larger chat models can temporarily block the Ollama queue.
+        # Give embedding requests enough time to wait and complete.
+        async with httpx.AsyncClient(timeout=180.0) as client:
             response = await client.post(OLLAMA_EMBEDDING_API_URL, json=payload)
             response.raise_for_status()
             

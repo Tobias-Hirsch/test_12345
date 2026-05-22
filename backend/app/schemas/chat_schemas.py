@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 class Attachment(BaseModel):
@@ -27,7 +27,7 @@ class ChatMessage(BaseModel):
     content: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     attachments: List[Attachment] = [] # Add attachments field
-    search_results: Optional[List[Dict]] = None # Add field for search results
+    search_results: Optional[Dict[str, Any]] = None # Source and online search payload for the UI
 
     class Config:
         from_attributes = True
